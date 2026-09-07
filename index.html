@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QaPoBojm - Social Edition</title>
+    <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -768,6 +768,21 @@
             return '🎉';
         }
 
+        // Kontrollo nëse përdoruesi është i kyçur tashmë gjatë hapjes/rifreskimit të faqes
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await mySupabase.auth.getSession();
+            if (session && session.user) {
+                const userMeta = session.user.user_metadata;
+                currentUser.name = userMeta?.full_name || session.user.email.split('@')[0];
+                currentUser.isAdmin = true;
+                adminWelcomeName.textContent = currentUser.name;
+
+                landingCard.classList.add('hidden');
+                roomsDashboard.classList.remove('hidden');
+                fetchRoomsFromSupabase();
+            }
+        });
+
         toggleAuth.addEventListener('click', (e) => {
             e.preventDefault();
             isSignUp = !isSignUp;
@@ -1314,14 +1329,6 @@
             const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             drawWheel(data?.options || []);
         });
-        
-        if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then((reg) => console.log('Service Worker registered', reg))
-        .catch((err) => console.log('Service Worker failed', err));
-    });
-  }
     </script>
 </body>
 </html>
