@@ -1,4 +1,3 @@
-JSON
 {
   "name": "QaPoBojm",
   "short_name": "QaPoBojm",
@@ -8,14 +7,10 @@ JSON
   "theme_color": "#ff3366",
   "icons": [
     {
-      "src": "https://img.icons8.com/fluency/192/lightning-bolt.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "https://img.icons8.com/fluency/512/lightning-bolt.png",
+      "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
