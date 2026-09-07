@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QaPoBojm</title>
-    <!-- Supabase JS Client -->
+    <title>QaPoBojm - Pro Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
@@ -50,7 +49,7 @@
             background-color: #161b22;
             padding: 25px;
             border-radius: 16px;
-            width: 420px;
+            width: 440px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.6);
             text-align: center;
             border: 1px solid #30363d;
@@ -75,7 +74,7 @@
             margin-bottom: 6px;
             text-align: left;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 10px 12px;
             margin-bottom: 12px;
@@ -86,7 +85,7 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: #58a6ff;
             box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
@@ -150,12 +149,12 @@
             padding-left: 20px;
             color: #c9d1d9;
             text-align: left;
-            max-height: 90px;
+            max-height: 100px;
             overflow-y: auto;
         }
         li {
-            margin-bottom: 4px;
-            font-size: 14px;
+            margin-bottom: 6px;
+            font-size: 13px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -180,16 +179,16 @@
             border: 1px dashed #30363d;
             text-align: center;
             font-family: monospace;
-            font-size: 15px;
+            font-size: 14px;
             margin-bottom: 10px;
             color: #58a6ff;
             border-radius: 8px;
         }
         .wheel-container {
             position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 15px auto;
+            width: 200px;
+            height: 200px;
+            margin: 10px auto;
         }
         canvas {
             border-radius: 50%;
@@ -250,6 +249,8 @@
             margin-top: 15px;
             text-align: left;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         .chat-header {
             background: #161b22;
@@ -260,19 +261,33 @@
             border-bottom: 1px solid #30363d;
         }
         .chat-messages {
-            height: 100px;
+            height: 130px;
             overflow-y: auto;
-            padding: 8px 12px;
-            font-size: 13px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
         .chat-msg {
+            background: #21262d;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            max-width: 85%;
             word-break: break-word;
         }
-        .chat-msg b {
-            color: #58a6ff;
+        .chat-msg.self {
+            background: #1f6feb;
+            align-self: flex-end;
+        }
+        .chat-msg .author {
+            font-size: 10px;
+            color: #8b949e;
+            margin-bottom: 2px;
+            display: block;
+        }
+        .chat-msg.self .author {
+            color: #c8d1db;
         }
         .emoji-picker {
             display: flex;
@@ -326,6 +341,20 @@
         .leave-link:hover {
             color: #da3633;
         }
+        .notification-banner {
+            background: #1f6feb;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1; }
+            100% { opacity: 0.8; }
+        }
     </style>
 </head>
 <body>
@@ -338,8 +367,10 @@
         <h2 id="authTitle">Sign in as Administrator</h2>
         
         <form id="loginForm">
-            <label for="adminName">Your Name / Nickname</label>
-            <input type="text" id="adminName" required placeholder="e.g. John Admin">
+            <div id="nameFieldContainer" class="hidden">
+                <label for="adminName">Your Name / Nickname</label>
+                <input type="text" id="adminName" placeholder="e.g. John Admin">
+            </div>
 
             <label for="email">Email</label>
             <input type="email" id="email" required placeholder="name@example.com">
@@ -372,10 +403,27 @@
     <div class="card hidden" id="roomsDashboard">
         <div class="brand">QaPoBojm - Admin Dashboard</div>
         <h2>Welcome, <span id="adminWelcomeName">Admin</span>!</h2>
-        <p style="color: #8b949e; font-size: 13px; margin-bottom: 15px;">Create a named room for your group.</p>
         
-        <label for="newRoomName">Room Name</label>
+        <label for="eventCategory">Event Category</label>
+        <select id="eventCategory">
+            <option value="Ushqim">🍔 Ushqim (Food/Restaurants)</option>
+            <option value="Termin">⚽ Termin / Aktivitet</option>
+            <option value="Shetitje">🚗 Shetitje / Udhëtim</option>
+            <option value="Tjetër">🎉 Tjetër</option>
+        </select>
+
+        <label for="newRoomName">Room / Event Name</label>
         <input type="text" id="newRoomName" placeholder="e.g. Office Lunch, Friday Pizza...">
+
+        <label for="decisionMethod">Decision Method</label>
+        <select id="decisionMethod">
+            <option value="spin">🎡 Spin the Wheel (Rrota)</option>
+            <option value="poll">📊 Vote Poll (Sondazh)</option>
+        </select>
+
+        <label for="eventTime">Event Schedule (Time)</label>
+        <input type="datetime-local" id="eventTime">
+
         <button id="createRoomBtn" style="background-color: #238636; color: white;">Create Room</button>
         
         <button class="secondary-btn" id="backToLanding" style="margin-top: 10px;">Log out</button>
@@ -383,11 +431,15 @@
 
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
-        <div class="brand">QaPoBojm - Active Room</div>
+        <div class="brand" id="roomCategoryTag">QaPoBojm - Active Room</div>
         <h2 id="roomTitle" style="margin-bottom: 5px;">Room Name</h2>
         
         <div class="room-code-badge">
-            Code: <span id="displayRoomCode">----</span>
+            Code: <span id="displayRoomCode">----</span> | Time: <span id="displayEventTime">--:--</span>
+        </div>
+
+        <div id="eventAlertBox" class="hidden notification-banner">
+            🚨 <b>Koha e eventit ka arritur!</b> 🚀
         </div>
         
         <div class="members-box" id="openMembersModal">
@@ -399,36 +451,43 @@
 
         <div id="setupSection">
             <div id="adminControls">
-                <label for="restaurantInput">Add Restaurant (Admin Only)</label>
+                <label for="optionInput" id="optionInputLabel">Add Option (Admin Only)</label>
                 <div style="display: flex; gap: 6px;">
-                    <input type="text" id="restaurantInput" placeholder="Restaurant name..." style="margin-bottom: 0;">
-                    <button id="addRestBtn" style="width: 80px; margin-bottom: 0;">Add</button>
+                    <input type="text" id="optionInput" placeholder="Name..." style="margin-bottom: 0;">
+                    <button id="addOptBtn" style="width: 80px; margin-bottom: 0;">Add</button>
                 </div>
             </div>
 
-            <h3 style="font-size: 12px; margin-top: 12px; color: #8b949e; text-align: left; margin-bottom: 4px;">Restaurants List:</h3>
-            <ul id="restaurantList"></ul>
+            <h3 style="font-size: 12px; margin-top: 12px; color: #8b949e; text-align: left; margin-bottom: 4px;">Options List:</h3>
+            <ul id="optionList"></ul>
 
-            <!-- Rrota 2D -->
-            <div class="wheel-container">
-                <div class="wheel-pointer"></div>
-                <div class="wheel-center-knob"></div>
-                <canvas id="wheelCanvas" width="220" height="220"></canvas>
+            <!-- Spin Wheel View -->
+            <div id="spinView" class="hidden">
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <div class="wheel-center-knob"></div>
+                    <canvas id="wheelCanvas" width="200" height="200"></canvas>
+                </div>
+                <button id="spinBtn" style="background-color: #238636; color: white;" disabled>Spin the Wheel!</button>
             </div>
 
-            <button id="spinBtn" style="background-color: #238636; color: white;" disabled>Spin the Wheel!</button>
+            <!-- Poll View -->
+            <div id="pollView" class="hidden" style="margin: 15px 0;">
+                <div id="pollOptionsContainer" style="text-align: left; display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+
             <button class="secondary-btn" id="backToPortalBtn" style="margin-top: 4px;">Back to Portal</button>
         </div>
 
         <div id="resultSection" class="hidden">
-            <h3 style="color: #58a6ff; margin-bottom: 5px;">Winner Selected!</h3>
+            <h3 style="color: #58a6ff; margin-bottom: 5px;">Result / Winner Selected!</h3>
             <div id="winnerDisplay" style="font-size: 18px; font-weight: bold; margin: 12px 0; color: #3fb950;"></div>
             
             <button id="spinAgainBtn" style="background-color: #238636; color: white;">Spin Again</button>
             <button id="backToRoomBtn" class="secondary-btn">Back to Room / Add More</button>
         </div>
 
-        <!-- Chat Box -->
+        <!-- Chat Box (Discord Style) -->
         <div class="chat-container">
             <div class="chat-header">Room Chat</div>
             <div class="chat-messages" id="chatMessages">
@@ -455,19 +514,16 @@
     </div>
 
     <!-- Modal për anëtarët -->
-    <div class="modal hidden" id="membersModal">
-        <div class="modal-content">
-            <h3 style="margin-top: 0; color: #58a6ff; font-size: 18px;">Room Members</h3>
-            <ul id="modalMembersList" style="text-align: left; max-height: 150px; overflow-y: auto;"></ul>
-            <button class="secondary-btn" id="closeModalBtn" style="margin-top: 15px; margin-bottom: 0;">Close</button>
-        </div>
+    <div class="card hidden" id="membersModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100; width:300px;">
+        <h3 style="margin-top: 0; color: #58a6ff; font-size: 18px;">Room Members</h3>
+        <ul id="modalMembersList" style="text-align: left; max-height: 150px; overflow-y: auto;"></ul>
+        <button class="secondary-btn" id="closeModalBtn" style="margin-top: 15px; margin-bottom: 0;">Close</button>
     </div>
 
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = 'https://tdgwfzisedycdgjbutjq.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_aOVuNValCURcypfvaLmX8A_68N58Mqq';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const mySupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const landingCard = document.getElementById('landingCard');
         const roomsDashboard = document.getElementById('roomsDashboard');
@@ -478,6 +534,7 @@
         const toggleAuth = document.getElementById('toggleAuth');
         const authTitle = document.getElementById('authTitle');
         const authBtn = document.getElementById('authBtn');
+        const nameFieldContainer = document.getElementById('nameFieldContainer');
         const adminNameInput = document.getElementById('adminName');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
@@ -488,7 +545,11 @@
         const guestJoinBtn = document.getElementById('guestJoinBtn');
         
         const newRoomNameInput = document.getElementById('newRoomName');
+        const eventCategorySelect = document.getElementById('eventCategory');
+        const decisionMethodSelect = document.getElementById('decisionMethod');
+        const eventTimeInput = document.getElementById('eventTime');
         const createRoomBtn = document.getElementById('createRoomBtn');
+
         const backToLanding = document.getElementById('backToLanding');
         const displayRoomCode = document.getElementById('displayRoomCode');
         const inviteBtn = document.getElementById('inviteBtn');
@@ -507,9 +568,9 @@
         const sendChatBtn = document.getElementById('sendChatBtn');
 
         let isSignUp = false;
-        let activeRooms = {}; 
         let currentRoomCode = '';
         let currentUser = { name: '', isAdmin: false };
+        let timerInterval = null;
 
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
@@ -527,22 +588,25 @@
                 authTitle.textContent = "Create Administrator Account";
                 authBtn.textContent = "Sign up & Go to Dashboard";
                 toggleAuth.textContent = "Already have an account? Sign in";
+                nameFieldContainer.classList.remove('hidden');
+                adminNameInput.setAttribute('required', 'true');
             } else {
                 authTitle.textContent = "Sign in as Administrator";
                 authBtn.textContent = "Sign in & Go to Dashboard";
                 toggleAuth.textContent = "No account? Create one";
+                nameFieldContainer.classList.add('hidden');
+                adminNameInput.removeAttribute('required');
             }
         });
 
-        // Supabase Auth Integration
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = adminNameInput.value.trim();
             const email = emailInput.value.trim();
             const password = passwordInput.value.trim();
 
             if (isSignUp) {
-                const { data, error } = await supabase.auth.signUp({
+                const name = adminNameInput.value.trim();
+                const { error } = await mySupabase.auth.signUp({
                     email,
                     password,
                     options: { data: { full_name: name } }
@@ -555,43 +619,46 @@
                 isSignUp = false;
                 authTitle.textContent = "Sign in as Administrator";
                 authBtn.textContent = "Sign in & Go to Dashboard";
+                toggleAuth.textContent = "No account? Create one";
+                nameFieldContainer.classList.add('hidden');
+                adminNameInput.removeAttribute('required');
                 return;
             }
 
-            // Sign in
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password
-            });
-
+            const { data, error } = await mySupabase.auth.signInWithPassword({ email, password });
             if (error) {
                 alert('Login Error: ' + error.message);
                 return;
             }
 
-            currentUser.name = name || email;
+            const userMeta = data.user?.user_metadata;
+            currentUser.name = userMeta?.full_name || email.split('@')[0];
             currentUser.isAdmin = true;
             adminWelcomeName.textContent = currentUser.name;
 
             landingCard.classList.add('hidden');
             roomsDashboard.classList.remove('hidden');
-            roomsGrid.classList.remove('hidden');
+            fetchRoomsFromSupabase();
         });
 
-        guestJoinBtn.addEventListener('click', () => {
+        async function fetchRoomsFromSupabase() {
+            const { data, error } = await mySupabase.from('rooms').select('*');
+            if (error) {
+                console.error("Error fetching rooms:", error);
+                return;
+            }
+            renderRoomsGrid(data || []);
+        }
+
+        guestJoinBtn.addEventListener('click', async () => {
             const nickname = guestNameInput.value.trim();
             const code = guestRoomCode.value.trim().toUpperCase();
 
-            if (!nickname) {
-                alert("Please enter your nickname first!");
-                return;
-            }
-            if (!code) {
-                alert("Please enter a room code!");
-                return;
-            }
+            if (!nickname) { alert("Please enter your nickname first!"); return; }
+            if (!code) { alert("Please enter a room code!"); return; }
 
-            if (!activeRooms[code]) {
+            const { data, error } = await mySupabase.from('rooms').select('*').eq('code', code).single();
+            if (error || !data) {
                 alert("Room not found! Check the code.");
                 return;
             }
@@ -600,37 +667,53 @@
             currentUser.isAdmin = false;
             currentRoomCode = code;
 
-            if (!activeRooms[code].members.includes(nickname)) {
-                activeRooms[code].members.push(nickname);
+            let members = data.members || [];
+            if (!members.includes(nickname)) {
+                members.push(nickname);
+                await mySupabase.from('rooms').update({ members }).eq('code', code);
             }
 
-            enterRoom(code);
+            enterRoom(data);
         });
 
-        createRoomBtn.addEventListener('click', () => {
+        createRoomBtn.addEventListener('click', async () => {
             const roomName = newRoomNameInput.value.trim();
-            if (!roomName) {
-                alert("Please give a name to the room!");
-                return;
-            }
+            const category = eventCategorySelect.value;
+            const method = decisionMethodSelect.value;
+            const eventTime = eventTimeInput.value;
+
+            if (!roomName) { alert("Please give a name to the room!"); return; }
 
             const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-            activeRooms[randomCode] = {
+            const newRoomData = {
+                code: randomCode,
                 name: roomName,
+                category: category,
+                method: method,
+                event_time: eventTime,
                 admin: currentUser.name,
-                restaurants: [],
+                options: [],
                 members: [currentUser.name + " (Admin)"],
                 messages: []
             };
 
+            const { error } = await mySupabase.from('rooms').insert([newRoomData]);
+            if (error) {
+                alert("Error creating room: " + error.message);
+                return;
+            }
+
             newRoomNameInput.value = '';
-            renderRoomsGrid();
             currentRoomCode = randomCode;
-            enterRoom(randomCode);
+            enterRoom(newRoomData);
         });
 
+        async function updateRoomInSupabase(updates) {
+            await mySupabase.from('rooms').update(updates).eq('code', currentRoomCode);
+        }
+
         backToLanding.addEventListener('click', async () => {
-            await supabase.auth.signOut();
+            await mySupabase.auth.signOut();
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             landingCard.classList.remove('hidden');
@@ -640,35 +723,34 @@
             roomCard.classList.add('hidden');
             if (currentUser.isAdmin) {
                 roomsDashboard.classList.remove('hidden');
-                roomsGrid.classList.remove('hidden');
-                renderRoomsGrid();
+                fetchRoomsFromSupabase();
             } else {
                 landingCard.classList.remove('hidden');
             }
         });
 
-        leaveRoomBtn.addEventListener('click', () => {
+        leaveRoomBtn.addEventListener('click', async () => {
             if (confirm("Are you sure you want to leave this room permanently?")) {
-                const room = activeRooms[currentRoomCode];
-                if (room && room.members) {
-                    room.members = room.members.filter(m => m !== currentUser.name && m !== currentUser.name + " (Admin)");
+                const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+                if (data && data.members) {
+                    let members = data.members.filter(m => m !== currentUser.name && m !== currentUser.name + " (Admin)");
+                    await updateRoomInSupabase({ members });
                 }
                 roomCard.classList.add('hidden');
                 if (currentUser.isAdmin) {
                     roomsDashboard.classList.remove('hidden');
-                    roomsGrid.classList.remove('hidden');
-                    renderRoomsGrid();
+                    fetchRoomsFromSupabase();
                 } else {
                     landingCard.classList.remove('hidden');
                 }
             }
         });
 
-        openMembersModal.addEventListener('click', () => {
+        openMembersModal.addEventListener('click', async () => {
+            const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             modalMembersList.innerHTML = '';
-            const room = activeRooms[currentRoomCode];
-            if (room && room.members) {
-                room.members.forEach(m => {
+            if (data && data.members) {
+                data.members.forEach(m => {
                     const li = document.createElement('li');
                     li.textContent = m;
                     li.style.color = "#c9d1d9";
@@ -693,27 +775,28 @@
             if (e.key === 'Enter') sendChatMessage();
         });
 
-        function sendChatMessage() {
+        async function sendChatMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
 
-            const room = activeRooms[currentRoomCode];
-            if (room) {
-                if (!room.messages) room.messages = [];
-                room.messages.push({ sender: currentUser.name, text: text });
+            const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+            if (data) {
+                let messages = data.messages || [];
+                messages.push({ sender: currentUser.name, text: text });
+                await updateRoomInSupabase({ messages });
                 chatInput.value = '';
-                renderChat();
+                renderChat(messages);
             }
         }
 
-        function renderChat() {
+        function renderChat(messages) {
             chatMessages.innerHTML = '';
-            const room = activeRooms[currentRoomCode];
-            if (room && room.messages && room.messages.length > 0) {
-                room.messages.forEach(msg => {
+            if (messages && messages.length > 0) {
+                messages.forEach(msg => {
                     const div = document.createElement('div');
-                    div.className = 'chat-msg';
-                    div.innerHTML = `<b>${msg.sender}:</b> ${msg.text}`;
+                    const isSelf = msg.sender === currentUser.name;
+                    div.className = `chat-msg ${isSelf ? 'self' : ''}`;
+                    div.innerHTML = `<span class="author">${msg.sender}</span>${msg.text}`;
                     chatMessages.appendChild(div);
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -722,42 +805,46 @@
             }
         }
 
-        function renderRoomsGrid() {
+        function renderRoomsGrid(rooms) {
             roomsGrid.innerHTML = '';
-            const codes = Object.keys(activeRooms);
-            if (codes.length > 0) {
+            if (rooms.length > 0) {
                 roomsGrid.classList.remove('hidden');
             } else {
                 roomsGrid.classList.add('hidden');
             }
 
-            codes.forEach(code => {
-                const room = activeRooms[code];
+            rooms.forEach(room => {
                 const widget = document.createElement('div');
                 widget.className = 'room-widget';
                 widget.innerHTML = `
                     <h4>${room.name}</h4>
-                    <p>Code: <b>${code}</b><br>${room.restaurants.length} restaurants</p>
+                    <p>Code: <b>${room.code}</b><br>${(room.options || []).length} options (${room.category})</p>
                     <button class="secondary-btn" style="padding: 6px; font-size: 13px; margin-bottom: 0;">Open Room</button>
                 `;
                 widget.querySelector('button').addEventListener('click', () => {
                     currentUser.isAdmin = true;
-                    currentRoomCode = code;
-                    enterRoom(code);
+                    currentRoomCode = room.code;
+                    enterRoom(room);
                 });
                 roomsGrid.appendChild(widget);
             });
         }
 
-        function enterRoom(code) {
+        async function enterRoom(room) {
             landingCard.classList.add('hidden');
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             roomCard.classList.remove('hidden');
 
-            const room = activeRooms[code];
             document.getElementById('roomTitle').textContent = room.name;
-            displayRoomCode.textContent = code;
+            document.getElementById('roomCategoryTag').textContent = `QaPoBojm - ${room.category}`;
+            displayRoomCode.textContent = room.code;
+            document.getElementById('displayEventTime').textContent = room.event_time ? room.event_time.replace('T', ' ') : 'Not Set';
+
+            const optionInputLabel = document.getElementById('optionInputLabel');
+            if (room.category === 'Ushqim') optionInputLabel.textContent = "Add Restaurant Name";
+            else if (room.category === 'Termin') optionInputLabel.textContent = "Add Activity / Field";
+            else optionInputLabel.textContent = "Add Option";
 
             if (currentUser.isAdmin) {
                 adminControls.style.display = 'block';
@@ -765,73 +852,109 @@
                 adminControls.style.display = 'none';
             }
 
-            updateMembersUI();
-            renderList();
-            drawWheel();
-            renderChat();
-        }
-
-        function updateMembersUI() {
-            const room = activeRooms[currentRoomCode];
-            if (room && room.members) {
-                memberCount.textContent = room.members.length;
+            if (room.method === 'spin') {
+                document.getElementById('spinView').classList.remove('hidden');
+                document.getElementById('pollView').classList.add('hidden');
+            } else {
+                document.getElementById('spinView').classList.add('hidden');
+                document.getElementById('pollView').classList.remove('hidden');
             }
+
+            memberCount.textContent = (room.members || []).length;
+            renderOptionsList(room.options || []);
+            renderChat(room.messages || []);
+            startEventTimer(room.event_time);
         }
 
         inviteBtn.addEventListener('click', () => {
-            const inviteText = `Join my QaPoBojm room "${activeRooms[currentRoomCode].name}"! Room Code: ${currentRoomCode}`;
+            const inviteText = `Join my QaPoBojm event! Room Code: ${currentRoomCode}`;
             navigator.clipboard.writeText(inviteText);
-            alert("Invite code and details copied to clipboard!");
+            alert("Invite code copied to clipboard!");
         });
 
-        const addRestBtn = document.getElementById('addRestBtn');
-        const restaurantInput = document.getElementById('restaurantInput');
-        const restaurantList = document.getElementById('restaurantList');
+        function startEventTimer(timeString) {
+            if (!timeString) return;
+            if (timerInterval) clearInterval(timerInterval);
+
+            const targetTime = new Date(timeString).getTime();
+            const alertBox = document.getElementById('eventAlertBox');
+            alertBox.classList.add('hidden');
+
+            timerInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = targetTime - now;
+
+                if (distance <= 0) {
+                    alertBox.classList.remove('hidden');
+                    if (window.Notification && Notification.permission === "granted") {
+                        new Notification("QaPoBojm", { body: "Koha e eventit ka arritur!" });
+                    }
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        if (window.Notification && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        const addOptBtn = document.getElementById('addOptBtn');
+        const optionInput = document.getElementById('optionInput');
+        const optionList = document.getElementById('optionList');
         const spinBtn = document.getElementById('spinBtn');
 
-        addRestBtn.addEventListener('click', () => {
-            const val = restaurantInput.value.trim();
-            if(val && currentUser.isAdmin) {
-                activeRooms[currentRoomCode].restaurants.push(val);
-                renderList();
-                restaurantInput.value = '';
-                drawWheel();
-                spinBtn.disabled = activeRooms[currentRoomCode].restaurants.length < 2;
+        addOptBtn.addEventListener('click', async () => {
+            const val = optionInput.value.trim();
+            if (val && currentUser.isAdmin) {
+                const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+                if (data) {
+                    let options = data.options || [];
+                    options.push(val);
+                    await updateRoomInSupabase({ options });
+                    renderOptionsList(options);
+                    optionInput.value = '';
+                }
             }
         });
 
-        function renderList() {
-            restaurantList.innerHTML = '';
-            const rests = activeRooms[currentRoomCode].restaurants || [];
-            rests.forEach((r, index) => {
+        async function renderOptionsList(opts) {
+            optionList.innerHTML = '';
+            opts.forEach((opt, index) => {
                 const li = document.createElement('li');
-                li.textContent = r;
+                li.textContent = opt;
                 
                 if (currentUser.isAdmin) {
                     const delBtn = document.createElement('button');
                     delBtn.className = 'delete-btn';
                     delBtn.textContent = 'Delete';
-                    delBtn.addEventListener('click', () => {
-                        activeRooms[currentRoomCode].restaurants.splice(index, 1);
-                        renderList();
-                        drawWheel();
+                    delBtn.addEventListener('click', async () => {
+                        const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+                        if (data) {
+                            let options = data.options || [];
+                            options.splice(index, 1);
+                            await updateRoomInSupabase({ options });
+                            renderOptionsList(options);
+                        }
                     });
                     li.appendChild(delBtn);
                 }
-
-                restaurantList.appendChild(li);
+                optionList.appendChild(li);
             });
-            spinBtn.disabled = rests.length < 2;
+
+            const { data } = await mySupabase.from('rooms').select('method').eq('code', currentRoomCode).single();
+            if (data && data.method === 'spin') {
+                drawWheel(opts);
+                spinBtn.disabled = opts.length < 2;
+            }
         }
 
-        function drawWheel() {
-            ctx.clearRect(0, 0, 220, 220);
-            const outsideRadius = 100;
-            const textRadius = 60;
-            const center = 110;
-            const rests = activeRooms[currentRoomCode].restaurants || [];
+        function drawWheel(opts) {
+            ctx.clearRect(0, 0, 200, 200);
+            const outsideRadius = 90;
+            const textRadius = 55;
+            const center = 100;
 
-            if (rests.length === 0) {
+            if (opts.length === 0) {
                 ctx.fillStyle = '#161b22';
                 ctx.beginPath();
                 ctx.arc(center, center, outsideRadius, 0, 2 * Math.PI);
@@ -839,13 +962,12 @@
                 ctx.fillStyle = '#8b949e';
                 ctx.font = '11px sans-serif';
                 ctx.textAlign = 'center';
-                ctx.fillText(currentUser.isAdmin ? 'Add restaurants...' : 'Waiting for Admin...', center, center);
+                ctx.fillText('Add options...', center, center);
                 return;
             }
 
-            const arc = Math.PI / (rests.length / 2);
-
-            for (let i = 0; i < rests.length; i++) {
+            const arc = Math.PI / (opts.length / 2);
+            for (let i = 0; i < opts.length; i++) {
                 const angle = startAngle + i * arc;
                 ctx.fillStyle = colors[i % colors.length];
 
@@ -862,41 +984,41 @@
                 ctx.translate(center + Math.cos(angle + arc / 2) * textRadius, 
                             center + Math.sin(angle + arc / 2) * textRadius);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
-                const text = rests[i];
-                ctx.font = 'bold 11px sans-serif';
+                const text = opts[i];
+                ctx.font = 'bold 10px sans-serif';
                 ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
                 ctx.restore();
             }
         }
 
-        spinBtn.addEventListener('click', () => {
-            const rests = activeRooms[currentRoomCode].restaurants || [];
-            if (rests.length < 2) return;
+        spinBtn.addEventListener('click', async () => {
+            const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+            const opts = data?.options || [];
+            if (opts.length < 2) return;
             spinAngleStart = Math.random() * 20 + 25; 
             spinTime = 0;
             spinTimeTotal = Math.random() * 1500 + 4000; 
-            rotateWheel();
+            rotateWheel(opts);
         });
 
-        function rotateWheel() {
+        function rotateWheel(opts) {
             spinTime += 25;
             if (spinTime >= spinTimeTotal) {
-                stopRotateWheel();
+                stopRotateWheel(opts);
                 return;
             }
             const spinAngle = spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
             startAngle += (spinAngle * Math.PI / 180);
-            drawWheel();
-            spinTimeout = setTimeout(rotateWheel, 25);
+            drawWheel(opts);
+            spinTimeout = setTimeout(() => rotateWheel(opts), 25);
         }
 
-        function stopRotateWheel() {
+        function stopRotateWheel(opts) {
             clearTimeout(spinTimeout);
-            const rests = activeRooms[currentRoomCode].restaurants || [];
             const degrees = startAngle * 180 / Math.PI + 90;
-            const arcd = 360 / rests.length;
+            const arcd = 360 / opts.length;
             const index = Math.floor((360 - degrees % 360) / arcd);
-            const winner = rests[index];
+            const winner = opts[index];
 
             document.getElementById('setupSection').classList.add('hidden');
             document.getElementById('resultSection').classList.remove('hidden');
@@ -909,16 +1031,18 @@
             return c * (t * t * t + 1) + b;
         }
 
-        document.getElementById('spinAgainBtn').addEventListener('click', () => {
+        document.getElementById('spinAgainBtn').addEventListener('click', async () => {
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('resultSection').classList.add('hidden');
-            drawWheel();
+            const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+            drawWheel(data?.options || []);
         });
 
-        document.getElementById('backToRoomBtn').addEventListener('click', () => {
+        document.getElementById('backToRoomBtn').addEventListener('click', async () => {
             document.getElementById('setupSection').classList.remove('hidden');
             document.getElementById('resultSection').classList.add('hidden');
-            drawWheel();
+            const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+            drawWheel(data?.options || []);
         });
     </script>
 </body>
