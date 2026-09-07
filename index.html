@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QaPoBojm - Pro Edition</title>
+    <title>QaPoBojm - Social Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
-            background-color: #0d1117;
+            background-color: #0b0f19;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
@@ -26,19 +27,22 @@
             max-width: 900px;
         }
         .room-widget {
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 12px;
+            background: linear-gradient(145deg, #161b22, #0d1117);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
             padding: 20px;
             width: 240px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
             text-align: left;
             position: relative;
         }
         .room-widget h4 {
             margin: 0 0 5px 0;
-            color: #58a6ff;
+            color: #ff3366;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
         .room-widget p {
             font-size: 12px;
@@ -46,80 +50,116 @@
             margin: 0 0 15px 0;
         }
         .card {
-            background-color: #161b22;
-            padding: 20px;
-            border-radius: 16px;
+            background: linear-gradient(145deg, #161b22, #10151d);
+            padding: 24px;
+            border-radius: 24px;
             width: 100%;
             max-width: 420px;
             box-sizing: border-box;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+            box-shadow: 0 16px 40px rgba(0,0,0,0.7);
             text-align: center;
-            border: 1px solid #30363d;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             margin: 10px;
         }
-        .brand {
-            font-size: 12px;
-            letter-spacing: 1.5px;
-            color: #8b949e;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-            font-weight: 700;
+
+        /* Logo e re e stilit TikTok / Instagram (Vibrant Gradient) */
+        .app-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 22px;
         }
+        .app-logo-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 24px rgba(255, 51, 102, 0.15);
+        }
+        .logo-icon-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 4px 12px rgba(220, 39, 67, 0.4);
+        }
+        .logo-title-text {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #ff3366, #9b51e0, #2f80ed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         h2 {
             margin-top: 0;
-            margin-bottom: 15px;
-            font-size: 22px;
+            margin-bottom: 18px;
+            font-size: 20px;
+            color: #f0f6fc;
         }
         label {
             display: block;
-            font-size: 14px;
-            color: #c9d1d9;
+            font-size: 13px;
+            color: #8b949e;
             margin-bottom: 6px;
             text-align: left;
+            font-weight: 600;
         }
         input, select {
             width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 12px;
-            background-color: #0d1117;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            background-color: #0b0f19;
             border: 1px solid #30363d;
-            border-radius: 8px;
+            border-radius: 12px;
             color: #fff;
             box-sizing: border-box;
             font-size: 14px;
+            transition: all 0.2s;
         }
         input:focus, select:focus {
             outline: none;
-            border-color: #58a6ff;
-            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+            border-color: #ff3366;
+            box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.2);
         }
         button {
             width: 100%;
-            padding: 10px 12px;
-            background-color: #58a6ff;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, #ff3366, #d50032);
             border: none;
-            border-radius: 8px;
-            color: #0d1117;
+            border-radius: 12px;
+            color: #ffffff;
             font-weight: bold;
             font-size: 14px;
             cursor: pointer;
             margin-bottom: 8px;
-            transition: background 0.2s;
+            box-shadow: 0 4px 14px rgba(255, 51, 102, 0.3);
+            transition: opacity 0.2s;
         }
         button:hover {
-            background-color: #79c0ff;
+            opacity: 0.9;
         }
         .secondary-btn {
-            background-color: #21262d;
+            background: #21262d;
             color: #c9d1d9;
             border: 1px solid #30363d;
+            box-shadow: none;
         }
         .secondary-btn:hover {
-            background-color: #30363d;
+            background: #30363d;
             color: #ffffff;
+            opacity: 1;
         }
         .divider {
-            margin: 15px 0;
+            margin: 18px 0;
             border-top: 1px solid #30363d;
             position: relative;
         }
@@ -130,17 +170,19 @@
             transform: translateX(-50%);
             background-color: #161b22;
             padding: 0 10px;
-            font-size: 12px;
+            font-size: 11px;
             color: #8b949e;
+            letter-spacing: 1px;
         }
         .footer-link {
             text-align: center;
-            margin-top: 12px;
-            font-size: 14px;
+            margin-top: 14px;
+            font-size: 13px;
         }
         .footer-link a {
-            color: #58a6ff;
+            color: #ff3366;
             text-decoration: none;
+            font-weight: 600;
         }
         .footer-link a:hover {
             text-decoration: underline;
@@ -166,26 +208,27 @@
             background: #f85149;
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 2px 6px;
+            border-radius: 6px;
+            padding: 4px 8px;
             font-size: 10px;
             cursor: pointer;
             width: auto;
             margin-bottom: 0;
+            box-shadow: none;
         }
         .delete-btn:hover {
             background: #da3633;
         }
         .room-code-badge {
-            background: #0d1117;
-            padding: 6px;
-            border: 1px dashed #30363d;
+            background: #0b0f19;
+            padding: 8px;
+            border: 1px dashed rgba(255, 51, 102, 0.4);
             text-align: center;
             font-family: monospace;
-            font-size: 14px;
-            margin-bottom: 10px;
-            color: #58a6ff;
-            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 14px;
+            color: #ff3366;
+            border-radius: 10px;
         }
         .wheel-container {
             position: relative;
@@ -195,7 +238,7 @@
         }
         canvas {
             border-radius: 50%;
-            box-shadow: 0 0 20px rgba(88, 166, 255, 0.3), inset 0 0 15px rgba(0,0,0,0.5);
+            box-shadow: 0 0 25px rgba(255, 51, 102, 0.25), inset 0 0 15px rgba(0,0,0,0.5);
             border: 4px solid #30363d;
         }
         .wheel-pointer {
@@ -207,7 +250,7 @@
             height: 0;
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
-            border-top: 18px solid #ff7b72;
+            border-top: 18px solid #ff3366;
             z-index: 10;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
@@ -225,11 +268,11 @@
             border: 3px solid #161b22;
         }
         .members-box {
-            background: #0d1117;
+            background: #0b0f19;
             border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 8px 12px;
-            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
             text-align: left;
             font-size: 12px;
             color: #8b949e;
@@ -239,7 +282,7 @@
             align-items: center;
         }
         .members-box:hover {
-            border-color: #58a6ff;
+            border-color: #ff3366;
         }
         .members-box span {
             color: #3fb950;
@@ -250,8 +293,8 @@
         .poll-option-card {
             background-color: #21262d;
             border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 10px;
+            padding: 10px 14px;
             margin-bottom: 8px;
             cursor: pointer;
             position: relative;
@@ -259,7 +302,7 @@
             transition: border-color 0.2s;
         }
         .poll-option-card:hover {
-            border-color: #58a6ff;
+            border-color: #ff3366;
         }
         .poll-option-card.winner {
             background-color: #13231a;
@@ -270,7 +313,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            background-color: rgba(35, 134, 54, 0.2);
+            background-color: rgba(35, 134, 54, 0.25);
             z-index: 1;
             transition: width 0.3s ease;
         }
@@ -283,25 +326,26 @@
             font-size: 13px;
         }
 
-        /* Discord Style Chat */
+        /* Discord Style Chat & Emoji Popup */
         .discord-chat {
-            background: #111418;
-            border: 1px solid #272b33;
-            border-radius: 12px;
+            background: #0b0f19;
+            border: 1px solid #30363d;
+            border-radius: 14px;
             margin-top: 15px;
             text-align: left;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+            position: relative;
         }
         .discord-header {
-            background: #181d24;
+            background: #161b22;
             padding: 10px 14px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #8b949e;
-            border-bottom: 1px solid #272b33;
+            border-bottom: 1px solid #30363d;
             display: flex;
             align-items: center;
             gap: 6px;
@@ -313,7 +357,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            background: #0e1217;
+            background: #0b0f19;
         }
         .discord-msg {
             display: flex;
@@ -332,74 +376,103 @@
             margin-bottom: 2px;
         }
         .discord-author {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: #58a6ff;
+            color: #ff3366;
         }
         .discord-msg.self .discord-author {
             color: #3fb950;
         }
         .discord-text {
-            background: #1a202c;
+            background: #161b22;
             padding: 8px 12px;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 13px;
             color: #e6edf3;
-            border: 1px solid #2d3748;
+            border: 1px solid #30363d;
         }
         .discord-msg.self .discord-text {
-            background: #1e3a8a;
-            border-color: #2563eb;
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            border-color: #ff3366;
             color: #ffffff;
         }
-        .discord-emojis {
-            display: flex;
-            gap: 6px;
-            padding: 6px 10px;
+
+        /* Emoji Popup Panel */
+        .emoji-popup-panel {
+            position: absolute;
+            bottom: 56px;
+            left: 10px;
             background: #161b22;
-            border-top: 1px solid #272b33;
-        }
-        .discord-emoji-btn {
-            background: #21262d;
             border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.8);
+            z-index: 50;
+        }
+        .emoji-option-btn {
+            background: #21262d;
+            border: none;
+            border-radius: 8px;
+            font-size: 20px;
+            padding: 8px;
             cursor: pointer;
-            padding: 4px 8px;
-            font-size: 14px;
-            border-radius: 6px;
-            color: #fff;
             width: auto;
             margin-bottom: 0;
-            transition: background 0.2s;
+            box-shadow: none;
         }
-        .discord-emoji-btn:hover {
+        .emoji-option-btn:hover {
             background: #30363d;
         }
+
         .discord-input-area {
             display: flex;
             padding: 10px;
             background: #161b22;
-            border-top: 1px solid #272b33;
+            border-top: 1px solid #30363d;
             gap: 8px;
+            align-items: center;
+        }
+        .emoji-trigger-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: #c9d1d9;
+            font-size: 16px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+        .emoji-trigger-btn:hover {
+            background: #30363d;
+            color: #fff;
         }
         .discord-input-area input {
             margin-bottom: 0;
-            padding: 9px 12px;
+            padding: 10px 14px;
             font-size: 13px;
-            background: #0d1117;
+            background: #0b0f19;
             border: 1px solid #30363d;
-            border-radius: 6px;
+            border-radius: 10px;
+            flex: 1;
         }
-        .discord-input-area button {
-            width: 80px;
+        .discord-input-area button.send-btn {
+            width: 75px;
             margin-bottom: 0;
-            padding: 9px;
+            padding: 10px;
             font-size: 13px;
-            background: #238636;
+            background: linear-gradient(135deg, #ff3366, #d50032);
             color: white;
-            border-radius: 6px;
-        }
-        .discord-input-area button:hover {
-            background: #2ea043;
+            border-radius: 10px;
+            box-shadow: none;
         }
 
         .leave-link {
@@ -408,20 +481,21 @@
             color: #f85149;
             font-size: 12px;
             cursor: pointer;
-            margin-top: 12px;
+            margin-top: 14px;
             width: auto;
             text-decoration: underline;
+            box-shadow: none;
         }
         .leave-link:hover {
             color: #da3633;
         }
         .notification-banner {
-            background: #1f6feb;
+            background: linear-gradient(135deg, #ff3366, #d50032);
             color: white;
-            padding: 8px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 10px;
             font-size: 13px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
@@ -437,13 +511,18 @@
 
     <!-- 1. Landing Screen / Auth -->
     <div class="card" id="landingCard">
-        <div class="brand">QaPoBojm</div>
-        <h2 id="authTitle">Sign in as Administrator</h2>
+        <div class="app-logo-container">
+            <div class="app-logo-badge">
+                <div class="logo-icon-box">⚡</div>
+                <div class="logo-title-text">QaPoBojm</div>
+            </div>
+        </div>
+        <h2 id="authTitle">Sign in to Dashboard</h2>
         
         <form id="loginForm">
             <div id="nameFieldContainer" class="hidden">
                 <label for="adminName">Your Name / Nickname</label>
-                <input type="text" id="adminName" placeholder="e.g. John Admin">
+                <input type="text" id="adminName" placeholder="e.g. John Doe">
             </div>
 
             <label for="email">Email</label>
@@ -452,7 +531,7 @@
             <label for="password">Password</label>
             <input type="password" id="password" required placeholder="••••••••">
 
-            <button type="submit" id="authBtn">Sign in & Go to Dashboard</button>
+            <button type="submit" id="authBtn">Sign in & Continue</button>
         </form>
 
         <div class="footer-link">
@@ -468,15 +547,20 @@
         
         <label for="guestRoomCode">Room Code</label>
         <div style="display: flex; gap: 8px;">
-            <input type="text" id="guestRoomCode" placeholder="Enter room code..." style="margin-bottom: 0;">
+            <input type="text" id="guestRoomCode" placeholder="Enter code..." style="margin-bottom: 0;">
             <button class="secondary-btn" id="guestJoinBtn" style="width: 100px; margin-bottom: 0;">Join</button>
         </div>
     </div>
 
-    <!-- 2. Admin Dashboard -->
+    <!-- 2. Dashboard -->
     <div class="card hidden" id="roomsDashboard">
-        <div class="brand">QaPoBojm - Admin Dashboard</div>
-        <h2>Welcome, <span id="adminWelcomeName">Admin</span>!</h2>
+        <div class="app-logo-container">
+            <div class="app-logo-badge">
+                <div class="logo-icon-box">⚡</div>
+                <div class="logo-title-text">QaPoBojm</div>
+            </div>
+        </div>
+        <h2>Welcome, <span id="adminWelcomeName">User</span>!</h2>
         
         <label for="eventCategory">Event Category</label>
         <select id="eventCategory">
@@ -498,14 +582,19 @@
         <label for="eventTime">Event Schedule (Time)</label>
         <input type="datetime-local" id="eventTime">
 
-        <button id="createRoomBtn" style="background-color: #238636; color: white;">Create Room</button>
+        <button id="createRoomBtn">Create Room</button>
         
         <button class="secondary-btn" id="backToLanding" style="margin-top: 10px;">Log out</button>
     </div>
 
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
-        <div class="brand" id="roomCategoryTag">QaPoBojm - Active Room</div>
+        <div class="app-logo-container" style="margin-bottom: 10px;">
+            <div class="app-logo-badge" style="padding: 6px 16px;">
+                <div class="logo-icon-box" id="roomCategoryIcon" style="width: 26px; height: 26px; font-size: 13px;">⚡</div>
+                <div class="logo-title-text" id="roomCategoryTag" style="font-size: 14px;">QaPoBojm</div>
+            </div>
+        </div>
         <h2 id="roomTitle" style="margin-bottom: 5px;">Room Name</h2>
         
         <div class="room-code-badge">
@@ -518,10 +607,9 @@
         
         <div class="members-box" id="openMembersModal">
             Connected Members: <span id="memberCount">1</span> 
-            <span style="font-size: 11px; color: #58a6ff;">(View All)</span>
+            <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
 
-        <!-- Ndryshimi i Metodës në Kohë Reale (Admin Only) -->
         <div id="adminMethodContainer" class="hidden" style="margin-bottom: 12px; text-align: left;">
             <label for="changeMethodSelect" style="font-size: 12px; color: #8b949e;">Switch Decision Method:</label>
             <select id="changeMethodSelect" style="margin-bottom: 0; padding: 6px; font-size: 13px;">
@@ -530,11 +618,11 @@
             </select>
         </div>
 
-        <button class="secondary-btn" id="inviteBtn" style="margin-bottom: 12px; font-size: 13px; padding: 6px;">📋 Copy Invite Link & Code</button>
+        <button class="secondary-btn" id="inviteBtn" style="margin-bottom: 12px; font-size: 13px; padding: 8px;">📋 Copy Invite Link & Code</button>
 
         <div id="setupSection">
             <div id="adminControls">
-                <label for="optionInput" id="optionInputLabel">Add Option (Admin Only)</label>
+                <label for="optionInput" id="optionInputLabel">Add Option</label>
                 <div style="display: flex; gap: 6px;">
                     <input type="text" id="optionInput" placeholder="Name..." style="margin-bottom: 0;">
                     <button id="addOptBtn" style="width: 80px; margin-bottom: 0;">Add</button>
@@ -551,10 +639,10 @@
                     <div class="wheel-center-knob"></div>
                     <canvas id="wheelCanvas" width="200" height="200"></canvas>
                 </div>
-                <button id="spinBtn" style="background-color: #238636; color: white;" disabled>Spin the Wheel!</button>
+                <button id="spinBtn" disabled>Spin the Wheel!</button>
             </div>
 
-            <!-- Poll View (Me Grafikon & Ngjyrë të Gjelbër të Zbehtë) -->
+            <!-- Poll View -->
             <div id="pollView" class="hidden" style="margin: 15px 0;">
                 <div id="pollOptionsContainer" style="text-align: left; display:flex; flex-direction:column;"></div>
             </div>
@@ -563,31 +651,36 @@
         </div>
 
         <div id="resultSection" class="hidden">
-            <h3 style="color: #58a6ff; margin-bottom: 5px;">Result / Winner Selected!</h3>
+            <h3 style="color: #ff3366; margin-bottom: 5px;">Result / Winner Selected!</h3>
             <div id="winnerDisplay" style="font-size: 18px; font-weight: bold; margin: 12px 0; color: #3fb950;"></div>
             
-            <button id="spinAgainBtn" style="background-color: #238636; color: white;">Spin Again</button>
+            <button id="spinAgainBtn">Spin Again</button>
             <button id="backToRoomBtn" class="secondary-btn">Back to Room / Add More</button>
         </div>
 
-        <!-- Discord Style Chat Box -->
-        <div class="discord-chat">
+        <!-- Discord Style Chat Box with Popup Emoji Panel -->
+        <div class="discord-chat" id="discordChatContainer">
             <div class="discord-header">💬 Room Chat</div>
             <div class="discord-messages" id="chatMessages">
                 <div style="color: #8b949e; font-style: italic; font-size: 12px;">Welcome to the room chat!</div>
             </div>
-            <div class="discord-emojis">
-                <button class="discord-emoji-btn" onclick="addEmoji('🍕')">🍕</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('🍔')">🍔</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('🔥')">🔥</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('😂')">😂</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('🎉')">🎉</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('👍')">👍</button>
-                <button class="discord-emoji-btn" onclick="addEmoji('❤️')">❤️</button>
+
+            <!-- Emoji Popup Panel -->
+            <div class="emoji-popup-panel hidden" id="emojiPopup">
+                <button class="emoji-option-btn" onclick="insertEmoji('🍕')">🍕</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🍔')">🍔</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('⚽')">⚽</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🚶')">🚶</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🔥')">🔥</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('😂')">😂</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🎉')">🎉</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('👍')">👍</button>
             </div>
+
             <div class="discord-input-area">
+                <button class="emoji-trigger-btn" id="toggleEmojiBtn" title="Open Emojis">😀</button>
                 <input type="text" id="chatInput" placeholder="Message #room...">
-                <button id="sendChatBtn">Send</button>
+                <button class="send-btn" id="sendChatBtn">Send</button>
             </div>
         </div>
         
@@ -598,7 +691,7 @@
 
     <!-- Modal për anëtarët -->
     <div class="card hidden" id="membersModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100; width:300px;">
-        <h3 style="margin-top: 0; color: #58a6ff; font-size: 18px;">Room Members</h3>
+        <h3 style="margin-top: 0; color: #ff3366; font-size: 18px;">Room Members</h3>
         <ul id="modalMembersList" style="text-align: left; max-height: 150px; overflow-y: auto;"></ul>
         <button class="secondary-btn" id="closeModalBtn" style="margin-top: 15px; margin-bottom: 0;">Close</button>
     </div>
@@ -651,6 +744,8 @@
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
         const sendChatBtn = document.getElementById('sendChatBtn');
+        const toggleEmojiBtn = document.getElementById('toggleEmojiBtn');
+        const emojiPopup = document.getElementById('emojiPopup');
 
         let isSignUp = false;
         let currentRoomCode = '';
@@ -659,25 +754,32 @@
 
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
-        const colors = ['#FF5733', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3', '#33FFF0', '#FFA533', '#A533FF'];
+        const colors = ['#FF3366', '#33FF57', '#3357FF', '#F3FF33', '#FF33F3', '#33FFF0', '#FFA533', '#A533FF'];
         let startAngle = 0;
         let spinTimeout = null;
         let spinAngleStart = 0;
         let spinTime = 0;
         let spinTimeTotal = 0;
 
+        function getCategoryEmoji(category) {
+            if (category === 'Ushqim') return '🍕';
+            if (category === 'Termin') return '⚽';
+            if (category === 'Shetitje') return '🚶';
+            return '🎉';
+        }
+
         toggleAuth.addEventListener('click', (e) => {
             e.preventDefault();
             isSignUp = !isSignUp;
             if (isSignUp) {
-                authTitle.textContent = "Create Administrator Account";
-                authBtn.textContent = "Sign up & Go to Dashboard";
+                authTitle.textContent = "Create Account";
+                authBtn.textContent = "Sign up & Continue";
                 toggleAuth.textContent = "Already have an account? Sign in";
                 nameFieldContainer.classList.remove('hidden');
                 adminNameInput.setAttribute('required', 'true');
             } else {
-                authTitle.textContent = "Sign in as Administrator";
-                authBtn.textContent = "Sign in & Go to Dashboard";
+                authTitle.textContent = "Sign in to Dashboard";
+                authBtn.textContent = "Sign in & Continue";
                 toggleAuth.textContent = "No account? Create one";
                 nameFieldContainer.classList.add('hidden');
                 adminNameInput.removeAttribute('required');
@@ -702,8 +804,8 @@
                 }
                 alert('Account created successfully! You can now log in.');
                 isSignUp = false;
-                authTitle.textContent = "Sign in as Administrator";
-                authBtn.textContent = "Sign in & Go to Dashboard";
+                authTitle.textContent = "Sign in to Dashboard";
+                authBtn.textContent = "Sign in & Continue";
                 toggleAuth.textContent = "No account? Create one";
                 nameFieldContainer.classList.add('hidden');
                 adminNameInput.removeAttribute('required');
@@ -779,7 +881,7 @@
                 admin: currentUser.name,
                 options: [],
                 votes: {},
-                members: [currentUser.name + " (Admin)"],
+                members: [currentUser.name + " (Creator)"],
                 messages: []
             };
 
@@ -816,6 +918,7 @@
 
         backToPortalBtn.addEventListener('click', () => {
             roomCard.classList.add('hidden');
+            if (timerInterval) clearInterval(timerInterval);
             if (currentUser.isAdmin) {
                 roomsDashboard.classList.remove('hidden');
                 fetchRoomsFromSupabase();
@@ -828,10 +931,11 @@
             if (confirm("Are you sure you want to leave this room permanently?")) {
                 const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
                 if (data && data.members) {
-                    let members = data.members.filter(m => m !== currentUser.name && m !== currentUser.name + " (Admin)");
+                    let members = data.members.filter(m => m !== currentUser.name && m !== currentUser.name + " (Creator)");
                     await updateRoomInSupabase({ members });
                 }
                 roomCard.classList.add('hidden');
+                if (timerInterval) clearInterval(timerInterval);
                 if (currentUser.isAdmin) {
                     roomsDashboard.classList.remove('hidden');
                     fetchRoomsFromSupabase();
@@ -860,8 +964,20 @@
             membersModal.classList.add('hidden');
         });
 
-        window.addEmoji = function(emoji) {
+        toggleEmojiBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            emojiPopup.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!emojiPopup.contains(e.target) && e.target !== toggleEmojiBtn) {
+                emojiPopup.classList.add('hidden');
+            }
+        });
+
+        window.insertEmoji = function(emoji) {
             chatInput.value += emoji;
+            emojiPopup.classList.add('hidden');
             chatInput.focus();
         };
 
@@ -914,10 +1030,11 @@
             }
 
             rooms.forEach(room => {
+                const iconEmoji = getCategoryEmoji(room.category);
                 const widget = document.createElement('div');
                 widget.className = 'room-widget';
                 widget.innerHTML = `
-                    <h4>${room.name}</h4>
+                    <h4><span>${iconEmoji}</span> ${room.name}</h4>
                     <p>Code: <b>${room.code}</b><br>${(room.options || []).length} options (${room.category})</p>
                     <button class="secondary-btn" style="padding: 6px; font-size: 13px; margin-bottom: 0;">Open Room</button>
                 `;
@@ -936,8 +1053,10 @@
             roomsGrid.classList.add('hidden');
             roomCard.classList.remove('hidden');
 
+            const catEmoji = getCategoryEmoji(room.category);
             document.getElementById('roomTitle').textContent = room.name;
-            document.getElementById('roomCategoryTag').textContent = `QaPoBojm - ${room.category}`;
+            document.getElementById('roomCategoryTag').textContent = `${catEmoji} ${room.category}`;
+            document.getElementById('roomCategoryIcon').textContent = catEmoji;
             displayRoomCode.textContent = room.code;
             document.getElementById('displayEventTime').textContent = room.event_time ? room.event_time.replace('T', ' ') : 'Not Set';
 
@@ -990,7 +1109,7 @@
                 if (distance <= 0) {
                     alertBox.classList.remove('hidden');
                     if (window.Notification && Notification.permission === "granted") {
-                        new Notification("QaPoBojm", { body: "Koha e eventit ka arritur!" });
+                        new Notification("QaPoBojm - Event Alert", { body: "Koha e eventit ka arritur tani!" });
                     }
                     clearInterval(timerInterval);
                 }
@@ -1053,14 +1172,12 @@
             }
         }
 
-        // Poll Options with Live Progress Bar & Soft Green Winner Highlight
         async function renderPollOptions(roomData) {
             const container = document.getElementById('pollOptionsContainer');
             container.innerHTML = '';
             const opts = roomData.options || [];
             const votes = roomData.votes || {};
 
-            // Llogarit totalin e votave dhe gjej maksimumin për të shfaqur fituesin
             let voteCounts = {};
             let maxVotes = 0;
             let totalVotes = 0;
@@ -1128,12 +1245,12 @@
                 ctx.arc(center, center, outsideRadius, angle, angle + arc, false);
                 ctx.arc(center, center, 0, angle + arc, angle, true);
                 ctx.lineWidth = 2;
-                ctx.strokeStyle = '#0d1117';
+                ctx.strokeStyle = '#0b0f19';
                 ctx.stroke();
                 ctx.fill();
 
                 ctx.save();
-                ctx.fillStyle = "#0d1117"; 
+                ctx.fillStyle = "#ffffff"; 
                 ctx.translate(center + Math.cos(angle + arc / 2) * textRadius, 
                             center + Math.sin(angle + arc / 2) * textRadius);
                 ctx.rotate(angle + arc / 2 + Math.PI / 2);
