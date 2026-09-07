@@ -844,10 +844,14 @@
         });
 
         async function fetchRoomsFromSupabase() {
-            const { data, error } = await mySupabase.from('rooms').select('*');
+            const { data, error } = await mySupabase
+            .from('rooms')
+            .select('*')
+            .eq('admin', currentUser.name); // Shfaq vetëm dhomat e këtij përdoruesi
+
             if (error) {
-                console.error("Error fetching rooms:", error);
-                return;
+            console.error("Error fetching rooms:", error);
+            return;
             }
             renderRoomsGrid(data || []);
         }
