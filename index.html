@@ -8,7 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
-            background-color: #0b0f19;
+            background-color: #1e293b;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
@@ -1147,11 +1147,17 @@
         addOptBtn.addEventListener('click', async () => {
             const val = optionInput.value.trim();
             if (val && currentUser.isAdmin) {
-                const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
+                // 1. Marrim të dhënat më të fundit të dhomës nga Supabase
+                const { data, error } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
                 if (data) {
+                    // 2. Sigurohemi që options është array, pastaj shtojmë vlerën e re
                     let options = data.options || [];
                     options.push(val);
+                    
+                    // 3. Përditësojmë bazën e të dhënave me listën e re të plotë
                     await updateRoomInSupabase({ options });
+                    
+                    // 4. Rifreskojmë listën në ekran dhe pastrojmë inputin
                     renderOptionsList(options);
                     optionInput.value = '';
                 }
