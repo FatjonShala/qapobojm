@@ -20,25 +20,13 @@
         }
         .rooms-grid {
             display: flex;
-            flex-direction: column; /* I vendos dhomat njëra pas tjetrës teposhtë */
-            align-items: center;    /* I centering-kon në mes */
-            gap: 15px;
-            margin-top: 20px;
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 420px;       /* Përputhet gjerësisht me madhësinë e kartave të tjera */
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .rooms-grid {
-            display: flex;
-            flex-wrap: wrap; /* Lejon dhomat të rreshtohen krah për krah dy nga dy */
-            justify-content: space-between; /* I ndan bukur në të dy anët */
+            flex-wrap: wrap;
+            justify-content: space-between;
             gap: 10px;
             margin-top: 20px;
             margin-bottom: 30px;
             width: 100%;
-            max-width: 420px; /* Përshtatet fiks me gjerësinë e kartës sipër */
+            max-width: 420px;
             margin-left: auto;
             margin-right: auto;
         }
@@ -46,7 +34,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             padding: 10px 12px;
-            width: calc(50% - 5px); /* Zë saktësisht gjysmën e gjerësisë minus hapësirën */
+            width: calc(50% - 5px);
             box-shadow: 0 4px 16px rgba(0,0,0,0.4);
             display: flex;
             justify-content: space-between;
@@ -62,19 +50,6 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
-        /*.room-info-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        /*.room-info-right {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-shrink: 0; */
-        
         .card {
             background: linear-gradient(145deg, #161b22, #10151d);
             padding: 24px;
@@ -87,8 +62,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             margin: 10px;
         }
-
-        /* Logo e re e stilit TikTok / Instagram (Vibrant Gradient) */
         .app-logo-container {
             display: flex;
             flex-direction: column;
@@ -124,7 +97,6 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
         h2 {
             margin-top: 0;
             margin-bottom: 18px;
@@ -314,8 +286,6 @@
             color: #3fb950;
             font-weight: bold;
         }
-
-        /* Poll Graph Styling */
         .poll-option-card {
             background-color: #21262d;
             border: 1px solid #30363d;
@@ -351,8 +321,6 @@
             align-items: center;
             font-size: 13px;
         }
-
-        /* Discord Style Chat & Emoji Popup */
         .discord-chat {
             background: #0b0f19;
             border: 1px solid #30363d;
@@ -422,8 +390,6 @@
             border-color: #ff3366;
             color: #ffffff;
         }
-
-        /* Emoji Popup Panel */
         .emoji-popup-panel {
             position: absolute;
             bottom: 56px;
@@ -452,7 +418,6 @@
         .emoji-option-btn:hover {
             background: #30363d;
         }
-
         .discord-input-area {
             display: flex;
             padding: 10px;
@@ -500,7 +465,6 @@
             border-radius: 10px;
             box-shadow: none;
         }
-
         .leave-link {
             background: none;
             border: none;
@@ -588,10 +552,10 @@
         
         <label for="eventCategory">Event Category</label>
         <select id="eventCategory">
-            <option value="Ushqim">🍔 Ushqim (Food/Restaurants)</option>
-            <option value="Termin">⚽ Termin / Aktivitet</option>
-            <option value="Shetitje">🚗 Shetitje / Udhëtim</option>
-            <option value="Tjetër">🎉 Tjetër</option>
+            <option value="Ushqim">🍔 Food / Restaurants</option>
+            <option value="Termin">⚽ Activity / Sports</option>
+            <option value="Shetitje">🚗 Trip / Travel</option>
+            <option value="Tjetër">🎉 Other</option>
         </select>
 
         <label for="newRoomName">Room / Event Name</label>
@@ -599,8 +563,8 @@
 
         <label for="decisionMethod">Decision Method</label>
         <select id="decisionMethod">
-            <option value="spin">🎡 Spin the Wheel (Rrota)</option>
-            <option value="poll">📊 Vote Poll (Sondazh)</option>
+            <option value="spin">🎡 Spin the Wheel</option>
+            <option value="poll">📊 Vote Poll</option>
         </select>
 
         <label for="eventTime">Event Schedule (Time)</label>
@@ -627,13 +591,12 @@
             Code: <span id="displayRoomCode">----</span> | Time: <span id="displayEventTime">--:--</span>
         </div>
 
-        <!-- Ora digjitale me numërim mbrapsht -->
         <div id="countdownTimerDisplay" style="font-size: 14px; font-weight: bold; color: #3fb950; margin-bottom: 12px; background: #0b0f19; padding: 8px; border-radius: 8px; border: 1px solid rgba(63, 185, 80, 0.3);">
-            Koha e mbetur: --:--:--
+            Time remaining: --:--:--
         </div>
 
         <div id="eventAlertBox" class="hidden notification-banner">
-            🚨 <b>Koha e eventit ka arritur!</b> 🚀
+            🚨 <b>Event time has arrived!</b> 🚀
         </div>
         
         <div class="members-box" id="openMembersModal">
@@ -644,8 +607,8 @@
         <div id="adminMethodContainer" class="hidden" style="margin-bottom: 12px; text-align: left;">
             <label for="changeMethodSelect" style="font-size: 12px; color: #8b949e;">Switch Decision Method:</label>
             <select id="changeMethodSelect" style="margin-bottom: 0; padding: 6px; font-size: 13px;">
-                <option value="spin">🎡 Spin the Wheel (Rrota)</option>
-                <option value="poll">📊 Vote Poll (Sondazh)</option>
+                <option value="spin">🎡 Spin the Wheel</option>
+                <option value="poll">📊 Vote Poll</option>
             </select>
         </div>
 
@@ -799,13 +762,11 @@
             return '🎉';
         }
 
-        // Funksioni për ngjyrë pastel random për secilën kartelë dhome
         function getRandomPastelColor() {
             const hue = Math.floor(Math.random() * 360);
             return `hsla(${hue}, 70%, 85%, 0.15)`;
         }
 
-        // Kontrollo nëse përdoruesi është i kyçur tashmë gjatë hapjes/rifreskimit të faqes
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await mySupabase.auth.getSession();
             if (session && session.user) {
@@ -984,47 +945,60 @@
         });
 
         leaveRoomBtn.addEventListener('click', async () => {
+            if (!currentRoomCode) return;
+
             if (confirm("Are you sure you want to leave this room permanently?")) {
-                // 1. Marrim të dhënat më të freskëta të dhomës nga Supabase
-                const { data: roomData, error: fetchError } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
-                
-                if (fetchError || !roomData) {
-                    alert("Room not found.");
-                    return;
-                }
-
-                let members = roomData.members || [];
-
-                // Heqim përdoruesin aktual nga lista e anëtarëve
-                members = members.filter(m => m !== currentUser.name && m !== currentUser.name + " (Creator)" && !m.includes("(Admin)"));
-
-                // 2. Kontrollojmë nëse ka mbetur ndonjë anëtar tjetër në dhomë
-                // (Përjashtojmë krijuesin ose guest-ët nëse kanë mbetur bosh)
-                if (members.length === 0) {
-                    // Nese s'ka më asnjë anëtar, fshij dhomën përfundimisht nga baza e të dhënave
-                    await mySupabase.from('rooms').delete().eq('code', currentRoomCode);
-                } else {
-                    // 3. Nëse ka anëtarë të tjerë, menaxhojmë trashëgiminë e adminit nëse ky ishte admini
-                    let updates = { members: members };
+                try {
+                    const { data: roomData, error: fetchError } = await mySupabase
+                        .from('rooms')
+                        .select('*')
+                        .eq('code', currentRoomCode)
+                        .single();
                     
-                    if (currentUser.isAdmin || roomData.admin === currentUser.name) {
-                        // Caktimi i adminit të ri te anëtari i parë në listë (më i vjetri)
-                        let newAdmin = members[0].replace(" (Creator)", "").replace(" (Admin)", "");
-                        updates.admin = newAdmin;
+                    if (!fetchError && roomData) {
+                        let members = roomData.members || [];
+                        const currentCleanName = currentUser.name.trim();
+
+                        // Heqim përdoruesin aktual nga lista e anëtarëve duke pastruar çdo prapashtesë
+                        members = members.filter(m => {
+                            const cleanMemberName = String(m).replace(" (Creator)", "").replace(" (Admin)", "").trim();
+                            return cleanMemberName !== currentCleanName;
+                        });
+
+                        if (members.length === 0) {
+                            // Nëse nuk ka mbetur askush, fshij dhomën përfundimisht
+                            await mySupabase.from('rooms').delete().eq('code', currentRoomCode);
+                        } else {
+                            // Përgatitim ndryshimet për anëtarët e mbetur
+                            let updates = { members: members };
+                            
+                            const roomAdminClean = String(roomData.admin || "").replace(" (Creator)", "").replace(" (Admin)", "").trim();
+                            
+                            // Nëse u largua admini/krijuesi, caktojmë adminin e ri te anëtari i parë në listë
+                            if (roomAdminClean === currentCleanName || currentUser.isAdmin) {
+                                let newAdmin = String(members[0]).replace(" (Creator)", "").replace(" (Admin)", "").trim();
+                                updates.admin = newAdmin;
+                            }
+
+                            await mySupabase.from('rooms').update(updates).eq('code', currentRoomCode);
+                        }
                     }
+                } catch (err) {
+                    console.error("Error leaving room:", err);
+                } finally {
+                    // Kjo pjesë ekzekutohet gjithmonë, duke siguruar që përdoruesi të nxirret jashtë dhomës
+                    roomCard.classList.add('hidden');
+                    if (timerInterval) clearInterval(timerInterval);
+                    currentRoomCode = null;
 
-                    await mySupabase.from('rooms').update(updates).eq('code', currentRoomCode);
-                }
-
-                // Pastrojmë ekranin dhe kthehemi te faqja kryesore
-                roomCard.classList.add('hidden');
-                if (timerInterval) clearInterval(timerInterval);
-                
-                if (currentUser.isAdmin) {
-                    roomsDashboard.classList.remove('hidden');
-                    fetchRoomsFromSupabase();
-                } else {
-                    landingCard.classList.remove('hidden');
+                    if (currentUser.isAdmin && document.getElementById('roomsDashboard')) {
+                        roomsDashboard.classList.remove('hidden');
+                        if (typeof fetchRoomsFromSupabase === 'function') fetchRoomsFromSupabase();
+                    } else if (document.getElementById('landingCard')) {
+                        landingCard.classList.remove('hidden');
+                    } else {
+                        location.reload();
+                    }
                 }
             }
         });
@@ -1105,7 +1079,6 @@
             }
         }
 
-        // Përdorim appendChild dhe ngjyra pastel për dhomat në dashboard
         function renderRoomsGrid(rooms) {
             roomsGrid.innerHTML = '';
             if (rooms.length > 0) {
@@ -1120,7 +1093,6 @@
                 widget.className = 'room-widget';
                 widget.style.backgroundColor = getRandomPastelColor();
                 
-                // Shfaqet vetëm emri (dhe emoji) në të majtë, dhe butoni në të djathtë
                 widget.innerHTML = `
                     <div class="room-info-left">
                         <span style="font-size: 16px;">${iconEmoji}</span>
@@ -1186,22 +1158,19 @@
             alert("Invite code copied to clipboard!");
         });
 
-        // Ora digjitale me numërim mbrapsht (Countdown Timer)
         function startEventTimer(timeString) {
             if (!timeString) {
-                document.getElementById('countdownTimerDisplay').textContent = "Koha e eventit nuk është caktuar";
+                document.getElementById('countdownTimerDisplay').textContent = "Event time not set";
                 return;
             }
             if (timerInterval) clearInterval(timerInterval);
 
-            // Ndajmë datën dhe orën manualisht (Formati nga HTML: YYYY-MM-DDTHH:MM)
             const [datePart, timePart] = timeString.split('T');
             if (!datePart || !timePart) return;
             
             const [year, month, day] = datePart.split('-').map(Number);
             const [hour, minute] = timePart.split(':').map(Number);
 
-            // Krijojmë kohën e targetuar duke përdorur orën lokale ekzakte
             const targetTime = new Date(year, month - 1, day, hour, minute, 0).getTime();
             
             const alertBox = document.getElementById('eventAlertBox');
@@ -1218,12 +1187,12 @@
 
                 if (distance <= 0) {
                     clearInterval(timerInterval);
-                    timerDisplay.textContent = "Eventi ka filluar!";
+                    timerDisplay.textContent = "Event has started!";
                     alertBox.classList.remove('hidden');
                     
                     if (window.Notification && Notification.permission === "granted") {
                         new Notification("QaPoBojm - Event Alert", { 
-                            body: "Koha e eventit ka arritur tani!",
+                            body: "Event time has arrived now!",
                             icon: "https://cdn-icons-png.flaticon.com/512/3119/3119338.png"
                         });
                     }
@@ -1234,7 +1203,7 @@
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                timerDisplay.textContent = `Koha e mbetur: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                timerDisplay.textContent = `Time remaining: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }, 1000);
         }
 
