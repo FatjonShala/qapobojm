@@ -588,7 +588,31 @@
         .discord-input-area button.send-btn:active {
             transform: scale(0.96);
         }
-        .rsvp-btn {
+        .locked-interaction {
+            opacity: 0.4;
+            pointer-events: none;
+            filter: grayscale(0.4);
+        }
+        .view-only-note {
+            font-size: 11px;
+            color: #8b949e;
+            text-align: center;
+            padding: 10px;
+            font-style: italic;
+        }
+        .view-only-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #8b949e;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 3px 9px;
+            border-radius: 999px;
+            margin-top: 6px;
+        }
             flex: 1;
             margin-bottom: 0;
             padding: 9px 6px;
@@ -745,6 +769,9 @@
             Connected Members: <span id="memberCount">1</span> 
             <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
+        <div style="text-align: center;">
+            <span class="view-only-badge hidden" id="viewOnlyBadge">👁 View Only — only the admin can chat / vote / RSVP</span>
+        </div>
 
         <!-- Discord Style Chat Box with Popup Emoji Panel -->
         <div class="discord-chat" id="discordChatContainer">
@@ -769,7 +796,7 @@
                 <button class="emoji-option-btn" onclick="insertEmoji('👍')">👍</button>
             </div>
 
-            <div class="discord-input-area">
+            <div class="discord-input-area" id="discordInputArea">
                 <button class="emoji-trigger-btn" id="toggleEmojiBtn" title="Open Emojis">😀</button>
                 <input type="text" id="chatInput" placeholder="Message #room...">
                 <button class="send-btn" id="sendChatBtn">Send</button>
@@ -1325,6 +1352,7 @@
         });
 
         async function sendChatMessage() {
+            if (!currentUser.isAdmin) return;
             const text = chatInput.value.trim();
             if (!text) return;
 
@@ -1421,6 +1449,34 @@
             });
         }
 
+        // Guests (joined via code+nickname) mund vetëm të shikojnë; vetëm admini
+        // (i loguar) mund të shkruajë chat, të votojë, të bëjë RSVP, apo të rrotullojë rrotën.
+        function applyPermissions() {
+            const canInteract = !!currentUser.isAdmin;
+            const viewOnlyBadge = document.getElementById('viewOnlyBadge');
+            viewOnlyBadge.classList.toggle('hidden', canInteract);
+
+            const inputArea = document.getElementById('discordInputArea');
+            if (canInteract) {
+                inputArea.classList.remove('hidden');
+                let note = document.getElementById('chatViewOnlyNote');
+                if (note) note.remove();
+            } else {
+                inputArea.classList.add('hidden');
+                if (!document.getElementById('chatViewOnlyNote')) {
+                    const note = document.createElement('div');
+                    note.id = 'chatViewOnlyNote';
+                    note.className = 'view-only-note';
+                    note.textContent = '👁 Only the admin can send messages';
+                    inputArea.insertAdjacentElement('afterend', note);
+                }
+            }
+
+            document.getElementById('pollOptionsContainer').classList.toggle('locked-interaction', !canInteract);
+            document.getElementById('inOutView').querySelector('div').classList.toggle('locked-interaction', !canInteract);
+            spinBtn.classList.toggle('locked-interaction', !canInteract);
+        }
+
         async function enterRoom(room) {
             landingCard.classList.add('hidden');
             roomsDashboard.classList.add('hidden');
@@ -1464,6 +1520,7 @@
             renderLocation(room.location || '');
             renderInOut(room.rsvp || {});
             startEventTimer(room.event_time);
+            applyPermissions();
 
             subscribeToRoomChanges(room.code);
         }
@@ -1659,6 +1716,7 @@
         // kolonën `rsvp` (jsonb) të tabelës `rooms`, e kyçur me emrin e anëtarit.
         [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
             btn.addEventListener('click', async () => {
+                if (!currentUser.isAdmin) return;
                 const status = btn.dataset.status;
                 const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
                 if (!data) return;
@@ -1781,6 +1839,7 @@
                 `;
 
                 card.addEventListener('click', async () => {
+                    if (!currentUser.isAdmin) return;
                     votes[currentUser.name] = opt;
                     await updateRoomInSupabase({ votes });
                     const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
@@ -1835,6 +1894,7 @@
         }
 
         spinBtn.addEventListener('click', async () => {
+            if (!currentUser.isAdmin) return;
             const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             const opts = data?.options || [];
             if (opts.length < 2) return;
