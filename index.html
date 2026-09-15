@@ -770,7 +770,7 @@
             <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
         <div style="text-align: center;">
-            <span class="view-only-badge hidden" id="viewOnlyBadge">👁 View Only — only the admin can chat / vote / RSVP</span>
+            <span class="view-only-badge hidden" id="viewOnlyBadge">🔒 Guest Mode: Log in to participate</span>
         </div>
 
         <!-- Discord Style Chat Box with Popup Emoji Panel -->
@@ -1467,7 +1467,7 @@
                     const note = document.createElement('div');
                     note.id = 'chatViewOnlyNote';
                     note.className = 'view-only-note';
-                    note.textContent = '👁 Only the admin can send messages';
+                    note.textContent = 'Guest Mode: Log in to participate';
                     inputArea.insertAdjacentElement('afterend', note);
                 }
             }
