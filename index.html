@@ -613,6 +613,70 @@
             border-radius: 999px;
             margin-top: 6px;
         }
+        .vis-toggle-btn {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            background: #21262d;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            box-shadow: none;
+            transition: all 0.15s ease;
+        }
+        .vis-toggle-btn.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            color: #ffffff;
+            border-color: transparent;
+        }
+        .dash-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            background: #0b0f19;
+            border-radius: 12px;
+            padding: 4px;
+        }
+        .dash-tab {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 9px;
+            font-size: 12.5px;
+            font-weight: 700;
+            background: transparent;
+            color: #8b949e;
+            border: none;
+            border-radius: 9px;
+            box-shadow: none;
+            transition: all 0.15s ease;
+        }
+        .dash-tab.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            color: #ffffff;
+        }
+        .discover-widget {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+        .discover-widget-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .discover-widget-meta {
+            font-size: 11px;
+            color: #8b949e;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
             flex: 1;
             margin-bottom: 0;
             padding: 9px 6px;
@@ -714,37 +778,75 @@
             </div>
         </div>
         <h2>Welcome, <span id="adminWelcomeName">User</span>!</h2>
-        
-        <label for="eventCategory">Event Category</label>
-        <select id="eventCategory">
-            <option value="Ushqim">🍔 Food / Restaurants</option>
-            <option value="Termin">⚽ Activity / Sports</option>
-            <option value="Shetitje">🚗 Trip / Travel</option>
-            <option value="Tjetër">🎉 Other</option>
-        </select>
 
-        <label for="newRoomName">Room / Event Name</label>
-        <input type="text" id="newRoomName" placeholder="e.g. Office Lunch, Friday Pizza...">
+        <div class="dash-tabs">
+            <button type="button" id="tabMyRooms" class="dash-tab active">My Rooms</button>
+            <button type="button" id="tabDiscover" class="dash-tab">🌍 Discover</button>
+        </div>
 
-        <label for="decisionMethod">Decision Method</label>
-        <select id="decisionMethod">
-            <option value="inout" selected>✅ In / Out</option>
-            <option value="spin">🎡 Spin the Wheel</option>
-            <option value="poll">📊 Vote Poll</option>
-        </select>
+        <div id="createRoomPanel">
+            <label for="eventCategory">Event Category</label>
+            <select id="eventCategory">
+                <option value="Ushqim">🍔 Food / Restaurants</option>
+                <option value="Termin">⚽ Activity / Sports</option>
+                <option value="Shetitje">🚗 Trip / Travel</option>
+                <option value="Tjetër">🎉 Other</option>
+            </select>
 
-        <label for="eventTime">Event Schedule (Time)</label>
-        <input type="datetime-local" id="eventTime">
+            <label for="newRoomName">Room / Event Name</label>
+            <input type="text" id="newRoomName" placeholder="e.g. Office Lunch, Friday Pizza...">
 
-        <label for="eventLocation">Event Location (address or place name) <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
-        <input type="text" id="eventLocation" placeholder="e.g. Skanderbeg Square, Tirana">
+            <label for="decisionMethod">Decision Method</label>
+            <select id="decisionMethod">
+                <option value="inout" selected>✅ In / Out</option>
+                <option value="spin">🎡 Spin the Wheel</option>
+                <option value="poll">📊 Vote Poll</option>
+            </select>
 
-        <button id="createRoomBtn">Create Room</button>
+            <label for="eventTime">Event Schedule (Time)</label>
+            <input type="datetime-local" id="eventTime">
+
+            <label for="eventLocation">Event Location (address or place name) <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
+            <input type="text" id="eventLocation" placeholder="e.g. Skanderbeg Square, Tirana">
+
+            <label>Room Visibility</label>
+            <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                <button type="button" id="visPrivateBtn" class="vis-toggle-btn active">🔒 Private</button>
+                <button type="button" id="visPublicBtn" class="vis-toggle-btn">🌍 Public</button>
+            </div>
+
+            <div id="publicCityContainer" class="hidden">
+                <label for="newRoomCity">City (so people can find it) </label>
+                <input type="text" id="newRoomCity" placeholder="e.g. Prishtina">
+            </div>
+
+            <button id="createRoomBtn">Create Room</button>
+        </div>
+
+        <div id="discoverPanel" class="hidden">
+            <label for="discoverCategorySelect">Category</label>
+            <select id="discoverCategorySelect">
+                <option value="">All Categories</option>
+                <option value="Ushqim">🍔 Food / Restaurants</option>
+                <option value="Termin">⚽ Activity / Sports</option>
+                <option value="Shetitje">🚗 Trip / Travel</option>
+                <option value="Tjetër">🎉 Other</option>
+            </select>
+
+            <label for="discoverCityInput">City</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="discoverCityInput" placeholder="e.g. Prishtina" style="margin-bottom: 0;">
+                <button type="button" id="nearMeBtn" class="secondary-btn" style="width: 110px; margin-bottom: 0; font-size: 12px;">📍 Near Me</button>
+            </div>
+
+            <button type="button" id="searchPublicBtn" style="margin-top: 12px;">Search Public Events</button>
+        </div>
         
         <button class="secondary-btn" id="backToLanding" style="margin-top: 10px;">Log out</button>
     </div>
 
     <div class="rooms-grid hidden" id="roomsGrid"></div>
+    <div class="rooms-grid hidden" id="discoverGrid"></div>
 
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
@@ -770,7 +872,7 @@
             <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
         <div style="text-align: center;">
-            <span class="view-only-badge hidden" id="viewOnlyBadge">🔒 Guest Mode: Log in to participate</span>
+            <span class="view-only-badge hidden" id="viewOnlyBadge">👁 View Only — only the admin can chat / vote / RSVP</span>
         </div>
 
         <!-- Discord Style Chat Box with Popup Emoji Panel -->
@@ -926,6 +1028,19 @@
         const openInMapsBtn = document.getElementById('openInMapsBtn');
         const mapEmbedFrame = document.getElementById('mapEmbedFrame');
         const createRoomBtn = document.getElementById('createRoomBtn');
+        const visPrivateBtn = document.getElementById('visPrivateBtn');
+        const visPublicBtn = document.getElementById('visPublicBtn');
+        const publicCityContainer = document.getElementById('publicCityContainer');
+        const newRoomCityInput = document.getElementById('newRoomCity');
+        const tabMyRooms = document.getElementById('tabMyRooms');
+        const tabDiscover = document.getElementById('tabDiscover');
+        const createRoomPanel = document.getElementById('createRoomPanel');
+        const discoverPanel = document.getElementById('discoverPanel');
+        const discoverGrid = document.getElementById('discoverGrid');
+        const discoverCategorySelect = document.getElementById('discoverCategorySelect');
+        const discoverCityInput = document.getElementById('discoverCityInput');
+        const searchPublicBtn = document.getElementById('searchPublicBtn');
+        const nearMeBtn = document.getElementById('nearMeBtn');
 
         const backToLanding = document.getElementById('backToLanding');
         const displayRoomCode = document.getElementById('displayRoomCode');
@@ -951,11 +1066,12 @@
 
         let isSignUp = false;
         let currentRoomCode = '';
-        let currentUser = { name: '', isAdmin: false };
+        let currentUser = { name: '', isAdmin: false, isAuthenticated: false };
         let roomChannel = null; // Supabase Realtime channel aktiv për dhomën e hapur
         let timerInterval = null;
         let notificationsEnabled = localStorage.getItem('qpb_chat_notifications') !== 'off';
         let lastMessageCount = 0;
+        let selectedVisibility = 'private';
 
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
@@ -984,6 +1100,7 @@
                 const userMeta = session.user.user_metadata;
                 currentUser.name = userMeta?.full_name || session.user.email.split('@')[0];
                 currentUser.isAdmin = true;
+                currentUser.isAuthenticated = true;
                 adminWelcomeName.textContent = currentUser.name;
 
                 landingCard.classList.add('hidden');
@@ -1045,6 +1162,7 @@
             const userMeta = data.user?.user_metadata;
             currentUser.name = userMeta?.full_name || email.split('@')[0];
             currentUser.isAdmin = true;
+            currentUser.isAuthenticated = true;
             adminWelcomeName.textContent = currentUser.name;
 
             landingCard.classList.add('hidden');
@@ -1080,6 +1198,7 @@
 
             currentUser.name = nickname;
             currentUser.isAdmin = false;
+            currentUser.isAuthenticated = false;
             currentRoomCode = code;
 
             let members = data.members || [];
@@ -1091,14 +1210,30 @@
             enterRoom(data);
         });
 
+        visPrivateBtn.addEventListener('click', () => {
+            selectedVisibility = 'private';
+            visPrivateBtn.classList.add('active');
+            visPublicBtn.classList.remove('active');
+            publicCityContainer.classList.add('hidden');
+        });
+        visPublicBtn.addEventListener('click', () => {
+            selectedVisibility = 'public';
+            visPublicBtn.classList.add('active');
+            visPrivateBtn.classList.remove('active');
+            publicCityContainer.classList.remove('hidden');
+        });
+
         createRoomBtn.addEventListener('click', async () => {
             const roomName = newRoomNameInput.value.trim();
             const category = eventCategorySelect.value;
             const method = decisionMethodSelect.value;
             const eventTime = eventTimeInput.value;
             const location = eventLocationInput.value.trim();
+            const isPublic = selectedVisibility === 'public';
+            const city = newRoomCityInput.value.trim();
 
             if (!roomName) { alert("Please give a name to the room!"); return; }
+            if (isPublic && !city) { alert("Please add a city so people can find this public event!"); return; }
 
             const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
             const newRoomData = {
@@ -1108,6 +1243,8 @@
                 method: method,
                 event_time: eventTime,
                 location: location,
+                is_public: isPublic,
+                city: isPublic ? city : null,
                 admin: currentUser.name,
                 options: [],
                 votes: {},
@@ -1123,8 +1260,131 @@
 
             newRoomNameInput.value = '';
             eventLocationInput.value = '';
+            newRoomCityInput.value = '';
+            selectedVisibility = 'private';
+            visPrivateBtn.classList.add('active');
+            visPublicBtn.classList.remove('active');
+            publicCityContainer.classList.add('hidden');
             currentRoomCode = randomCode;
             enterRoom(newRoomData);
+        });
+
+        // --- Dashboard tabs: My Rooms vs Discover Public Events ---
+        tabMyRooms.addEventListener('click', () => {
+            tabMyRooms.classList.add('active');
+            tabDiscover.classList.remove('active');
+            createRoomPanel.classList.remove('hidden');
+            discoverPanel.classList.add('hidden');
+            discoverGrid.classList.add('hidden');
+            roomsGrid.classList.remove('hidden');
+            fetchRoomsFromSupabase();
+        });
+        tabDiscover.addEventListener('click', () => {
+            tabDiscover.classList.add('active');
+            tabMyRooms.classList.remove('active');
+            discoverPanel.classList.remove('hidden');
+            createRoomPanel.classList.add('hidden');
+            roomsGrid.classList.add('hidden');
+            fetchPublicRooms('', '');
+        });
+
+        async function fetchPublicRooms(category, city) {
+            let query = mySupabase.from('rooms').select('*').eq('is_public', true);
+            if (category) query = query.eq('category', category);
+            if (city) query = query.ilike('city', `%${city}%`);
+
+            const { data, error } = await query;
+            if (error) {
+                console.error("Error fetching public rooms:", error);
+                return;
+            }
+            renderDiscoverGrid(data || []);
+        }
+
+        function renderDiscoverGrid(rooms) {
+            discoverGrid.innerHTML = '';
+            discoverGrid.classList.remove('hidden');
+
+            if (rooms.length === 0) {
+                discoverGrid.innerHTML = `<div style="text-align:center; color:#8b949e; font-size:12px; padding: 16px;">No public events found. Try a different filter.</div>`;
+                return;
+            }
+
+            rooms.forEach(room => {
+                const iconEmoji = getCategoryEmoji(room.category);
+                const widget = document.createElement('div');
+                widget.className = 'discover-widget';
+                widget.style.backgroundColor = getRandomPastelColor();
+
+                const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
+
+                widget.innerHTML = `
+                    <div class="discover-widget-top">
+                        <b style="font-size: 14px; color: #ff3366;">${iconEmoji} ${escapeHtml(room.name)}</b>
+                        <button class="secondary-btn" style="padding: 6px 12px; font-size: 11px; margin-bottom: 0; width: auto;">Join</button>
+                    </div>
+                    <div class="discover-widget-meta">
+                        ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
+                        ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
+                        <span>👤 ${(room.members || []).length} joined</span>
+                    </div>
+                `;
+
+                widget.querySelector('button').addEventListener('click', async () => {
+                    currentRoomCode = room.code;
+                    let members = room.members || [];
+                    if (!members.includes(currentUser.name)) {
+                        members.push(currentUser.name);
+                        await mySupabase.from('rooms').update({ members }).eq('code', room.code);
+                        room.members = members;
+                    }
+                    enterRoom(room);
+                });
+
+                discoverGrid.appendChild(widget);
+            });
+        }
+
+        searchPublicBtn.addEventListener('click', () => {
+            fetchPublicRooms(discoverCategorySelect.value, discoverCityInput.value.trim());
+        });
+
+        // "Near Me" - merr koordinatat e pajisjes dhe i kthen në emër qyteti përmes
+        // Nominatim (OpenStreetMap, falas, pa API key). Kjo mbush automatikisht
+        // fushën e qytetit dhe kërkon direkt eventet publike aty afër.
+        nearMeBtn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported on this device/browser.");
+                return;
+            }
+            nearMeBtn.disabled = true;
+            nearMeBtn.textContent = "Locating...";
+
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                try {
+                    const { latitude, longitude } = pos.coords;
+                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                    const geo = await res.json();
+                    const city = geo?.address?.city || geo?.address?.town || geo?.address?.village || geo?.address?.municipality || '';
+
+                    if (city) {
+                        discoverCityInput.value = city;
+                        fetchPublicRooms(discoverCategorySelect.value, city);
+                    } else {
+                        alert("Could not determine your city. Please type it manually.");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Could not detect your location right now. Please type your city manually.");
+                } finally {
+                    nearMeBtn.disabled = false;
+                    nearMeBtn.textContent = "📍 Near Me";
+                }
+            }, (err) => {
+                alert("Location access was denied or unavailable. Please type your city manually.");
+                nearMeBtn.disabled = false;
+                nearMeBtn.textContent = "📍 Near Me";
+            });
         });
 
         async function updateRoomInSupabase(updates) {
@@ -1352,7 +1612,7 @@
         });
 
         async function sendChatMessage() {
-            if (!currentUser.isAdmin) return;
+            if (!currentUser.isAuthenticated) return;
             const text = chatInput.value.trim();
             if (!text) return;
 
@@ -1441,7 +1701,6 @@
                     </div>
                 `;
                 widget.querySelector('button').addEventListener('click', () => {
-                    currentUser.isAdmin = true;
                     currentRoomCode = room.code;
                     enterRoom(room);
                 });
@@ -1449,11 +1708,14 @@
             });
         }
 
-        // Guests (joined via code+nickname) mund vetëm të shikojnë; vetëm admini
-        // (i loguar) mund të shkruajë chat, të votojë, të bëjë RSVP, apo të rrotullojë rrotën.
+        // Guests (joined via code+nickname, s'janë të loguar) mund vetëm të shikojnë.
+        // Çdo user i loguar me email mund të marrë pjesë (chat/vote/RSVP), qoftë admin
+        // i dhomës apo thjesht pjesëmarrës i një eventi publik. Vetëm menaxhimi i vetë
+        // dhomës (opsione, metodë, lokacion) mbetet i rezervuar për admin-in real.
         function applyPermissions() {
-            const canInteract = !!currentUser.isAdmin;
+            const canInteract = !!currentUser.isAuthenticated;
             const viewOnlyBadge = document.getElementById('viewOnlyBadge');
+            viewOnlyBadge.textContent = 'Guest Mode: Log in to participate';
             viewOnlyBadge.classList.toggle('hidden', canInteract);
 
             const inputArea = document.getElementById('discordInputArea');
@@ -1467,7 +1729,7 @@
                     const note = document.createElement('div');
                     note.id = 'chatViewOnlyNote';
                     note.className = 'view-only-note';
-                    note.textContent = 'Guest Mode: Log in to participate';
+                    note.textContent = '🔒 Log in to send messages';
                     inputArea.insertAdjacentElement('afterend', note);
                 }
             }
@@ -1481,7 +1743,13 @@
             landingCard.classList.add('hidden');
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
+            if (document.getElementById('discoverGrid')) document.getElementById('discoverGrid').classList.add('hidden');
             roomCard.classList.remove('hidden');
+
+            // Admin i KËSAJ dhome specifike = je i loguar (jo guest) DHE emri yt përputhet me admin-in
+            // e ruajtur në rekord. Kjo lejon që një user i loguar të hyjë si pjesëmarrës i thjeshtë
+            // (jo admin) në një dhomë publike të dikujt tjetër.
+            currentUser.isAdmin = !!currentUser.isAuthenticated && (room.admin === currentUser.name);
 
             const catEmoji = getCategoryEmoji(room.category);
             document.getElementById('roomTitle').textContent = room.name;
@@ -1716,7 +1984,7 @@
         // kolonën `rsvp` (jsonb) të tabelës `rooms`, e kyçur me emrin e anëtarit.
         [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
             btn.addEventListener('click', async () => {
-                if (!currentUser.isAdmin) return;
+                if (!currentUser.isAuthenticated) return;
                 const status = btn.dataset.status;
                 const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
                 if (!data) return;
@@ -1839,7 +2107,7 @@
                 `;
 
                 card.addEventListener('click', async () => {
-                    if (!currentUser.isAdmin) return;
+                    if (!currentUser.isAuthenticated) return;
                     votes[currentUser.name] = opt;
                     await updateRoomInSupabase({ votes });
                     const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
@@ -1894,7 +2162,7 @@
         }
 
         spinBtn.addEventListener('click', async () => {
-            if (!currentUser.isAdmin) return;
+            if (!currentUser.isAuthenticated) return;
             const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             const opts = data?.options || [];
             if (opts.length < 2) return;
