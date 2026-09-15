@@ -322,73 +322,176 @@
             font-size: 13px;
         }
         .discord-chat {
-            background: #0b0f19;
-            border: 1px solid #30363d;
-            border-radius: 14px;
-            margin-top: 15px;
+            background: linear-gradient(165deg, #11151d, #0a0e16);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            margin-top: 16px;
             text-align: left;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.03);
             position: relative;
         }
         .discord-header {
-            background: #161b22;
-            padding: 10px 14px;
-            font-size: 12px;
-            font-weight: bold;
-            color: #8b949e;
-            border-bottom: 1px solid #30363d;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #f0f6fc;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .discord-header-title {
             display: flex;
             align-items: center;
             gap: 6px;
         }
+        .notif-toggle-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 9px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 0;
+            box-shadow: none;
+            padding: 0;
+            transition: transform 0.15s ease, background 0.2s ease, opacity 0.2s ease;
+        }
+        .notif-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: scale(1.08);
+            opacity: 1;
+        }
+        .notif-toggle-btn.muted {
+            opacity: 0.45;
+        }
         .discord-messages {
-            height: 160px;
+            height: clamp(180px, 32vh, 250px);
             overflow-y: auto;
-            padding: 12px;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            background: #0b0f19;
+            gap: 12px;
+            background: transparent;
+            scroll-behavior: smooth;
+        }
+        .discord-messages::-webkit-scrollbar {
+            width: 5px;
+        }
+        .discord-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .discord-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+        .discord-msg-row {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            max-width: 88%;
+            animation: msgSlideIn 0.28s ease-out;
+        }
+        .discord-msg-row.self {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        @keyframes msgSlideIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .msg-avatar {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         .discord-msg {
             display: flex;
             flex-direction: column;
-            max-width: 90%;
-            word-break: break-word;
+            gap: 3px;
+            max-width: 100%;
         }
-        .discord-msg.self {
-            align-self: flex-end;
+        .discord-msg-row.self .discord-msg {
             align-items: flex-end;
         }
         .discord-msg-header {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: baseline;
-            margin-bottom: 2px;
         }
         .discord-author {
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             color: #ff3366;
         }
-        .discord-msg.self .discord-author {
+        .discord-msg-row.self .discord-author {
             color: #3fb950;
+        }
+        .discord-time {
+            font-size: 9.5px;
+            color: #6e7681;
         }
         .discord-text {
             background: #161b22;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 13px;
+            padding: 9px 13px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            font-size: 13.5px;
+            line-height: 1.4;
             color: #e6edf3;
-            border: 1px solid #30363d;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            word-break: break-word;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
         }
-        .discord-msg.self .discord-text {
-            background: linear-gradient(135deg, #ff3366, #d50032);
-            border-color: #ff3366;
+        .discord-msg.self .discord-text,
+        .discord-msg-row.self .discord-text {
+            background: linear-gradient(135deg, #ff3366, #c2185b);
+            border-color: transparent;
             color: #ffffff;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-toast {
+            position: absolute;
+            top: 48px;
+            left: 50%;
+            background: rgba(22, 27, 34, 0.97);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #ffffff;
+            box-shadow: 0 10px 26px rgba(0,0,0,0.5);
+            z-index: 60;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, -8px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            max-width: 82%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chat-toast.show {
+            opacity: 1;
+            transform: translate(-50%, 0);
         }
         .emoji-popup-panel {
             position: absolute;
@@ -403,6 +506,15 @@
             gap: 8px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.8);
             z-index: 50;
+            opacity: 0;
+            transform: translateY(8px) scale(0.94);
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+        .emoji-popup-panel.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
         }
         .emoji-option-btn {
             background: #21262d;
@@ -414,9 +526,11 @@
             width: auto;
             margin-bottom: 0;
             box-shadow: none;
+            transition: transform 0.12s ease, background 0.15s ease;
         }
         .emoji-option-btn:hover {
             background: #30363d;
+            transform: scale(1.12);
         }
         .discord-input-area {
             display: flex;
@@ -441,10 +555,12 @@
             margin-bottom: 0;
             padding: 0;
             box-shadow: none;
+            transition: transform 0.15s ease, background 0.2s ease;
         }
         .emoji-trigger-btn:hover {
             background: #30363d;
             color: #fff;
+            transform: scale(1.06);
         }
         .discord-input-area input {
             margin-bottom: 0;
@@ -464,6 +580,31 @@
             color: white;
             border-radius: 10px;
             box-shadow: none;
+            transition: transform 0.12s ease, opacity 0.2s ease;
+        }
+        .discord-input-area button.send-btn:hover {
+            transform: scale(1.03);
+        }
+        .discord-input-area button.send-btn:active {
+            transform: scale(0.96);
+        }
+        .rsvp-btn {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 9px 6px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 999px;
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, outline 0.15s ease;
+        }
+        .rsvp-btn:hover {
+            transform: translateY(-1px) scale(1.02);
+        }
+        .rsvp-btn:active {
+            transform: scale(0.95);
         }
         .leave-link {
             background: none;
@@ -583,32 +724,59 @@
 
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
-        <div class="app-logo-container" style="margin-bottom: 10px;">
-            <div class="app-logo-badge" style="padding: 6px 16px;">
-                <div class="logo-icon-box" id="roomCategoryIcon" style="width: 26px; height: 26px; font-size: 13px;">⚡</div>
-                <div class="logo-title-text" id="roomCategoryTag" style="font-size: 14px;">QaPoBojm</div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+            <button id="backToPortalBtn" title="Back" style="width: 32px; height: 32px; border-radius: 10px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 0; box-shadow: none; padding: 0; flex-shrink: 0;">←</button>
+            <div class="app-logo-container" style="margin-bottom: 0;">
+                <div class="app-logo-badge" style="padding: 5px 14px;">
+                    <div class="logo-icon-box" id="roomCategoryIcon" style="width: 22px; height: 22px; font-size: 12px;">⚡</div>
+                    <div class="logo-title-text" id="roomCategoryTag" style="font-size: 13px;">QaPoBojm</div>
+                </div>
             </div>
+            <div style="width: 32px; flex-shrink: 0;"></div>
         </div>
-        <h2 id="roomTitle" style="margin-bottom: 5px;">Room Name</h2>
-        
-        <div class="room-code-badge">
-            Code: <span id="displayRoomCode">----</span> | Time: <span id="displayEventTime">--:--</span>
+        <h2 id="roomTitle" style="margin-bottom: 6px; font-size: 19px;">Room Name</h2>
+
+        <div class="room-code-badge" style="font-size: 11px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+            <span>Code: <span id="displayRoomCode">----</span></span>
+            <span id="countdownInline" class="hidden" style="font-weight: 700;"></span>
         </div>
 
-        <div id="countdownTimerDisplay" style="font-size: 14px; font-weight: bold; color: #3fb950; margin-bottom: 12px; background: #0b0f19; padding: 8px; border-radius: 8px; border: 1px solid rgba(63, 185, 80, 0.3);">
-            Time remaining: --:--:--
-        </div>
-
-        <div id="eventAlertBox" class="hidden notification-banner">
-            🚨 <b>Event time has arrived!</b> 🚀
-        </div>
-        
-        <div class="members-box" id="openMembersModal">
+        <div class="members-box" id="openMembersModal" style="margin-top: 8px;">
             Connected Members: <span id="memberCount">1</span> 
             <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
 
-        <div id="adminMethodContainer" class="hidden" style="margin-bottom: 12px; text-align: left;">
+        <!-- Discord Style Chat Box with Popup Emoji Panel -->
+        <div class="discord-chat" id="discordChatContainer">
+            <div class="discord-header">
+                <div class="discord-header-title">💬 Room Chat</div>
+                <button class="notif-toggle-btn" id="notifToggleBtn" title="Toggle notifications">🔔</button>
+            </div>
+            <div class="chat-toast" id="chatToast"></div>
+            <div class="discord-messages" id="chatMessages">
+                <div style="color: #8b949e; font-style: italic; font-size: 12px;">Welcome to the room chat!</div>
+            </div>
+
+            <!-- Emoji Popup Panel -->
+            <div class="emoji-popup-panel" id="emojiPopup">
+                <button class="emoji-option-btn" onclick="insertEmoji('🍕')">🍕</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🍔')">🍔</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('⚽')">⚽</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🚶')">🚶</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🔥')">🔥</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('😂')">😂</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('🎉')">🎉</button>
+                <button class="emoji-option-btn" onclick="insertEmoji('👍')">👍</button>
+            </div>
+
+            <div class="discord-input-area">
+                <button class="emoji-trigger-btn" id="toggleEmojiBtn" title="Open Emojis">😀</button>
+                <input type="text" id="chatInput" placeholder="Message #room...">
+                <button class="send-btn" id="sendChatBtn">Send</button>
+            </div>
+        </div>
+
+        <div id="adminMethodContainer" class="hidden" style="margin-bottom: 12px; margin-top: 14px; text-align: left;">
             <label for="changeMethodSelect" style="font-size: 12px; color: #8b949e;">Switch Decision Method:</label>
             <select id="changeMethodSelect" style="margin-bottom: 0; padding: 6px; font-size: 13px;">
                 <option value="inout">✅ In / Out</option>
@@ -616,8 +784,6 @@
                 <option value="poll">📊 Vote Poll</option>
             </select>
         </div>
-
-        <button class="secondary-btn" id="inviteBtn" style="margin-bottom: 12px; font-size: 13px; padding: 8px;">📋 Copy Invite Link & Code</button>
 
         <!-- Location / Map Section -->
         <div id="locationSection" style="margin-bottom: 14px; text-align: left;">
@@ -668,14 +834,12 @@
             <!-- In / Out View -->
             <div id="inOutView" class="hidden" style="margin: 15px 0;">
                 <div style="display: flex; gap: 6px; margin-bottom: 14px;">
-                    <button id="rsvpInBtn" data-status="in" style="background: linear-gradient(135deg, #3fb950, #2ea043); box-shadow: 0 4px 14px rgba(63, 185, 80, 0.3); margin-bottom: 0;">✅ IN</button>
-                    <button id="rsvpMaybeBtn" data-status="maybe" style="background: linear-gradient(135deg, #d29922, #bb8009); box-shadow: 0 4px 14px rgba(210, 153, 34, 0.3); margin-bottom: 0;">🤔 MAYBE</button>
-                    <button id="rsvpOutBtn" data-status="out" style="background: linear-gradient(135deg, #f85149, #da3633); box-shadow: 0 4px 14px rgba(248, 81, 73, 0.3); margin-bottom: 0;">❌ OUT</button>
+                    <button id="rsvpInBtn" data-status="in" class="rsvp-btn" style="background: linear-gradient(135deg, #3fb950, #2ea043);">✅ IN</button>
+                    <button id="rsvpMaybeBtn" data-status="maybe" class="rsvp-btn" style="background: linear-gradient(135deg, #d29922, #bb8009);">🤔 MAYBE</button>
+                    <button id="rsvpOutBtn" data-status="out" class="rsvp-btn" style="background: linear-gradient(135deg, #f85149, #da3633);">❌ OUT</button>
                 </div>
                 <div id="rsvpSummary" style="text-align: left;"></div>
             </div>
-
-            <button class="secondary-btn" id="backToPortalBtn" style="margin-top: 4px;">Back to Portal</button>
         </div>
 
         <div id="resultSection" class="hidden">
@@ -686,32 +850,6 @@
             <button id="backToRoomBtn" class="secondary-btn">Back to Room / Add More</button>
         </div>
 
-        <!-- Discord Style Chat Box with Popup Emoji Panel -->
-        <div class="discord-chat" id="discordChatContainer">
-            <div class="discord-header">💬 Room Chat</div>
-            <div class="discord-messages" id="chatMessages">
-                <div style="color: #8b949e; font-style: italic; font-size: 12px;">Welcome to the room chat!</div>
-            </div>
-
-            <!-- Emoji Popup Panel -->
-            <div class="emoji-popup-panel hidden" id="emojiPopup">
-                <button class="emoji-option-btn" onclick="insertEmoji('🍕')">🍕</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('🍔')">🍔</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('⚽')">⚽</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('🚶')">🚶</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('🔥')">🔥</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('😂')">😂</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('🎉')">🎉</button>
-                <button class="emoji-option-btn" onclick="insertEmoji('👍')">👍</button>
-            </div>
-
-            <div class="discord-input-area">
-                <button class="emoji-trigger-btn" id="toggleEmojiBtn" title="Open Emojis">😀</button>
-                <input type="text" id="chatInput" placeholder="Message #room...">
-                <button class="send-btn" id="sendChatBtn">Send</button>
-            </div>
-        </div>
-        
         <div>
             <button class="leave-link" id="leaveRoomBtn">Leave the Room (Permanent)</button>
         </div>
@@ -764,7 +902,6 @@
 
         const backToLanding = document.getElementById('backToLanding');
         const displayRoomCode = document.getElementById('displayRoomCode');
-        const inviteBtn = document.getElementById('inviteBtn');
         const backToPortalBtn = document.getElementById('backToPortalBtn');
         const leaveRoomBtn = document.getElementById('leaveRoomBtn');
         const memberCount = document.getElementById('memberCount');
@@ -782,12 +919,16 @@
         const sendChatBtn = document.getElementById('sendChatBtn');
         const toggleEmojiBtn = document.getElementById('toggleEmojiBtn');
         const emojiPopup = document.getElementById('emojiPopup');
+        const notifToggleBtn = document.getElementById('notifToggleBtn');
+        const chatToast = document.getElementById('chatToast');
 
         let isSignUp = false;
         let currentRoomCode = '';
         let currentUser = { name: '', isAdmin: false };
         let roomChannel = null; // Supabase Realtime channel aktiv për dhomën e hapur
         let timerInterval = null;
+        let notificationsEnabled = localStorage.getItem('qpb_chat_notifications') !== 'off';
+        let lastMessageCount = 0;
 
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
@@ -1113,20 +1254,70 @@
 
         toggleEmojiBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            emojiPopup.classList.toggle('hidden');
+            emojiPopup.classList.toggle('open');
         });
 
         document.addEventListener('click', (e) => {
             if (!emojiPopup.contains(e.target) && e.target !== toggleEmojiBtn) {
-                emojiPopup.classList.add('hidden');
+                emojiPopup.classList.remove('open');
             }
         });
 
         window.insertEmoji = function(emoji) {
             chatInput.value += emoji;
-            emojiPopup.classList.add('hidden');
+            emojiPopup.classList.remove('open');
             chatInput.focus();
         };
+
+        // Notification toggle (🔔/🔕) - preferenca ruhet lokalisht në pajisje
+        function updateNotifToggleUI() {
+            notifToggleBtn.textContent = notificationsEnabled ? '🔔' : '🔕';
+            notifToggleBtn.classList.toggle('muted', !notificationsEnabled);
+            notifToggleBtn.title = notificationsEnabled ? 'Notifications ON - click to mute' : 'Notifications OFF - click to unmute';
+        }
+        updateNotifToggleUI();
+
+        notifToggleBtn.addEventListener('click', () => {
+            notificationsEnabled = !notificationsEnabled;
+            localStorage.setItem('qpb_chat_notifications', notificationsEnabled ? 'on' : 'off');
+            updateNotifToggleUI();
+            if (notificationsEnabled && window.Notification && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        });
+
+        function playPingSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.16);
+            } catch (e) { /* audio not available, ignore */ }
+        }
+
+        function showChatToast(text) {
+            chatToast.textContent = text;
+            chatToast.classList.add('show');
+            clearTimeout(chatToast._hideTimer);
+            chatToast._hideTimer = setTimeout(() => chatToast.classList.remove('show'), 2500);
+        }
+
+        function notifyNewMessage(msg) {
+            if (!notificationsEnabled) return;
+            showChatToast(`${msg.sender}: ${msg.text}`);
+            playPingSound();
+            if (window.Notification && Notification.permission === 'granted' && document.hidden) {
+                new Notification(`💬 ${msg.sender}`, { body: msg.text });
+            }
+        }
 
         sendChatBtn.addEventListener('click', sendChatMessage);
         chatInput.addEventListener('keypress', (e) => {
@@ -1140,27 +1331,57 @@
             const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             if (data) {
                 let messages = data.messages || [];
-                messages.push({ sender: currentUser.name, text: text });
+                messages.push({ sender: currentUser.name, text: text, time: new Date().toISOString() });
                 await updateRoomInSupabase({ messages });
                 chatInput.value = '';
+                lastMessageCount = messages.length;
                 renderChat(messages);
             }
+        }
+
+        const AVATAR_COLORS = ['#ff3366', '#3fb950', '#58a6ff', '#d29922', '#a371f7', '#f778ba', '#39c5cf', '#ff8c42'];
+        function getAvatarColor(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+            return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+        }
+        function getInitials(name) {
+            const parts = String(name).trim().split(/\s+/);
+            return ((parts[0]?.[0] || '?') + (parts[1]?.[0] || '')).toUpperCase();
+        }
+        function formatMsgTime(iso) {
+            if (!iso) return '';
+            const d = new Date(iso);
+            if (isNaN(d.getTime())) return '';
+            return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
 
         function renderChat(messages) {
             chatMessages.innerHTML = '';
             if (messages && messages.length > 0) {
                 messages.forEach(msg => {
-                    const div = document.createElement('div');
+                    const row = document.createElement('div');
                     const isSelf = msg.sender === currentUser.name;
-                    div.className = `discord-msg ${isSelf ? 'self' : ''}`;
-                    div.innerHTML = `
+                    row.className = `discord-msg-row ${isSelf ? 'self' : ''}`;
+
+                    const avatar = document.createElement('div');
+                    avatar.className = 'msg-avatar';
+                    avatar.style.background = getAvatarColor(msg.sender || '?');
+                    avatar.textContent = getInitials(msg.sender || '?');
+
+                    const bubble = document.createElement('div');
+                    bubble.className = 'discord-msg';
+                    bubble.innerHTML = `
                         <div class="discord-msg-header">
-                            <span class="discord-author">${msg.sender}</span>
+                            <span class="discord-author">${escapeHtml(msg.sender || '')}</span>
+                            <span class="discord-time">${formatMsgTime(msg.time)}</span>
                         </div>
-                        <div class="discord-text">${msg.text}</div>
+                        <div class="discord-text">${escapeHtml(msg.text || '')}</div>
                     `;
-                    chatMessages.appendChild(div);
+
+                    row.appendChild(avatar);
+                    row.appendChild(bubble);
+                    chatMessages.appendChild(row);
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             } else {
@@ -1211,7 +1432,6 @@
             document.getElementById('roomCategoryTag').textContent = `${catEmoji} ${room.category}`;
             document.getElementById('roomCategoryIcon').textContent = catEmoji;
             displayRoomCode.textContent = room.code;
-            document.getElementById('displayEventTime').textContent = room.event_time ? room.event_time.replace('T', ' ') : 'Not Set';
 
             const optionInputLabel = document.getElementById('optionInputLabel');
             if (room.category === 'Ushqim') optionInputLabel.textContent = "Add Restaurant Name";
@@ -1240,6 +1460,7 @@
             memberCount.textContent = (room.members || []).length;
             renderOptionsList(room.options || []);
             renderChat(room.messages || []);
+            lastMessageCount = (room.messages || []).length;
             renderLocation(room.location || '');
             renderInOut(room.rsvp || {});
             startEventTimer(room.event_time);
@@ -1333,7 +1554,16 @@
 
                     memberCount.textContent = (updatedRoom.members || []).length;
                     renderOptionsList(updatedRoom.options || []);
-                    renderChat(updatedRoom.messages || []);
+
+                    const newMessages = updatedRoom.messages || [];
+                    if (newMessages.length > lastMessageCount) {
+                        newMessages.slice(lastMessageCount).forEach(m => {
+                            if (m.sender !== currentUser.name) notifyNewMessage(m);
+                        });
+                    }
+                    lastMessageCount = newMessages.length;
+                    renderChat(newMessages);
+
                     renderLocation(updatedRoom.location || '');
                     renderInOut(updatedRoom.rsvp || {});
                     if (updatedRoom.method === 'poll') {
@@ -1343,30 +1573,28 @@
                 .subscribe();
         }
 
-        inviteBtn.addEventListener('click', () => {
-            const inviteText = `Join my QaPoBojm event! Room Code: ${currentRoomCode}`;
-            navigator.clipboard.writeText(inviteText);
-            alert("Invite code copied to clipboard!");
-        });
-
         function startEventTimer(timeString) {
-            if (!timeString) {
-                document.getElementById('countdownTimerDisplay').textContent = "Event time not set";
-                return;
-            }
+            const countdownInline = document.getElementById('countdownInline');
             if (timerInterval) clearInterval(timerInterval);
 
+            if (!timeString) {
+                countdownInline.classList.add('hidden');
+                return;
+            }
+
             const [datePart, timePart] = timeString.split('T');
-            if (!datePart || !timePart) return;
-            
+            if (!datePart || !timePart) {
+                countdownInline.classList.add('hidden');
+                return;
+            }
+
             const [year, month, day] = datePart.split('-').map(Number);
             const [hour, minute] = timePart.split(':').map(Number);
 
             const targetTime = new Date(year, month - 1, day, hour, minute, 0).getTime();
-            
-            const alertBox = document.getElementById('eventAlertBox');
-            const timerDisplay = document.getElementById('countdownTimerDisplay');
-            alertBox.classList.add('hidden');
+
+            countdownInline.classList.remove('hidden');
+            countdownInline.style.color = '#3fb950';
 
             if (window.Notification && Notification.permission === "default") {
                 Notification.requestPermission();
@@ -1378,9 +1606,9 @@
 
                 if (distance <= 0) {
                     clearInterval(timerInterval);
-                    timerDisplay.textContent = "Event has started!";
-                    alertBox.classList.remove('hidden');
-                    
+                    countdownInline.textContent = "🚨 It's time!";
+                    countdownInline.style.color = '#ff3366';
+
                     if (window.Notification && Notification.permission === "granted") {
                         new Notification("QaPoBojm - Event Alert", { 
                             body: "Event time has arrived now!",
@@ -1394,7 +1622,7 @@
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-                timerDisplay.textContent = `Time remaining: ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                countdownInline.textContent = `⏳ ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             }, 1000);
         }
 
