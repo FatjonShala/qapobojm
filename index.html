@@ -678,22 +678,79 @@
             gap: 10px;
             flex-wrap: wrap;
         }
+        .rsvp-btn {
             flex: 1;
             margin-bottom: 0;
-            padding: 9px 6px;
-            font-size: 12px;
+            padding: 8px 4px;
+            font-size: 11px;
             font-weight: 700;
             border-radius: 999px;
             border: none;
             color: #ffffff;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, outline 0.15s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            letter-spacing: 0.2px;
         }
-        .rsvp-btn:hover {
+        .rsvp-btn:hover:not(:disabled) {
             transform: translateY(-1px) scale(1.02);
         }
-        .rsvp-btn:active {
+        .rsvp-btn:active:not(:disabled) {
             transform: scale(0.95);
+        }
+        .rsvp-btn.active-rsvp {
+            box-shadow: 0 0 0 2px #ffffff, 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .rsvp-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .rsvp-group {
+            margin-bottom: 12px;
+        }
+        .rsvp-group-header {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .rsvp-count {
+            color: #8b949e;
+            font-weight: 600;
+        }
+        .rsvp-chip-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .rsvp-chip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 3px 10px 3px 3px;
+            border-radius: 999px;
+            font-size: 11px;
+            color: #e6edf3;
+        }
+        .rsvp-chip-avatar {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
         }
         .leave-link {
             background: none;
@@ -856,6 +913,9 @@
 
             <label for="eventTime">Event Schedule (Time)</label>
             <input type="datetime-local" id="eventTime">
+
+            <label for="eventCapacity">Max Capacity <span style="color:#8b949e; font-weight: 400;">- optional, leave empty for unlimited</span></label>
+            <input type="number" id="eventCapacity" min="1" placeholder="e.g. 12">
 
             <label for="eventLocation">Event Location (address or place name) <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
             <input type="text" id="eventLocation" placeholder="e.g. Skanderbeg Square, Tirana">
@@ -1045,6 +1105,7 @@
         const eventCategorySelect = document.getElementById('eventCategory');
         const decisionMethodSelect = document.getElementById('decisionMethod');
         const eventTimeInput = document.getElementById('eventTime');
+        const eventCapacityInput = document.getElementById('eventCapacity');
         const eventLocationInput = document.getElementById('eventLocation');
         const adminLocationControls = document.getElementById('adminLocationControls');
         const locationInput = document.getElementById('locationInput');
@@ -1105,6 +1166,7 @@
         let currentUser = { name: '', isAdmin: false, isAuthenticated: false };
         let roomChannel = null; // Supabase Realtime channel aktiv për dhomën e hapur
         let timerInterval = null;
+        let currentRoomCapacity = null;
         let notificationsEnabled = localStorage.getItem('qpb_chat_notifications') !== 'off';
         let lastMessageCount = 0;
         let selectedVisibility = 'private';
@@ -1278,12 +1340,15 @@
             const category = eventCategorySelect.value;
             const method = decisionMethodSelect.value;
             const eventTime = eventTimeInput.value;
+            const capacityRaw = eventCapacityInput.value.trim();
+            const capacity = capacityRaw ? parseInt(capacityRaw, 10) : null;
             const location = eventLocationInput.value.trim();
             const isPublic = selectedVisibility === 'public';
             const city = newRoomCityInput.value.trim();
 
             if (!roomName) { alert("Please give a name to the room!"); return; }
             if (isPublic && !city) { alert("Please add a city so people can find this public event!"); return; }
+            if (capacityRaw && (isNaN(capacity) || capacity < 1)) { alert("Max Capacity must be a positive number."); return; }
 
             const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
             const newRoomData = {
@@ -1292,6 +1357,7 @@
                 category: category,
                 method: method,
                 event_time: eventTime,
+                capacity: capacity,
                 location: location,
                 is_public: isPublic,
                 city: isPublic ? city : null,
@@ -1309,6 +1375,7 @@
             }
 
             newRoomNameInput.value = '';
+            eventCapacityInput.value = '';
             eventLocationInput.value = '';
             newRoomCityInput.value = '';
             selectedVisibility = 'private';
@@ -1877,6 +1944,7 @@
             renderChat(room.messages || []);
             lastMessageCount = (room.messages || []).length;
             renderLocation(room.location || '');
+            currentRoomCapacity = room.capacity || null;
             renderInOut(room.rsvp || {});
             startEventTimer(room.event_time);
             applyPermissions();
@@ -1980,6 +2048,7 @@
                     renderChat(newMessages);
 
                     renderLocation(updatedRoom.location || '');
+                    currentRoomCapacity = updatedRoom.capacity || null;
                     renderInOut(updatedRoom.rsvp || {});
                     if (updatedRoom.method === 'poll') {
                         renderPollOptions(updatedRoom);
@@ -2071,7 +2140,9 @@
         });
 
         // In / Out (RSVP): çdo anëtar klikon IN, OUT, ose MAYBE. Statusi ruhet në
-        // kolonën `rsvp` (jsonb) të tabelës `rooms`, e kyçur me emrin e anëtarit.
+        // kolonën `rsvp` (jsonb) të tabelës `rooms`. Nëse dhoma ka `capacity` (limit),
+        // rilexojmë gjendjen e fundit nga DB para se të lejojmë IN, për të shmangur
+        // "race condition" kur dy persona klikojnë IN njëkohësisht kur ka mbetur 1 vend.
         [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
             btn.addEventListener('click', async () => {
                 const status = btn.dataset.status;
@@ -2079,6 +2150,19 @@
                 if (!data) return;
 
                 let rsvp = data.rsvp || {};
+                const capacity = data.capacity || null;
+                currentRoomCapacity = capacity;
+
+                if (status === 'in' && capacity) {
+                    const inCount = Object.values(rsvp).filter(s => s === 'in').length;
+                    const alreadyIn = rsvp[currentUser.name] === 'in';
+                    if (!alreadyIn && inCount >= capacity) {
+                        alert("Event is full. You'll be able to join IN as soon as a spot opens up.");
+                        renderInOut(rsvp);
+                        return;
+                    }
+                }
+
                 rsvp[currentUser.name] = status;
 
                 const { error } = await mySupabase.from('rooms').update({ rsvp }).eq('code', currentRoomCode);
@@ -2093,32 +2177,49 @@
         function renderInOut(rsvp) {
             rsvp = rsvp || {};
             const myStatus = rsvp[currentUser.name];
-
-            [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
-                btn.style.outline = btn.dataset.status === myStatus ? '3px solid #ffffff' : 'none';
-            });
+            const capacity = currentRoomCapacity;
 
             const groups = { in: [], maybe: [], out: [] };
             Object.entries(rsvp).forEach(([name, status]) => {
                 if (groups[status]) groups[status].push(name);
             });
 
+            const isFull = !!capacity && groups.in.length >= capacity && myStatus !== 'in';
+
+            [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
+                btn.classList.toggle('active-rsvp', btn.dataset.status === myStatus);
+            });
+            rsvpInBtn.disabled = isFull;
+            rsvpInBtn.title = isFull ? 'Event is full' : '';
+            rsvpInBtn.innerHTML = isFull ? '🚫 FULL' : '✅ IN';
+
             const rows = [
-                { key: 'in', label: '✅ IN', color: '#3fb950' },
-                { key: 'maybe', label: '🤔 MAYBE', color: '#d29922' },
-                { key: 'out', label: '❌ OUT', color: '#f85149' }
+                { key: 'in', emoji: '✅', label: 'IN', color: '#3fb950' },
+                { key: 'maybe', emoji: '🤔', label: 'MAYBE', color: '#d29922' },
+                { key: 'out', emoji: '❌', label: 'OUT', color: '#f85149' }
             ];
 
-            rsvpSummary.innerHTML = rows.map(row => `
-                <div style="margin-bottom: 10px;">
-                    <div style="font-size: 12px; font-weight: 700; color: ${row.color}; margin-bottom: 4px;">
-                        ${row.label} (${groups[row.key].length})
+            rsvpSummary.innerHTML = rows.map(row => {
+                const count = groups[row.key].length;
+                const countLabel = (row.key === 'in' && capacity) ? `${count}/${capacity}` : `${count}`;
+                const chips = groups[row.key].length > 0
+                    ? groups[row.key].map(n => `
+                        <div class="rsvp-chip">
+                            <span class="rsvp-chip-avatar" style="background:${getAvatarColor(n)}">${getInitials(n)}</span>
+                            <span>${escapeHtml(n)}</span>
+                        </div>
+                      `).join('')
+                    : `<span style="color:#8b949e; font-style: italic; font-size: 11px;">No one yet</span>`;
+
+                return `
+                    <div class="rsvp-group">
+                        <div class="rsvp-group-header" style="color: ${row.color};">
+                            ${row.emoji} ${row.label} <span class="rsvp-count">(${countLabel})</span>
+                        </div>
+                        <div class="rsvp-chip-list">${chips}</div>
                     </div>
-                    <div style="font-size: 12px; color: #c9d1d9; padding-left: 4px;">
-                        ${groups[row.key].length > 0 ? groups[row.key].map(n => escapeHtml(n)).join(', ') : '<span style="color:#8b949e; font-style: italic;">No one yet</span>'}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function escapeHtml(str) {
