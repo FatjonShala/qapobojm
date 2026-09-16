@@ -752,6 +752,78 @@
             color: #ffffff;
             flex-shrink: 0;
         }
+        .friend-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 8px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        .friend-row-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+        .friend-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+            flex-shrink: 0;
+        }
+        .friend-name {
+            font-size: 12.5px;
+            color: #e6edf3;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .friend-email {
+            font-size: 10.5px;
+            color: #8b949e;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .friend-action-btn {
+            margin-bottom: 0;
+            width: auto;
+            padding: 6px 12px;
+            font-size: 11px;
+            box-shadow: none;
+            flex-shrink: 0;
+        }
+        .notif-item {
+            padding: 9px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .notif-item.unread {
+            border-color: rgba(255, 51, 102, 0.4);
+            background: rgba(255, 51, 102, 0.06);
+        }
+        .notif-text {
+            font-size: 11.5px;
+            color: #e6edf3;
+            margin-bottom: 6px;
+        }
+        .notif-actions {
+            display: flex;
+            gap: 6px;
+        }
         .leave-link {
             background: none;
             border: none;
@@ -834,11 +906,24 @@
                 <div class="logo-icon-box" style="width: 20px; height: 20px; font-size: 11px;">⚡</div>
                 <div class="logo-title-text" style="font-size: 12px;">QaPoBojm</div>
             </div>
-            <div style="position: relative;">
-                <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">👤</button>
-                <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 170px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
-                    <div style="font-size: 11px; color: #8b949e; padding: 2px 6px 8px;">Signed in as<br><b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px;">User</b></div>
-                    <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
+            <div style="display: flex; gap: 8px;">
+                <div style="position: relative;">
+                    <button type="button" id="notifBellBtn" title="Notifications" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; position: relative;">
+                        🔔
+                        <span id="notifBadge" class="hidden" style="position: absolute; top: -3px; right: -3px; background: #ff3366; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 3px; border: 2px solid #161b22;">0</span>
+                    </button>
+                    <div id="notifDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 8px; width: 260px; max-height: 340px; overflow-y: auto; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
+                        <div style="font-size: 12px; font-weight: 700; color: #f0f6fc; padding: 4px 6px 8px;">Notifications</div>
+                        <div id="notifList"></div>
+                    </div>
+                </div>
+                <div style="position: relative;">
+                    <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">👤</button>
+                    <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 170px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
+                        <div style="font-size: 11px; color: #8b949e; padding: 2px 6px 8px;">Signed in as<br><b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px;">User</b></div>
+                        <button class="secondary-btn" id="openFriendsModalBtn" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">👥 Friends</button>
+                        <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -934,6 +1019,41 @@
             <button id="createRoomBtn">Create Room</button>
         </div>
     </div>
+
+    <!-- Friends Modal -->
+    <div class="card hidden" id="friendsModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 88%; max-width: 380px; max-height: 86vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 16px;">Friends</h3>
+            <button type="button" id="closeFriendsModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
+        </div>
+
+        <label for="friendSearchInput">Add a friend by email</label>
+        <div style="display: flex; gap: 6px;">
+            <input type="text" id="friendSearchInput" placeholder="friend@email.com" style="margin-bottom: 0;">
+            <button type="button" id="friendSearchBtn" style="width: 80px; margin-bottom: 0; font-size: 12px;">Search</button>
+        </div>
+        <div id="friendSearchResult" style="margin-top: 8px;"></div>
+
+        <div style="margin-top: 18px;">
+            <h4 style="font-size: 12px; color: #8b949e; text-align: left; margin-bottom: 8px;">Pending Requests</h4>
+            <div id="pendingRequestsList"><p style="font-size: 12px; color: #8b949e; margin: 0;">No pending requests.</p></div>
+        </div>
+
+        <div style="margin-top: 18px;">
+            <h4 style="font-size: 12px; color: #8b949e; text-align: left; margin-bottom: 8px;">My Friends</h4>
+            <div id="friendsList"><p style="font-size: 12px; color: #8b949e; margin: 0;">No friends yet — search above to add some!</p></div>
+        </div>
+    </div>
+
+    <!-- Invite Friends to Room Modal -->
+    <div class="card hidden" id="inviteFriendsModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 88%; max-width: 360px; max-height: 80vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 16px;">Invite Friends</h3>
+            <button type="button" id="closeInviteFriendsModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
+        </div>
+        <div id="inviteFriendsList"><p style="font-size: 12px; color: #8b949e; margin: 0;">You don't have any friends yet. Add some from the Friends menu first!</p></div>
+    </div>
+
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
@@ -957,6 +1077,7 @@
             Connected Members: <span id="memberCount">1</span> 
             <span style="font-size: 11px; color: #ff3366;">(View All)</span>
         </div>
+        <button type="button" class="secondary-btn hidden" id="inviteFriendsBtn" style="margin-top: 8px; font-size: 12px; padding: 8px;">👥 Invite Friends</button>
         <div style="text-align: center;">
             <span class="view-only-badge hidden" id="viewOnlyBadge">👁 View Only — only the admin can chat / vote / RSVP</span>
         </div>
@@ -1134,6 +1255,22 @@
         const profileMenuDropdown = document.getElementById('profileMenuDropdown');
         const openCreateModalBtn = document.getElementById('openCreateModalBtn');
         const closeCreateModalBtn = document.getElementById('closeCreateModalBtn');
+        const notifBellBtn = document.getElementById('notifBellBtn');
+        const notifBadge = document.getElementById('notifBadge');
+        const notifDropdown = document.getElementById('notifDropdown');
+        const notifList = document.getElementById('notifList');
+        const openFriendsModalBtn = document.getElementById('openFriendsModalBtn');
+        const closeFriendsModalBtn = document.getElementById('closeFriendsModalBtn');
+        const friendsModal = document.getElementById('friendsModal');
+        const friendSearchInput = document.getElementById('friendSearchInput');
+        const friendSearchBtn = document.getElementById('friendSearchBtn');
+        const friendSearchResult = document.getElementById('friendSearchResult');
+        const pendingRequestsList = document.getElementById('pendingRequestsList');
+        const friendsList = document.getElementById('friendsList');
+        const inviteFriendsBtn = document.getElementById('inviteFriendsBtn');
+        const inviteFriendsModal = document.getElementById('inviteFriendsModal');
+        const closeInviteFriendsModalBtn = document.getElementById('closeInviteFriendsModalBtn');
+        const inviteFriendsList = document.getElementById('inviteFriendsList');
         const createEventModal = document.getElementById('createEventModal');
         const modalBackdrop = document.getElementById('modalBackdrop');
         const dashboardTitle = document.getElementById('dashboardTitle');
@@ -1163,7 +1300,7 @@
 
         let isSignUp = false;
         let currentRoomCode = '';
-        let currentUser = { name: '', isAdmin: false, isAuthenticated: false };
+        let currentUser = { name: '', isAdmin: false, isAuthenticated: false, id: null, email: null };
         let roomChannel = null; // Supabase Realtime channel aktiv për dhomën e hapur
         let timerInterval = null;
         let currentRoomCapacity = null;
@@ -1213,9 +1350,13 @@
             if (session && session.user) {
                 const userMeta = session.user.user_metadata;
                 currentUser.name = userMeta?.full_name || session.user.email.split('@')[0];
+                currentUser.id = session.user.id;
+                currentUser.email = session.user.email;
                 currentUser.isAdmin = true;
                 currentUser.isAuthenticated = true;
+                await upsertProfile();
                 showDashboard();
+                subscribeToNotifications();
             }
         });
 
@@ -1271,9 +1412,13 @@
 
             const userMeta = data.user?.user_metadata;
             currentUser.name = userMeta?.full_name || email.split('@')[0];
+            currentUser.id = data.user.id;
+            currentUser.email = data.user.email;
             currentUser.isAdmin = true;
             currentUser.isAuthenticated = true;
+            await upsertProfile();
             showDashboard();
+            subscribeToNotifications();
         });
 
         // "My Events" = dhomat që i ke krijuar TI, ose dhomat ku je bërë join si anëtar
@@ -1447,17 +1592,340 @@
             }
         });
 
-        // --- Create Event modal ---
+        // --- Modal system (Create Event / Friends / Invite Friends share one backdrop) ---
+        function closeAllModals() {
+            createEventModal.classList.add('hidden');
+            friendsModal.classList.add('hidden');
+            inviteFriendsModal.classList.add('hidden');
+            modalBackdrop.classList.add('hidden');
+        }
+        function closeCreateModal() { closeAllModals(); }
+
         openCreateModalBtn.addEventListener('click', () => {
+            closeAllModals();
             createEventModal.classList.remove('hidden');
             modalBackdrop.classList.remove('hidden');
         });
-        function closeCreateModal() {
-            createEventModal.classList.add('hidden');
-            modalBackdrop.classList.add('hidden');
+        closeCreateModalBtn.addEventListener('click', closeAllModals);
+        modalBackdrop.addEventListener('click', closeAllModals);
+
+        openFriendsModalBtn.addEventListener('click', async () => {
+            profileMenuDropdown.classList.add('hidden');
+            closeAllModals();
+            friendsModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            await loadFriendsData();
+        });
+        closeFriendsModalBtn.addEventListener('click', closeAllModals);
+
+        inviteFriendsBtn.addEventListener('click', async () => {
+            closeAllModals();
+            inviteFriendsModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            await loadInviteFriendsList();
+        });
+        closeInviteFriendsModalBtn.addEventListener('click', closeAllModals);
+
+        // ==================== FRIENDS & NOTIFICATIONS SYSTEM ====================
+
+        // Ruajmë/rifreskojmë profilin publik (id/email/name) sa herë dikush bën login,
+        // që të mund të kërkohet nga miq të tjerë përmes email-it.
+        async function upsertProfile() {
+            if (!currentUser.id) return;
+            const { error } = await mySupabase.from('profiles').upsert({
+                id: currentUser.id,
+                email: currentUser.email,
+                name: currentUser.name
+            });
+            if (error) console.error('Profile upsert failed:', error);
         }
-        closeCreateModalBtn.addEventListener('click', closeCreateModal);
-        modalBackdrop.addEventListener('click', closeCreateModal);
+
+        function getFriendAvatarHtml(name) {
+            return `<span class="friend-avatar" style="background:${getAvatarColor(name || '?')}">${getInitials(name || '?')}</span>`;
+        }
+
+        // Merr profile të plota për një listë ID-sh (shmang embedded-relation selects
+        // që varen nga emri i saktë i foreign key-t; më e qëndrueshme kështu).
+        async function fetchProfilesByIds(ids) {
+            const unique = [...new Set(ids)].filter(Boolean);
+            if (unique.length === 0) return {};
+            const { data } = await mySupabase.from('profiles').select('*').in('id', unique);
+            const map = {};
+            (data || []).forEach(p => { map[p.id] = p; });
+            return map;
+        }
+
+        // --- Kërko dhe shto mik me email ---
+        friendSearchBtn.addEventListener('click', async () => {
+            const email = friendSearchInput.value.trim().toLowerCase();
+            if (!email) return;
+            if (currentUser.email && email === currentUser.email.toLowerCase()) {
+                friendSearchResult.innerHTML = `<p style="font-size:12px; color:#8b949e;">That's you!</p>`;
+                return;
+            }
+
+            const { data, error } = await mySupabase.from('profiles').select('*').ilike('email', email).maybeSingle();
+            if (error || !data) {
+                friendSearchResult.innerHTML = `<p style="font-size:12px; color:#8b949e;">No user found with that email. They need to have logged in at least once.</p>`;
+                return;
+            }
+
+            friendSearchResult.innerHTML = `
+                <div class="friend-row">
+                    <div class="friend-row-left">
+                        ${getFriendAvatarHtml(data.name)}
+                        <div style="min-width:0;">
+                            <div class="friend-name">${escapeHtml(data.name)}</div>
+                            <div class="friend-email">${escapeHtml(data.email)}</div>
+                        </div>
+                    </div>
+                    <button class="friend-action-btn" id="sendFriendReqBtn">Add</button>
+                </div>
+            `;
+
+            document.getElementById('sendFriendReqBtn').addEventListener('click', async () => {
+                const { error: reqError } = await mySupabase.from('friendships').insert({
+                    requester_id: currentUser.id,
+                    addressee_id: data.id,
+                    status: 'pending'
+                });
+                if (reqError) {
+                    alert(reqError.code === '23505' ? 'A friend request already exists between you two.' : 'Could not send request: ' + reqError.message);
+                    return;
+                }
+                await mySupabase.from('notifications').insert({
+                    recipient_id: data.id,
+                    type: 'friend_request',
+                    sender_name: currentUser.name,
+                    payload: {}
+                });
+                friendSearchResult.innerHTML = `<p style="font-size:12px; color:#3fb950;">Friend request sent!</p>`;
+            });
+        });
+
+        async function respondToFriendRequest(friendshipId, status) {
+            const { error } = await mySupabase.from('friendships').update({ status }).eq('id', friendshipId);
+            if (error) { alert('Could not update request: ' + error.message); return; }
+            await loadFriendsData();
+        }
+
+        async function loadFriendsData() {
+            if (!currentUser.id) return;
+
+            const { data: pendingRows } = await mySupabase
+                .from('friendships').select('*')
+                .eq('addressee_id', currentUser.id)
+                .eq('status', 'pending');
+
+            const pending = pendingRows || [];
+            const pendingProfiles = await fetchProfilesByIds(pending.map(r => r.requester_id));
+
+            if (pending.length === 0) {
+                pendingRequestsList.innerHTML = `<p style="font-size:12px; color:#8b949e; margin:0;">No pending requests.</p>`;
+            } else {
+                pendingRequestsList.innerHTML = pending.map(req => {
+                    const p = pendingProfiles[req.requester_id] || { name: 'Unknown', email: '' };
+                    return `
+                        <div class="friend-row">
+                            <div class="friend-row-left">
+                                ${getFriendAvatarHtml(p.name)}
+                                <div style="min-width:0;">
+                                    <div class="friend-name">${escapeHtml(p.name)}</div>
+                                    <div class="friend-email">${escapeHtml(p.email)}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:4px;">
+                                <button class="friend-action-btn" style="background:linear-gradient(135deg,#3fb950,#2ea043);" data-accept="${req.id}">✓</button>
+                                <button class="friend-action-btn" style="background:#21262d;" data-decline="${req.id}">✕</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                pendingRequestsList.querySelectorAll('[data-accept]').forEach(btn => {
+                    btn.addEventListener('click', () => respondToFriendRequest(btn.dataset.accept, 'accepted'));
+                });
+                pendingRequestsList.querySelectorAll('[data-decline]').forEach(btn => {
+                    btn.addEventListener('click', () => respondToFriendRequest(btn.dataset.decline, 'declined'));
+                });
+            }
+
+            const { data: acceptedRows } = await mySupabase
+                .from('friendships').select('*')
+                .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`)
+                .eq('status', 'accepted');
+
+            const accepted = acceptedRows || [];
+            const otherIds = accepted.map(r => r.requester_id === currentUser.id ? r.addressee_id : r.requester_id);
+            const friendProfiles = await fetchProfilesByIds(otherIds);
+            const friends = otherIds.map(id => friendProfiles[id]).filter(Boolean);
+
+            if (friends.length === 0) {
+                friendsList.innerHTML = `<p style="font-size:12px; color:#8b949e; margin:0;">No friends yet — search above to add some!</p>`;
+            } else {
+                friendsList.innerHTML = friends.map(f => `
+                    <div class="friend-row">
+                        <div class="friend-row-left">
+                            ${getFriendAvatarHtml(f.name)}
+                            <div style="min-width:0;">
+                                <div class="friend-name">${escapeHtml(f.name)}</div>
+                                <div class="friend-email">${escapeHtml(f.email)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- Ftesë e drejtpërdrejtë në dhomë ---
+        async function loadInviteFriendsList() {
+            if (!currentUser.id) {
+                inviteFriendsList.innerHTML = `<p style="font-size:12px; color:#8b949e;">Log in to invite friends.</p>`;
+                return;
+            }
+
+            const { data: acceptedRows } = await mySupabase
+                .from('friendships').select('*')
+                .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`)
+                .eq('status', 'accepted');
+
+            const accepted = acceptedRows || [];
+            const otherIds = accepted.map(r => r.requester_id === currentUser.id ? r.addressee_id : r.requester_id);
+            const friendProfiles = await fetchProfilesByIds(otherIds);
+            const friends = otherIds.map(id => friendProfiles[id]).filter(Boolean);
+
+            if (friends.length === 0) {
+                inviteFriendsList.innerHTML = `<p style="font-size:12px; color:#8b949e;">You don't have any friends yet. Add some from the Friends menu first!</p>`;
+                return;
+            }
+
+            const roomNameForInvite = document.getElementById('roomTitle').textContent;
+            inviteFriendsList.innerHTML = friends.map(f => `
+                <div class="friend-row">
+                    <div class="friend-row-left">
+                        ${getFriendAvatarHtml(f.name)}
+                        <div style="min-width:0;">
+                            <div class="friend-name">${escapeHtml(f.name)}</div>
+                        </div>
+                    </div>
+                    <button class="friend-action-btn" data-invite="${f.id}">Invite</button>
+                </div>
+            `).join('');
+
+            inviteFriendsList.querySelectorAll('[data-invite]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    btn.disabled = true;
+                    btn.textContent = 'Sent ✓';
+                    await mySupabase.from('notifications').insert({
+                        recipient_id: btn.dataset.invite,
+                        type: 'room_invite',
+                        sender_name: currentUser.name,
+                        payload: { room_code: currentRoomCode, room_name: roomNameForInvite }
+                    });
+                });
+            });
+        }
+
+        // --- Njoftime live (bell + badge) ---
+        let notificationsChannel = null;
+
+        async function fetchNotifications() {
+            if (!currentUser.id) return;
+            const { data } = await mySupabase
+                .from('notifications')
+                .select('*')
+                .eq('recipient_id', currentUser.id)
+                .order('created_at', { ascending: false })
+                .limit(30);
+            renderNotifications(data || []);
+        }
+
+        function renderNotifications(items) {
+            const unreadCount = items.filter(n => !n.is_read).length;
+            notifBadge.classList.toggle('hidden', unreadCount === 0);
+            notifBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+
+            if (items.length === 0) {
+                notifList.innerHTML = `<p style="font-size:12px; color:#8b949e; padding: 6px;">No notifications yet.</p>`;
+                return;
+            }
+
+            notifList.innerHTML = items.map(n => {
+                let text = '';
+                let actions = '';
+                if (n.type === 'friend_request') {
+                    text = `<b>${escapeHtml(n.sender_name || '')}</b> sent you a friend request.`;
+                    actions = `<button class="friend-action-btn" style="background:linear-gradient(135deg,#3fb950,#2ea043);" data-open-friends="1">View</button>`;
+                } else if (n.type === 'room_invite') {
+                    text = `<b>${escapeHtml(n.sender_name || '')}</b> invited you to <b>${escapeHtml(n.payload?.room_name || 'an event')}</b>.`;
+                    actions = `<button class="friend-action-btn" data-join-code="${escapeHtml(n.payload?.room_code || '')}" data-notif-id="${n.id}">Join</button>`;
+                } else {
+                    text = escapeHtml(n.sender_name || 'New notification');
+                }
+                return `
+                    <div class="notif-item ${n.is_read ? '' : 'unread'}">
+                        <div class="notif-text">${text}</div>
+                        <div class="notif-actions">${actions}</div>
+                    </div>
+                `;
+            }).join('');
+
+            notifList.querySelectorAll('[data-join-code]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const code = btn.dataset.joinCode;
+                    const notifId = btn.dataset.notifId;
+                    if (notifId) await mySupabase.from('notifications').update({ is_read: true }).eq('id', notifId);
+                    notifDropdown.classList.add('hidden');
+                    if (code) joinRoomByCode(code);
+                });
+            });
+            notifList.querySelectorAll('[data-open-friends]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    notifDropdown.classList.add('hidden');
+                    closeAllModals();
+                    friendsModal.classList.remove('hidden');
+                    modalBackdrop.classList.remove('hidden');
+                    await loadFriendsData();
+                });
+            });
+        }
+
+        function subscribeToNotifications() {
+            if (!currentUser.id) return;
+            if (notificationsChannel) mySupabase.removeChannel(notificationsChannel);
+
+            fetchNotifications();
+
+            notificationsChannel = mySupabase
+                .channel(`notifications-${currentUser.id}`)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `recipient_id=eq.${currentUser.id}`
+                }, () => {
+                    fetchNotifications();
+                    playPingSound();
+                })
+                .subscribe();
+        }
+
+        notifBellBtn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            profileMenuDropdown.classList.add('hidden');
+            notifDropdown.classList.toggle('hidden');
+            if (!notifDropdown.classList.contains('hidden')) {
+                await mySupabase.from('notifications').update({ is_read: true }).eq('recipient_id', currentUser.id).eq('is_read', false);
+                await fetchNotifications();
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!notifDropdown.contains(e.target) && e.target !== notifBellBtn) {
+                notifDropdown.classList.add('hidden');
+            }
+        });
+
+        // ==================== END FRIENDS & NOTIFICATIONS ====================
 
         async function fetchPublicRooms(category, city) {
             let query = mySupabase.from('rooms').select('*').eq('is_public', true);
@@ -1908,6 +2376,7 @@
             // e ruajtur në rekord. Kjo lejon që një user i loguar të hyjë si pjesëmarrës i thjeshtë
             // (jo admin) në një dhomë publike të dikujt tjetër.
             currentUser.isAdmin = !!currentUser.isAuthenticated && (room.admin === currentUser.name);
+            inviteFriendsBtn.classList.toggle('hidden', !currentUser.isAuthenticated);
 
             const catEmoji = getCategoryEmoji(room.category);
             document.getElementById('roomTitle').textContent = room.name;
