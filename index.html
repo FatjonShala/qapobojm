@@ -122,6 +122,7 @@
             box-sizing: border-box;
             font-size: 14px;
             transition: all 0.2s;
+            color-scheme: dark;
         }
         input:focus, select:focus {
             outline: none;
@@ -771,17 +772,67 @@
 
     <!-- 2. Dashboard -->
     <div class="card hidden" id="roomsDashboard">
-        <div class="app-logo-container">
-            <div class="app-logo-badge">
-                <div class="logo-icon-box">⚡</div>
-                <div class="logo-title-text">QaPoBojm</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div class="app-logo-badge" style="padding: 5px 12px;">
+                <div class="logo-icon-box" style="width: 20px; height: 20px; font-size: 11px;">⚡</div>
+                <div class="logo-title-text" style="font-size: 12px;">QaPoBojm</div>
+            </div>
+            <div style="position: relative;">
+                <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">👤</button>
+                <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 170px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
+                    <div style="font-size: 11px; color: #8b949e; padding: 2px 6px 8px;">Signed in as<br><b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px;">User</b></div>
+                    <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
+                </div>
             </div>
         </div>
-        <h2>Welcome, <span id="adminWelcomeName">User</span>!</h2>
+
+        <h2 id="dashboardTitle" style="margin-bottom: 10px; font-size: 19px;">Discover Events</h2>
 
         <div class="dash-tabs">
-            <button type="button" id="tabMyRooms" class="dash-tab active">My Rooms</button>
-            <button type="button" id="tabDiscover" class="dash-tab">🌍 Discover</button>
+            <button type="button" id="tabDiscover" class="dash-tab active">Discover Events</button>
+            <button type="button" id="tabMyRooms" class="dash-tab">My Events</button>
+        </div>
+
+        <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+            <input type="text" id="joinCodeInput" placeholder="Have a room code? Enter it..." style="margin-bottom: 0; text-transform: uppercase;">
+            <button type="button" id="joinCodeBtn" class="secondary-btn" style="width: 78px; margin-bottom: 0; font-size: 12px;">Join</button>
+        </div>
+
+        <button type="button" id="openCreateModalBtn" style="margin-bottom: 4px;">+ Create Event</button>
+
+        <div id="discoverPanel" style="margin-top: 14px;">
+            <label for="discoverCategorySelect">Category</label>
+            <select id="discoverCategorySelect">
+                <option value="">All Categories</option>
+                <option value="Ushqim">🍔 Food / Restaurants</option>
+                <option value="Termin">⚽ Activity / Sports</option>
+                <option value="Shetitje">🚗 Trip / Travel</option>
+                <option value="Tjetër">🎉 Other</option>
+            </select>
+
+            <label for="discoverCityInput">City</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="discoverCityInput" placeholder="e.g. Prishtina" style="margin-bottom: 0;">
+                <button type="button" id="nearMeBtn" class="secondary-btn" style="width: 110px; margin-bottom: 0; font-size: 12px;">📍 Near Me</button>
+            </div>
+
+            <button type="button" id="searchPublicBtn" style="margin-top: 12px;">Search Public Events</button>
+        </div>
+
+        <div id="myEventsPanel" class="hidden" style="margin-top: 14px;">
+            <p style="font-size: 12px; color: #8b949e; margin: 0;">Rooms you created or joined appear below.</p>
+        </div>
+    </div>
+
+    <div class="rooms-grid hidden" id="discoverGrid"></div>
+    <div class="rooms-grid hidden" id="roomsGrid"></div>
+
+    <!-- Create Event Modal -->
+    <div id="modalBackdrop" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 90;"></div>
+    <div class="card hidden" id="createEventModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 88%; max-width: 380px; max-height: 86vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 16px;">Create Event</h3>
+            <button type="button" id="closeCreateModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
 
         <div id="createRoomPanel">
@@ -822,32 +873,7 @@
 
             <button id="createRoomBtn">Create Room</button>
         </div>
-
-        <div id="discoverPanel" class="hidden">
-            <label for="discoverCategorySelect">Category</label>
-            <select id="discoverCategorySelect">
-                <option value="">All Categories</option>
-                <option value="Ushqim">🍔 Food / Restaurants</option>
-                <option value="Termin">⚽ Activity / Sports</option>
-                <option value="Shetitje">🚗 Trip / Travel</option>
-                <option value="Tjetër">🎉 Other</option>
-            </select>
-
-            <label for="discoverCityInput">City</label>
-            <div style="display: flex; gap: 6px;">
-                <input type="text" id="discoverCityInput" placeholder="e.g. Prishtina" style="margin-bottom: 0;">
-                <button type="button" id="nearMeBtn" class="secondary-btn" style="width: 110px; margin-bottom: 0; font-size: 12px;">📍 Near Me</button>
-            </div>
-
-            <button type="button" id="searchPublicBtn" style="margin-top: 12px;">Search Public Events</button>
-        </div>
-        
-        <button class="secondary-btn" id="backToLanding" style="margin-top: 10px;">Log out</button>
     </div>
-
-    <div class="rooms-grid hidden" id="roomsGrid"></div>
-    <div class="rooms-grid hidden" id="discoverGrid"></div>
-
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
@@ -1009,7 +1035,7 @@
         const adminNameInput = document.getElementById('adminName');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
-        const adminWelcomeName = document.getElementById('adminWelcomeName');
+        const profileMenuName = document.getElementById('profileMenuName');
         
         const guestNameInput = document.getElementById('guestName');
         const guestRoomCode = document.getElementById('guestRoomCode');
@@ -1041,6 +1067,16 @@
         const discoverCityInput = document.getElementById('discoverCityInput');
         const searchPublicBtn = document.getElementById('searchPublicBtn');
         const nearMeBtn = document.getElementById('nearMeBtn');
+        const joinCodeInput = document.getElementById('joinCodeInput');
+        const joinCodeBtn = document.getElementById('joinCodeBtn');
+        const profileMenuBtn = document.getElementById('profileMenuBtn');
+        const profileMenuDropdown = document.getElementById('profileMenuDropdown');
+        const openCreateModalBtn = document.getElementById('openCreateModalBtn');
+        const closeCreateModalBtn = document.getElementById('closeCreateModalBtn');
+        const createEventModal = document.getElementById('createEventModal');
+        const modalBackdrop = document.getElementById('modalBackdrop');
+        const dashboardTitle = document.getElementById('dashboardTitle');
+        const myEventsPanel = document.getElementById('myEventsPanel');
 
         const backToLanding = document.getElementById('backToLanding');
         const displayRoomCode = document.getElementById('displayRoomCode');
@@ -1094,6 +1130,22 @@
             return `hsla(${hue}, 70%, 85%, 0.15)`;
         }
 
+        function showDashboard() {
+            profileMenuName.textContent = currentUser.name;
+            landingCard.classList.add('hidden');
+            roomsDashboard.classList.remove('hidden');
+            profileMenuDropdown.classList.add('hidden');
+
+            // Default View: Discover Events
+            tabDiscover.classList.add('active');
+            tabMyRooms.classList.remove('active');
+            dashboardTitle.textContent = 'Discover Events';
+            discoverPanel.classList.remove('hidden');
+            myEventsPanel.classList.add('hidden');
+            roomsGrid.classList.add('hidden');
+            fetchPublicRooms('', '');
+        }
+
         window.addEventListener('DOMContentLoaded', async () => {
             const { data: { session } } = await mySupabase.auth.getSession();
             if (session && session.user) {
@@ -1101,11 +1153,7 @@
                 currentUser.name = userMeta?.full_name || session.user.email.split('@')[0];
                 currentUser.isAdmin = true;
                 currentUser.isAuthenticated = true;
-                adminWelcomeName.textContent = currentUser.name;
-
-                landingCard.classList.add('hidden');
-                roomsDashboard.classList.remove('hidden');
-                fetchRoomsFromSupabase();
+                showDashboard();
             }
         });
 
@@ -1163,24 +1211,26 @@
             currentUser.name = userMeta?.full_name || email.split('@')[0];
             currentUser.isAdmin = true;
             currentUser.isAuthenticated = true;
-            adminWelcomeName.textContent = currentUser.name;
-
-            landingCard.classList.add('hidden');
-            roomsDashboard.classList.remove('hidden');
-            fetchRoomsFromSupabase();
+            showDashboard();
         });
 
+        // "My Events" = dhomat që i ke krijuar TI, ose dhomat ku je bërë join si anëtar
+        // (qofsh guest, qofsh i loguar). I bashkojmë të dyja pa u dubluar.
         async function fetchRoomsFromSupabase() {
-            const { data, error } = await mySupabase
-            .from('rooms')
-            .select('*')
-            .eq('admin', currentUser.name);
+            const [ownedRes, joinedRes] = await Promise.all([
+                mySupabase.from('rooms').select('*').eq('admin', currentUser.name),
+                mySupabase.from('rooms').select('*').contains('members', [currentUser.name])
+            ]);
 
-            if (error) {
-                console.error("Error fetching rooms:", error);
-                return;
-            }
-            renderRoomsGrid(data || []);
+            if (ownedRes.error) console.error("Error fetching owned rooms:", ownedRes.error);
+            if (joinedRes.error) console.error("Error fetching joined rooms:", joinedRes.error);
+
+            const owned = ownedRes.data || [];
+            const joined = joinedRes.data || [];
+            const merged = [...owned];
+            joined.forEach(r => { if (!merged.find(m => m.code === r.code)) merged.push(r); });
+
+            renderRoomsGrid(merged);
         }
 
         guestJoinBtn.addEventListener('click', async () => {
@@ -1266,14 +1316,16 @@
             visPublicBtn.classList.remove('active');
             publicCityContainer.classList.add('hidden');
             currentRoomCode = randomCode;
+            closeCreateModal();
             enterRoom(newRoomData);
         });
 
-        // --- Dashboard tabs: My Rooms vs Discover Public Events ---
+        // --- Dashboard tabs: Discover Events (default) vs My Events ---
         tabMyRooms.addEventListener('click', () => {
             tabMyRooms.classList.add('active');
             tabDiscover.classList.remove('active');
-            createRoomPanel.classList.remove('hidden');
+            dashboardTitle.textContent = 'My Events';
+            myEventsPanel.classList.remove('hidden');
             discoverPanel.classList.add('hidden');
             discoverGrid.classList.add('hidden');
             roomsGrid.classList.remove('hidden');
@@ -1282,11 +1334,63 @@
         tabDiscover.addEventListener('click', () => {
             tabDiscover.classList.add('active');
             tabMyRooms.classList.remove('active');
+            dashboardTitle.textContent = 'Discover Events';
             discoverPanel.classList.remove('hidden');
-            createRoomPanel.classList.add('hidden');
+            myEventsPanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             fetchPublicRooms('', '');
         });
+
+        // --- Join a room directly by code (works for logged-in users too, not just guests) ---
+        async function joinRoomByCode(code) {
+            if (!code) { alert("Please enter a room code."); return; }
+            const { data, error } = await mySupabase.from('rooms').select('*').eq('code', code.toUpperCase()).single();
+            if (error || !data) {
+                alert("Room not found. Please check the code and try again.");
+                return;
+            }
+            let members = data.members || [];
+            if (!members.includes(currentUser.name)) {
+                members.push(currentUser.name);
+                await mySupabase.from('rooms').update({ members }).eq('code', data.code);
+                data.members = members;
+            }
+            currentRoomCode = data.code;
+            enterRoom(data);
+        }
+        joinCodeBtn.addEventListener('click', () => {
+            joinRoomByCode(joinCodeInput.value.trim());
+            joinCodeInput.value = '';
+        });
+        joinCodeInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                joinRoomByCode(joinCodeInput.value.trim());
+                joinCodeInput.value = '';
+            }
+        });
+
+        // --- Profile menu (Log out lives here now, away from action buttons) ---
+        profileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileMenuDropdown.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!profileMenuDropdown.contains(e.target) && e.target !== profileMenuBtn) {
+                profileMenuDropdown.classList.add('hidden');
+            }
+        });
+
+        // --- Create Event modal ---
+        openCreateModalBtn.addEventListener('click', () => {
+            createEventModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        });
+        function closeCreateModal() {
+            createEventModal.classList.add('hidden');
+            modalBackdrop.classList.add('hidden');
+        }
+        closeCreateModalBtn.addEventListener('click', closeCreateModal);
+        modalBackdrop.addEventListener('click', closeCreateModal);
 
         async function fetchPublicRooms(category, city) {
             let query = mySupabase.from('rooms').select('*').eq('is_public', true);
@@ -1400,6 +1504,21 @@
             if (data) enterRoom(data);
         });
 
+        // Kthehu te Dashboard (respekton tab-in aktual: Discover ose My Events) nëse je i
+        // loguar (qoftë admin i dhomës apo thjesht pjesëmarrës i loguar), përndryshe landing.
+        function returnToDashboardOrLanding() {
+            if (currentUser.isAuthenticated) {
+                roomsDashboard.classList.remove('hidden');
+                if (tabMyRooms.classList.contains('active')) {
+                    fetchRoomsFromSupabase();
+                } else {
+                    fetchPublicRooms(discoverCategorySelect.value, discoverCityInput.value.trim());
+                }
+            } else {
+                landingCard.classList.remove('hidden');
+            }
+        }
+
         backToLanding.addEventListener('click', async () => {
             await mySupabase.auth.signOut();
             roomsDashboard.classList.add('hidden');
@@ -1411,12 +1530,7 @@
             roomCard.classList.add('hidden');
             if (timerInterval) clearInterval(timerInterval);
             if (roomChannel) { mySupabase.removeChannel(roomChannel); roomChannel = null; }
-            if (currentUser.isAdmin) {
-                roomsDashboard.classList.remove('hidden');
-                fetchRoomsFromSupabase();
-            } else {
-                landingCard.classList.remove('hidden');
-            }
+            returnToDashboardOrLanding();
         });
 
         leaveRoomBtn.addEventListener('click', async () => {
@@ -1507,15 +1621,7 @@
                     roomCard.classList.add('hidden');
                     if (timerInterval) clearInterval(timerInterval);
                     currentRoomCode = null;
-
-                    if (currentUser.isAdmin && document.getElementById('roomsDashboard')) {
-                        roomsDashboard.classList.remove('hidden');
-                        if (typeof fetchRoomsFromSupabase === 'function') fetchRoomsFromSupabase();
-                    } else if (document.getElementById('landingCard')) {
-                        landingCard.classList.remove('hidden');
-                    } else {
-                        location.reload();
-                    }
+                    returnToDashboardOrLanding();
                 }
             }
         });
@@ -1612,7 +1718,6 @@
         });
 
         async function sendChatMessage() {
-            if (!currentUser.isAuthenticated) return;
             const text = chatInput.value.trim();
             if (!text) return;
 
@@ -1708,35 +1813,21 @@
             });
         }
 
-        // Guests (joined via code+nickname, s'janë të loguar) mund vetëm të shikojnë.
-        // Çdo user i loguar me email mund të marrë pjesë (chat/vote/RSVP), qoftë admin
-        // i dhomës apo thjesht pjesëmarrës i një eventi publik. Vetëm menaxhimi i vetë
-        // dhomës (opsione, metodë, lokacion) mbetet i rezervuar për admin-in real.
+        // Çdokush që është brenda dhomës — guest apo user i loguar — mund të chattojë, të
+        // votojë dhe të bëjë RSVP. Vetëm menaxhimi i vetë dhomës (shto opsione, ndrysho
+        // metodën, ndrysho lokacionin) mbetet i rezervuar për admin-in real të dhomës.
+        // Email/llogari kërkohet vetëm për të KRIJUAR një dhomë.
         function applyPermissions() {
-            const canInteract = !!currentUser.isAuthenticated;
-            const viewOnlyBadge = document.getElementById('viewOnlyBadge');
-            viewOnlyBadge.textContent = 'Guest Mode: Log in to participate';
-            viewOnlyBadge.classList.toggle('hidden', canInteract);
+            document.getElementById('viewOnlyBadge').classList.add('hidden');
 
             const inputArea = document.getElementById('discordInputArea');
-            if (canInteract) {
-                inputArea.classList.remove('hidden');
-                let note = document.getElementById('chatViewOnlyNote');
-                if (note) note.remove();
-            } else {
-                inputArea.classList.add('hidden');
-                if (!document.getElementById('chatViewOnlyNote')) {
-                    const note = document.createElement('div');
-                    note.id = 'chatViewOnlyNote';
-                    note.className = 'view-only-note';
-                    note.textContent = '🔒 Log in to send messages';
-                    inputArea.insertAdjacentElement('afterend', note);
-                }
-            }
+            inputArea.classList.remove('hidden');
+            const note = document.getElementById('chatViewOnlyNote');
+            if (note) note.remove();
 
-            document.getElementById('pollOptionsContainer').classList.toggle('locked-interaction', !canInteract);
-            document.getElementById('inOutView').querySelector('div').classList.toggle('locked-interaction', !canInteract);
-            spinBtn.classList.toggle('locked-interaction', !canInteract);
+            document.getElementById('pollOptionsContainer').classList.remove('locked-interaction');
+            document.getElementById('inOutView').querySelector('div').classList.remove('locked-interaction');
+            spinBtn.classList.remove('locked-interaction');
         }
 
         async function enterRoom(room) {
@@ -1854,9 +1945,8 @@
                         roomCard.classList.add('hidden');
                         if (timerInterval) clearInterval(timerInterval);
                         currentRoomCode = null;
-                        if (currentUser.isAdmin && document.getElementById('roomsDashboard')) {
-                            roomsDashboard.classList.remove('hidden');
-                            fetchRoomsFromSupabase();
+                        if (document.getElementById('roomsDashboard')) {
+                            returnToDashboardOrLanding();
                         } else {
                             landingCard.classList.remove('hidden');
                         }
@@ -1984,7 +2074,6 @@
         // kolonën `rsvp` (jsonb) të tabelës `rooms`, e kyçur me emrin e anëtarit.
         [rsvpInBtn, rsvpMaybeBtn, rsvpOutBtn].forEach(btn => {
             btn.addEventListener('click', async () => {
-                if (!currentUser.isAuthenticated) return;
                 const status = btn.dataset.status;
                 const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
                 if (!data) return;
@@ -2107,7 +2196,6 @@
                 `;
 
                 card.addEventListener('click', async () => {
-                    if (!currentUser.isAuthenticated) return;
                     votes[currentUser.name] = opt;
                     await updateRoomInSupabase({ votes });
                     const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
@@ -2162,7 +2250,6 @@
         }
 
         spinBtn.addEventListener('click', async () => {
-            if (!currentUser.isAuthenticated) return;
             const { data } = await mySupabase.from('rooms').select('*').eq('code', currentRoomCode).single();
             const opts = data?.options || [];
             if (opts.length < 2) return;
