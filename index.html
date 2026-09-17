@@ -796,6 +796,22 @@
             text-overflow: ellipsis;
             white-space: nowrap;
         }
+        .info-toggle-btn {
+            font-size: 10px;
+            color: #6e7681;
+            cursor: pointer;
+            user-select: none;
+        }
+        .info-toggle-btn:hover {
+            color: #ff3366;
+        }
+        .friend-row-clickable {
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .friend-row-clickable:hover {
+            background: rgba(255,255,255,0.08);
+        }
         .friend-action-btn {
             margin-bottom: 0;
             width: auto;
@@ -908,6 +924,12 @@
             </div>
             <div style="display: flex; gap: 8px;">
                 <div style="position: relative;">
+                    <button type="button" id="openFriendsModalBtn" title="Friends" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; position: relative;">
+                        👥
+                        <span id="dmUnreadDot" class="hidden" style="position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: #ff3366; border-radius: 50%; border: 2px solid #161b22;"></span>
+                    </button>
+                </div>
+                <div style="position: relative;">
                     <button type="button" id="notifBellBtn" title="Notifications" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; position: relative;">
                         🔔
                         <span id="notifBadge" class="hidden" style="position: absolute; top: -3px; right: -3px; background: #ff3366; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 3px; border: 2px solid #161b22;">0</span>
@@ -921,7 +943,6 @@
                     <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">👤</button>
                     <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 170px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
                         <div style="font-size: 11px; color: #8b949e; padding: 2px 6px 8px;">Signed in as<br><b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px;">User</b></div>
-                        <button class="secondary-btn" id="openFriendsModalBtn" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">👥 Friends</button>
                         <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
                     </div>
                 </div>
@@ -1052,6 +1073,27 @@
             <button type="button" id="closeInviteFriendsModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
         <div id="inviteFriendsList"><p style="font-size: 12px; color: #8b949e; margin: 0;">You don't have any friends yet. Add some from the Friends menu first!</p></div>
+    </div>
+
+    <!-- Direct Message Modal (Instagram-style) -->
+    <div class="card hidden" id="dmModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 101; width: 90%; max-width: 380px; padding: 0; overflow: hidden;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid #30363d;">
+            <div style="display: flex; align-items: center; gap: 8px; min-width: 0; cursor: pointer;" id="dmHeaderInfo">
+                <span class="friend-avatar" id="dmFriendAvatar" style="width: 32px; height: 32px; font-size: 12px;"></span>
+                <div style="min-width: 0; text-align: left;">
+                    <div id="dmFriendName" style="font-size: 13.5px; font-weight: 700; color: #f0f6fc; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></div>
+                    <div id="dmFriendEmail" class="hidden" style="font-size: 10.5px; color: #8b949e;"></div>
+                </div>
+            </div>
+            <button type="button" id="closeDmModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; flex-shrink: 0;">✕</button>
+        </div>
+
+        <div class="discord-messages" id="dmMessages" style="height: clamp(220px, 42vh, 340px); background: #0b0f19;"></div>
+
+        <div class="discord-input-area">
+            <input type="text" id="dmInput" placeholder="Message...">
+            <button class="send-btn" id="dmSendBtn">Send</button>
+        </div>
     </div>
 
     <!-- 3. Active Room Card -->
@@ -1271,6 +1313,16 @@
         const inviteFriendsModal = document.getElementById('inviteFriendsModal');
         const closeInviteFriendsModalBtn = document.getElementById('closeInviteFriendsModalBtn');
         const inviteFriendsList = document.getElementById('inviteFriendsList');
+        const dmModal = document.getElementById('dmModal');
+        const dmFriendAvatar = document.getElementById('dmFriendAvatar');
+        const dmFriendName = document.getElementById('dmFriendName');
+        const dmFriendEmail = document.getElementById('dmFriendEmail');
+        const dmHeaderInfo = document.getElementById('dmHeaderInfo');
+        const closeDmModalBtn = document.getElementById('closeDmModalBtn');
+        const dmMessages = document.getElementById('dmMessages');
+        const dmInput = document.getElementById('dmInput');
+        const dmSendBtn = document.getElementById('dmSendBtn');
+        const dmUnreadDot = document.getElementById('dmUnreadDot');
         const createEventModal = document.getElementById('createEventModal');
         const modalBackdrop = document.getElementById('modalBackdrop');
         const dashboardTitle = document.getElementById('dashboardTitle');
@@ -1357,6 +1409,7 @@
                 await upsertProfile();
                 showDashboard();
                 subscribeToNotifications();
+                subscribeToDmInbox();
             }
         });
 
@@ -1419,25 +1472,55 @@
             await upsertProfile();
             showDashboard();
             subscribeToNotifications();
+                subscribeToDmInbox();
         });
 
         // "My Events" = dhomat që i ke krijuar TI, ose dhomat ku je bërë join si anëtar
         // (qofsh guest, qofsh i loguar). I bashkojmë të dyja pa u dubluar.
+        // "My Events" bazohet tani te tabela e dedikuar `room_members`, jo te kërkimi
+        // "contains" mbi array-in `members` (i cili mund të dështojë në heshtje varësisht
+        // nga tipi i kolonës). Kjo garanton që dhomat e bashkuara TË MOS humbasin kurrë.
         async function fetchRoomsFromSupabase() {
-            const [ownedRes, joinedRes] = await Promise.all([
-                mySupabase.from('rooms').select('*').eq('admin', currentUser.name),
-                mySupabase.from('rooms').select('*').contains('members', [currentUser.name])
-            ]);
+            if (!currentUser.id) { renderRoomsGrid([]); return; }
 
-            if (ownedRes.error) console.error("Error fetching owned rooms:", ownedRes.error);
-            if (joinedRes.error) console.error("Error fetching joined rooms:", joinedRes.error);
+            const { data: memberRows, error: memberError } = await mySupabase
+                .from('room_members')
+                .select('room_code')
+                .eq('user_id', currentUser.id);
 
-            const owned = ownedRes.data || [];
-            const joined = joinedRes.data || [];
-            const merged = [...owned];
-            joined.forEach(r => { if (!merged.find(m => m.code === r.code)) merged.push(r); });
+            if (memberError) {
+                console.error("Error fetching room_members:", memberError);
+                renderRoomsGrid([]);
+                return;
+            }
 
-            renderRoomsGrid(merged);
+            const codes = (memberRows || []).map(r => r.room_code);
+            if (codes.length === 0) { renderRoomsGrid([]); return; }
+
+            const { data: rooms, error } = await mySupabase.from('rooms').select('*').in('code', codes);
+            if (error) {
+                console.error("Error fetching rooms by code:", error);
+                return;
+            }
+            renderRoomsGrid(rooms || []);
+        }
+
+        // Regjistron/heq anëtarësinë e vërtetë (të qëndrueshme) të një useri të loguar
+        // në një dhomë specifike, e pavarur nga array-i `members` i vet dhomës.
+        async function trackRoomMembership(roomCode) {
+            if (!currentUser.id) return;
+            const { error } = await mySupabase.from('room_members').upsert({
+                room_code: roomCode,
+                user_id: currentUser.id,
+                user_name: currentUser.name
+            }, { onConflict: 'room_code,user_id' });
+            if (error) console.error("Could not track room membership:", error);
+        }
+        async function untrackRoomMembership(roomCode) {
+            if (!currentUser.id) return;
+            const { error } = await mySupabase.from('room_members')
+                .delete().eq('room_code', roomCode).eq('user_id', currentUser.id);
+            if (error) console.error("Could not untrack room membership:", error);
         }
 
         guestJoinBtn.addEventListener('click', async () => {
@@ -1528,6 +1611,7 @@
             visPublicBtn.classList.remove('active');
             publicCityContainer.classList.add('hidden');
             currentRoomCode = randomCode;
+            await trackRoomMembership(randomCode);
             closeCreateModal();
             enterRoom(newRoomData);
         });
@@ -1567,6 +1651,7 @@
                 await mySupabase.from('rooms').update({ members }).eq('code', data.code);
                 data.members = members;
             }
+            await trackRoomMembership(data.code);
             currentRoomCode = data.code;
             enterRoom(data);
         }
@@ -1597,6 +1682,7 @@
             createEventModal.classList.add('hidden');
             friendsModal.classList.add('hidden');
             inviteFriendsModal.classList.add('hidden');
+            dmModal.classList.add('hidden');
             modalBackdrop.classList.add('hidden');
         }
         function closeCreateModal() { closeAllModals(); }
@@ -1611,6 +1697,7 @@
 
         openFriendsModalBtn.addEventListener('click', async () => {
             profileMenuDropdown.classList.add('hidden');
+            notifDropdown.classList.add('hidden');
             closeAllModals();
             friendsModal.classList.remove('hidden');
             modalBackdrop.classList.remove('hidden');
@@ -1675,8 +1762,8 @@
                     <div class="friend-row-left">
                         ${getFriendAvatarHtml(data.name)}
                         <div style="min-width:0;">
-                            <div class="friend-name">${escapeHtml(data.name)}</div>
-                            <div class="friend-email">${escapeHtml(data.email)}</div>
+                            <div class="friend-name">${escapeHtml(data.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, 'email-search-result')">ⓘ</span></div>
+                            <div class="friend-email hidden" id="email-search-result">${escapeHtml(data.email)}</div>
                         </div>
                     </div>
                     <button class="friend-action-btn" id="sendFriendReqBtn">Add</button>
@@ -1709,6 +1796,14 @@
             await loadFriendsData();
         }
 
+        // Emaili shfaqet vetëm kur klikohet ikona ⓘ (informacion shtesë) — kudo tjetër
+        // shfaqet gjithmonë Nickname (name).
+        window.toggleEmailInfo = function(event, emailSpanId) {
+            event.stopPropagation();
+            const el = document.getElementById(emailSpanId);
+            if (el) el.classList.toggle('hidden');
+        };
+
         async function loadFriendsData() {
             if (!currentUser.id) return;
 
@@ -1725,13 +1820,14 @@
             } else {
                 pendingRequestsList.innerHTML = pending.map(req => {
                     const p = pendingProfiles[req.requester_id] || { name: 'Unknown', email: '' };
+                    const emailId = `email-pending-${req.id}`;
                     return `
                         <div class="friend-row">
                             <div class="friend-row-left">
                                 ${getFriendAvatarHtml(p.name)}
                                 <div style="min-width:0;">
-                                    <div class="friend-name">${escapeHtml(p.name)}</div>
-                                    <div class="friend-email">${escapeHtml(p.email)}</div>
+                                    <div class="friend-name">${escapeHtml(p.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, '${emailId}')">ⓘ</span></div>
+                                    <div class="friend-email hidden" id="${emailId}">${escapeHtml(p.email)}</div>
                                 </div>
                             </div>
                             <div style="display:flex; gap:4px;">
@@ -1763,18 +1859,146 @@
             if (friends.length === 0) {
                 friendsList.innerHTML = `<p style="font-size:12px; color:#8b949e; margin:0;">No friends yet — search above to add some!</p>`;
             } else {
-                friendsList.innerHTML = friends.map(f => `
-                    <div class="friend-row">
-                        <div class="friend-row-left">
-                            ${getFriendAvatarHtml(f.name)}
-                            <div style="min-width:0;">
-                                <div class="friend-name">${escapeHtml(f.name)}</div>
-                                <div class="friend-email">${escapeHtml(f.email)}</div>
+                friendsList.innerHTML = friends.map(f => {
+                    const emailId = `email-friend-${f.id}`;
+                    return `
+                        <div class="friend-row friend-row-clickable" data-open-dm="${f.id}" data-dm-name="${escapeHtml(f.name)}" data-dm-email="${escapeHtml(f.email)}">
+                            <div class="friend-row-left">
+                                ${getFriendAvatarHtml(f.name)}
+                                <div style="min-width:0;">
+                                    <div class="friend-name">${escapeHtml(f.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, '${emailId}')">ⓘ</span></div>
+                                    <div class="friend-email hidden" id="${emailId}">${escapeHtml(f.email)}</div>
+                                </div>
                             </div>
+                            <span style="font-size: 16px; color: #8b949e;">💬</span>
+                        </div>
+                    `;
+                }).join('');
+
+                friendsList.querySelectorAll('[data-open-dm]').forEach(row => {
+                    row.addEventListener('click', () => {
+                        openDmWith(row.dataset.openDm, row.dataset.dmName, row.dataset.dmEmail);
+                    });
+                });
+            }
+        }
+
+        // --- Direct Messages (stil Instagram: flluska, avatarë rrethorë, live) ---
+        let activeDmFriendId = null;
+        let activeDmFriendName = null;
+        let dmChannel = null;
+
+        async function openDmWith(friendId, friendName, friendEmail) {
+            activeDmFriendId = friendId;
+            activeDmFriendName = friendName;
+            dmFriendAvatar.style.background = getAvatarColor(friendName);
+            dmFriendAvatar.textContent = getInitials(friendName);
+            dmFriendName.textContent = friendName;
+            dmFriendEmail.textContent = friendEmail || '';
+            dmFriendEmail.classList.add('hidden');
+
+            closeAllModals();
+            dmModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+            await loadDmMessages();
+        }
+
+        dmHeaderInfo.addEventListener('click', () => {
+            dmFriendEmail.classList.toggle('hidden');
+        });
+
+        async function loadDmMessages() {
+            if (!activeDmFriendId) return;
+            const { data } = await mySupabase
+                .from('direct_messages')
+                .select('*')
+                .or(`and(sender_id.eq.${currentUser.id},recipient_id.eq.${activeDmFriendId}),and(sender_id.eq.${activeDmFriendId},recipient_id.eq.${currentUser.id})`)
+                .order('created_at', { ascending: true });
+
+            renderDmMessages(data || []);
+
+            await mySupabase.from('direct_messages').update({ is_read: true })
+                .eq('sender_id', activeDmFriendId).eq('recipient_id', currentUser.id).eq('is_read', false);
+            updateDmUnreadDot();
+        }
+
+        function renderDmMessages(messages) {
+            if (messages.length === 0) {
+                dmMessages.innerHTML = `<div style="color:#8b949e; font-style: italic; font-size:12px; text-align:center; padding: 20px;">Say hi to ${escapeHtml(activeDmFriendName)}! 👋</div>`;
+                return;
+            }
+            dmMessages.innerHTML = messages.map(m => {
+                const isSelf = m.sender_id === currentUser.id;
+                const name = isSelf ? currentUser.name : activeDmFriendName;
+                return `
+                    <div class="discord-msg-row ${isSelf ? 'self' : ''}">
+                        <span class="msg-avatar" style="background:${getAvatarColor(name)}">${getInitials(name)}</span>
+                        <div class="discord-msg">
+                            <div class="discord-text">${escapeHtml(m.text)}</div>
                         </div>
                     </div>
-                `).join('');
+                `;
+            }).join('');
+            dmMessages.scrollTop = dmMessages.scrollHeight;
+        }
+
+        async function sendDmMessage() {
+            const text = dmInput.value.trim();
+            if (!text || !activeDmFriendId) return;
+            dmInput.value = '';
+
+            const { error } = await mySupabase.from('direct_messages').insert({
+                sender_id: currentUser.id,
+                recipient_id: activeDmFriendId,
+                text: text
+            });
+            if (error) {
+                alert("Could not send message: " + error.message);
+                return;
             }
+            await loadDmMessages();
+        }
+        dmSendBtn.addEventListener('click', sendDmMessage);
+        dmInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendDmMessage(); });
+        closeDmModalBtn.addEventListener('click', closeAllModals);
+
+        // Dëgjon vetëm mesazhet e ADRESUARA për mua (recipient_id = unë) — efikase dhe
+        // e mjaftueshme, sepse mesazhet e mia dërguara i shfaq lokalisht menjëherë.
+        let dmInboxChannel = null;
+        function subscribeToDmInbox() {
+            if (!currentUser.id) return;
+            if (dmInboxChannel) mySupabase.removeChannel(dmInboxChannel);
+
+            updateDmUnreadDot();
+
+            dmInboxChannel = mySupabase
+                .channel(`dm-inbox-${currentUser.id}`)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'direct_messages',
+                    filter: `recipient_id=eq.${currentUser.id}`
+                }, (payload) => {
+                    const m = payload.new;
+                    const dmIsOpen = !dmModal.classList.contains('hidden');
+                    if (dmIsOpen && m.sender_id === activeDmFriendId) {
+                        loadDmMessages();
+                    } else {
+                        dmUnreadDot.classList.remove('hidden');
+                    }
+                    playPingSound();
+                })
+                .subscribe();
+        }
+
+        async function updateDmUnreadDot() {
+            if (!currentUser.id) return;
+            const { count } = await mySupabase
+                .from('direct_messages')
+                .select('*', { count: 'exact', head: true })
+                .eq('recipient_id', currentUser.id)
+                .eq('is_read', false);
+            dmUnreadDot.classList.toggle('hidden', !count);
         }
 
         // --- Ftesë e drejtpërdrejtë në dhomë ---
@@ -1977,6 +2201,7 @@
                         await mySupabase.from('rooms').update({ members }).eq('code', room.code);
                         room.members = members;
                     }
+                    await trackRoomMembership(room.code);
                     enterRoom(room);
                 });
 
@@ -2153,6 +2378,7 @@
                 // Kështu shmangim "false success" - useri të mendojë se u largua ndërkohë që në DB ende figuron.
                 if (leftSuccessfully) {
                     if (roomChannel) { mySupabase.removeChannel(roomChannel); roomChannel = null; }
+                    await untrackRoomMembership(roomCodeToLeave);
                     roomCard.classList.add('hidden');
                     if (timerInterval) clearInterval(timerInterval);
                     currentRoomCode = null;
