@@ -984,9 +984,16 @@
                     </div>
                 </div>
                 <div style="position: relative;">
-                    <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">👤</button>
-                    <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 170px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
-                        <div style="font-size: 11px; color: #8b949e; padding: 2px 6px 8px;">Signed in as<br><b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px;">User</b></div>
+                    <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; overflow: hidden;">👤</button>
+                    <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 190px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 2px 4px 10px;">
+                            <button type="button" id="profileAvatarBtn" title="Change photo" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; margin: 0; box-shadow: none; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></button>
+                            <div style="min-width: 0;">
+                                <div style="font-size: 10px; color: #8b949e;">Signed in as</div>
+                                <b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">User</b>
+                            </div>
+                        </div>
+                        <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
                         <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
                     </div>
                 </div>
@@ -1058,6 +1065,10 @@
         </div>
 
         <div id="createRoomPanel">
+            <label for="eventCoverInput">Event Cover Photo <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
+            <input type="file" id="eventCoverInput" accept="image/*">
+            <div id="eventCoverPreview" class="hidden" style="margin: -6px 0 14px; border-radius: 12px; overflow: hidden; height: 100px;"></div>
+
             <label for="eventCategory">Event Category</label>
             <select id="eventCategory">
                 <option value="Ushqim">🍔 Food / Restaurants</option>
@@ -1164,6 +1175,15 @@
         <div id="pickRoomList"></div>
     </div>
 
+    <!-- Waiting for host approval -->
+    <div class="card hidden" id="pendingApprovalCard" style="text-align: center;">
+        <div id="pendingApprovalIcon" style="font-size: 40px; margin-bottom: 10px;">⏳</div>
+        <h2 id="pendingApprovalTitle" style="font-size: 17px; margin-bottom: 6px;">Waiting for approval...</h2>
+        <p id="pendingApprovalRoomName" style="font-size: 13px; color: #8b949e; margin-bottom: 20px;"></p>
+        <p id="pendingApprovalMessage" style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">The host needs to approve your request before you can join this event.</p>
+        <button class="secondary-btn" id="cancelJoinRequestBtn">Cancel Request</button>
+    </div>
+
     <!-- 3. Active Room Card -->
     <div class="card hidden" id="roomCard">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
@@ -1176,6 +1196,7 @@
             </div>
             <div style="width: 32px; flex-shrink: 0;"></div>
         </div>
+        <div id="roomCoverBanner" class="hidden" style="height: 130px; border-radius: 16px; overflow: hidden; margin-bottom: 10px; background-size: cover; background-position: center;"></div>
         <h2 id="roomTitle" style="margin-bottom: 6px; font-size: 19px;">Room Name</h2>
 
         <div class="room-code-badge" style="font-size: 11px; padding: 6px 10px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
@@ -1190,6 +1211,12 @@
         <button type="button" class="secondary-btn hidden" id="inviteFriendsBtn" style="margin-top: 8px; font-size: 12px; padding: 8px;">👥 Invite Friends</button>
         <div style="text-align: center;">
             <span class="view-only-badge hidden" id="viewOnlyBadge">👁 View Only — only the admin can chat / vote / RSVP</span>
+        </div>
+
+        <!-- Pending Join Requests (visible only to the room's real admin) -->
+        <div id="pendingRequestsPanel" class="hidden" style="margin-top: 12px; text-align: left;">
+            <h4 style="font-size: 11.5px; color: #d29922; margin-bottom: 8px;">🔔 Join Requests</h4>
+            <div id="roomPendingRequestsList"></div>
         </div>
 
         <!-- Discord Style Chat Box with Popup Emoji Panel -->
@@ -1400,6 +1427,19 @@
         const peopleMapContainer = document.getElementById('peopleMapContainer');
         const pickRoomModal = document.getElementById('pickRoomModal');
         const closePickRoomModalBtn = document.getElementById('closePickRoomModalBtn');
+        const profileAvatarBtn = document.getElementById('profileAvatarBtn');
+        const avatarFileInput = document.getElementById('avatarFileInput');
+        const eventCoverInput = document.getElementById('eventCoverInput');
+        const eventCoverPreview = document.getElementById('eventCoverPreview');
+        const roomCoverBanner = document.getElementById('roomCoverBanner');
+        const pendingRequestsPanel = document.getElementById('pendingRequestsPanel');
+        const roomPendingRequestsList = document.getElementById('roomPendingRequestsList');
+        const pendingApprovalCard = document.getElementById('pendingApprovalCard');
+        const pendingApprovalIcon = document.getElementById('pendingApprovalIcon');
+        const pendingApprovalTitle = document.getElementById('pendingApprovalTitle');
+        const pendingApprovalRoomName = document.getElementById('pendingApprovalRoomName');
+        const pendingApprovalMessage = document.getElementById('pendingApprovalMessage');
+        const cancelJoinRequestBtn = document.getElementById('cancelJoinRequestBtn');
         const pickRoomList = document.getElementById('pickRoomList');
         const createEventModal = document.getElementById('createEventModal');
         const modalBackdrop = document.getElementById('modalBackdrop');
@@ -1430,7 +1470,9 @@
 
         let isSignUp = false;
         let currentRoomCode = '';
-        let currentUser = { name: '', isAdmin: false, isAuthenticated: false, id: null, email: null };
+        let currentUser = { name: '', isAdmin: false, isAuthenticated: false, id: null, email: null, avatarUrl: null };
+        let selectedCoverFile = null;
+        let roomProfileCache = {};
         let roomChannel = null; // Supabase Realtime channel aktiv për dhomën e hapur
         let timerInterval = null;
         let currentRoomCapacity = null;
@@ -1619,15 +1661,8 @@
             currentUser.name = nickname;
             currentUser.isAdmin = false;
             currentUser.isAuthenticated = false;
-            currentRoomCode = code;
 
-            let members = data.members || [];
-            if (!members.includes(nickname)) {
-                members.push(nickname);
-                await mySupabase.from('rooms').update({ members }).eq('code', code);
-            }
-
-            enterRoom(data);
+            await requestToJoinRoom(data);
         });
 
         visPrivateBtn.addEventListener('click', () => {
@@ -1658,7 +1693,39 @@
             if (isPublic && !city) { alert("Please add a city so people can find this public event!"); return; }
             if (capacityRaw && (isNaN(capacity) || capacity < 1)) { alert("Max Capacity must be a positive number."); return; }
 
+            // Rate limiting: max 4 rooms per user per 24h, to prevent spam.
+            const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+            const { count, error: countErr } = await mySupabase
+                .from('rooms')
+                .select('*', { count: 'exact', head: true })
+                .eq('admin', currentUser.name)
+                .gte('created_at', since);
+
+            if (!countErr && count >= 4) {
+                alert("Keni arritur limitin e krijimit të dhomave për 24 orët e fundit.");
+                return;
+            }
+
+            createRoomBtn.disabled = true;
+            createRoomBtn.textContent = "Creating...";
+
             const randomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+            // Cover photo upload (optional) — ndodh PARA insert-it te 'rooms', që URL-ja
+            // e fotos të jetë gati për ta ruajtur direkt në rekordin e ri.
+            let coverUrl = null;
+            if (selectedCoverFile) {
+                const ext = (selectedCoverFile.name.split('.').pop() || 'jpg').toLowerCase();
+                const path = `${randomCode}.${ext}`;
+                const { error: coverErr } = await mySupabase.storage.from('event-covers').upload(path, selectedCoverFile, { upsert: true });
+                if (coverErr) {
+                    console.error('Cover upload failed:', coverErr);
+                } else {
+                    const { data: urlData } = mySupabase.storage.from('event-covers').getPublicUrl(path);
+                    coverUrl = urlData.publicUrl;
+                }
+            }
+
             const newRoomData = {
                 code: randomCode,
                 name: roomName,
@@ -1667,9 +1734,11 @@
                 event_time: eventTime,
                 capacity: capacity,
                 location: location,
+                cover_url: coverUrl,
                 is_public: isPublic,
                 city: isPublic ? city : null,
                 admin: currentUser.name,
+                admin_id: currentUser.id || null,
                 options: [],
                 votes: {},
                 members: [currentUser.name + " (Creator)"],
@@ -1677,6 +1746,9 @@
             };
 
             const { error } = await mySupabase.from('rooms').insert([newRoomData]);
+            createRoomBtn.disabled = false;
+            createRoomBtn.textContent = "Create Room";
+
             if (error) {
                 alert("Error creating room: " + error.message);
                 return;
@@ -1686,6 +1758,10 @@
             eventCapacityInput.value = '';
             eventLocationInput.value = '';
             newRoomCityInput.value = '';
+            eventCoverInput.value = '';
+            eventCoverPreview.classList.add('hidden');
+            eventCoverPreview.style.backgroundImage = '';
+            selectedCoverFile = null;
             selectedVisibility = 'private';
             visPrivateBtn.classList.add('active');
             visPublicBtn.classList.remove('active');
@@ -1694,6 +1770,19 @@
             await trackRoomMembership(randomCode);
             closeCreateModal();
             enterRoom(newRoomData);
+        });
+
+        eventCoverInput.addEventListener('change', () => {
+            const file = eventCoverInput.files[0];
+            selectedCoverFile = file || null;
+            if (file) {
+                eventCoverPreview.style.backgroundImage = `url(${URL.createObjectURL(file)})`;
+                eventCoverPreview.style.backgroundSize = 'cover';
+                eventCoverPreview.style.backgroundPosition = 'center';
+                eventCoverPreview.classList.remove('hidden');
+            } else {
+                eventCoverPreview.classList.add('hidden');
+            }
         });
 
         // --- Dashboard tabs: Discover Events (default) vs My Events vs People ---
@@ -1741,15 +1830,7 @@
                 alert("Room not found. Please check the code and try again.");
                 return;
             }
-            let members = data.members || [];
-            if (!members.includes(currentUser.name)) {
-                members.push(currentUser.name);
-                await mySupabase.from('rooms').update({ members }).eq('code', data.code);
-                data.members = members;
-            }
-            await trackRoomMembership(data.code);
-            currentRoomCode = data.code;
-            enterRoom(data);
+            await requestToJoinRoom(data);
         }
         joinCodeBtn.addEventListener('click', () => {
             joinRoomByCode(joinCodeInput.value.trim());
@@ -1761,6 +1842,98 @@
                 joinCodeInput.value = '';
             }
         });
+
+        // ==================== JOIN APPROVAL SYSTEM ====================
+        // Çdo hyrje (guest, join-by-code, Discover) kalon nga këtu. Nëse je tashmë
+        // anëtar i miratuar (ose je krijuesi), hyn direkt. Përndryshe krijohet një
+        // kërkesë "pending" dhe shfaqet ekrani i pritjes deri sa admini të vendosë.
+        async function requestToJoinRoom(room) {
+            const members = room.members || [];
+            if (room.admin === currentUser.name || members.includes(currentUser.name)) {
+                currentRoomCode = room.code;
+                await trackRoomMembership(room.code);
+                enterRoom(room);
+                return;
+            }
+
+            const { error } = await mySupabase.from('join_requests').upsert({
+                room_code: room.code,
+                user_id: currentUser.id || null,
+                user_name: currentUser.name,
+                status: 'pending'
+            }, { onConflict: 'room_code,user_name' });
+
+            if (error) {
+                alert("Could not send join request: " + error.message);
+                return;
+            }
+
+            showPendingApprovalScreen(room);
+        }
+
+        let pendingApprovalRoomCode = null;
+        let pendingApprovalChannel = null;
+
+        function showPendingApprovalScreen(room) {
+            pendingApprovalRoomCode = room.code;
+            landingCard.classList.add('hidden');
+            roomsDashboard.classList.add('hidden');
+            roomsGrid.classList.add('hidden');
+            discoverGrid.classList.add('hidden');
+            roomCard.classList.add('hidden');
+
+            pendingApprovalIcon.textContent = '⏳';
+            pendingApprovalTitle.textContent = 'Waiting for approval...';
+            pendingApprovalMessage.textContent = 'The host needs to approve your request before you can join this event.';
+            pendingApprovalRoomName.textContent = room.name;
+            cancelJoinRequestBtn.textContent = 'Cancel Request';
+            pendingApprovalCard.classList.remove('hidden');
+
+            subscribeToJoinRequestStatus(room.code);
+        }
+
+        function subscribeToJoinRequestStatus(roomCode) {
+            if (pendingApprovalChannel) { mySupabase.removeChannel(pendingApprovalChannel); pendingApprovalChannel = null; }
+
+            pendingApprovalChannel = mySupabase
+                .channel(`join-request-${roomCode}-${currentUser.name}`)
+                .on('postgres_changes', {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'join_requests',
+                    filter: `room_code=eq.${roomCode}`
+                }, async (payload) => {
+                    const row = payload.new;
+                    if (row.user_name !== currentUser.name) return;
+
+                    if (row.status === 'approved') {
+                        if (pendingApprovalChannel) { mySupabase.removeChannel(pendingApprovalChannel); pendingApprovalChannel = null; }
+                        const { data: freshRoom } = await mySupabase.from('rooms').select('*').eq('code', roomCode).single();
+                        if (freshRoom) {
+                            currentRoomCode = roomCode;
+                            await trackRoomMembership(roomCode);
+                            pendingApprovalCard.classList.add('hidden');
+                            enterRoom(freshRoom);
+                        }
+                    } else if (row.status === 'rejected') {
+                        pendingApprovalIcon.textContent = '🚫';
+                        pendingApprovalTitle.textContent = 'Request declined';
+                        pendingApprovalMessage.textContent = 'The host did not approve your request to join this event.';
+                        cancelJoinRequestBtn.textContent = 'Back';
+                    }
+                })
+                .subscribe();
+        }
+
+        cancelJoinRequestBtn.addEventListener('click', async () => {
+            if (pendingApprovalChannel) { mySupabase.removeChannel(pendingApprovalChannel); pendingApprovalChannel = null; }
+            if (pendingApprovalRoomCode) {
+                await mySupabase.from('join_requests').delete().eq('room_code', pendingApprovalRoomCode).eq('user_name', currentUser.name);
+            }
+            pendingApprovalCard.classList.add('hidden');
+            returnToDashboardOrLanding();
+        });
+        // ==================== END JOIN APPROVAL SYSTEM ====================
 
         // --- Profile menu (Log out lives here now, away from action buttons) ---
         profileMenuBtn.addEventListener('click', (e) => {
@@ -1822,10 +1995,54 @@
                 name: currentUser.name
             });
             if (error) console.error('Profile upsert failed:', error);
+
+            const { data } = await mySupabase.from('profiles').select('avatar_url').eq('id', currentUser.id).maybeSingle();
+            currentUser.avatarUrl = data?.avatar_url || null;
+            renderProfileButtonAvatar();
         }
 
-        function getFriendAvatarHtml(name) {
-            return `<span class="friend-avatar" style="background:${getAvatarColor(name || '?')}">${getInitials(name || '?')}</span>`;
+        function renderProfileButtonAvatar() {
+            const html = currentUser.avatarUrl
+                ? `<img src="${currentUser.avatarUrl}" style="width:100%; height:100%; object-fit:cover;">`
+                : getInitials(currentUser.name || '?');
+            profileMenuBtn.innerHTML = currentUser.avatarUrl ? html : '👤';
+            profileAvatarBtn.innerHTML = currentUser.avatarUrl
+                ? html
+                : `<span style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${getAvatarColor(currentUser.name || '?')}; color:#fff; font-weight:700; font-size:14px;">${getInitials(currentUser.name || '?')}</span>`;
+        }
+
+        profileAvatarBtn.addEventListener('click', () => avatarFileInput.click());
+        avatarFileInput.addEventListener('change', async () => {
+            const file = avatarFileInput.files[0];
+            if (!file || !currentUser.id) return;
+            if (file.size > 5 * 1024 * 1024) { alert('Image too large — please choose one under 5MB.'); return; }
+
+            const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+            const path = `${currentUser.id}.${ext}`;
+
+            const { error: upErr } = await mySupabase.storage.from('avatars').upload(path, file, { upsert: true });
+            if (upErr) { alert('Could not upload photo: ' + upErr.message); return; }
+
+            const { data: urlData } = mySupabase.storage.from('avatars').getPublicUrl(path);
+            const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+            await mySupabase.from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id);
+            currentUser.avatarUrl = avatarUrl;
+            renderProfileButtonAvatar();
+        });
+
+        // Kthen HTML për një avatar rrethor: foto reale nëse ekziston `avatarUrl`,
+        // përndryshe rrethi me ngjyrë+inicialet (siç ishte deri tani). `sizeClass`
+        // duhet të jetë një nga klasat ekzistuese (friend-avatar, msg-avatar, etj.)
+        function avatarHtml(name, avatarUrl, sizeClass) {
+            if (avatarUrl) {
+                return `<span class="${sizeClass}" style="padding:0; overflow:hidden; background:#30363d;"><img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; display:block;"></span>`;
+            }
+            return `<span class="${sizeClass}" style="background:${getAvatarColor(name || '?')}">${getInitials(name || '?')}</span>`;
+        }
+
+        function getFriendAvatarHtml(name, avatarUrl) {
+            return avatarHtml(name, avatarUrl, 'friend-avatar');
         }
 
         // Merr profile të plota për një listë ID-sh (shmang embedded-relation selects
@@ -1857,7 +2074,7 @@
             friendSearchResult.innerHTML = `
                 <div class="friend-row">
                     <div class="friend-row-left">
-                        ${getFriendAvatarHtml(data.name)}
+                        ${getFriendAvatarHtml(data.name, data.avatar_url)}
                         <div style="min-width:0;">
                             <div class="friend-name">${escapeHtml(data.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, 'email-search-result')">ⓘ</span></div>
                             <div class="friend-email hidden" id="email-search-result">${escapeHtml(data.email)}</div>
@@ -1921,7 +2138,7 @@
                     return `
                         <div class="friend-row">
                             <div class="friend-row-left">
-                                ${getFriendAvatarHtml(p.name)}
+                                ${getFriendAvatarHtml(p.name, p.avatar_url)}
                                 <div style="min-width:0;">
                                     <div class="friend-name">${escapeHtml(p.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, '${emailId}')">ⓘ</span></div>
                                     <div class="friend-email hidden" id="${emailId}">${escapeHtml(p.email)}</div>
@@ -1959,9 +2176,9 @@
                 friendsList.innerHTML = friends.map(f => {
                     const emailId = `email-friend-${f.id}`;
                     return `
-                        <div class="friend-row friend-row-clickable" data-open-dm="${f.id}" data-dm-name="${escapeHtml(f.name)}" data-dm-email="${escapeHtml(f.email)}">
+                        <div class="friend-row friend-row-clickable" data-open-dm="${f.id}" data-dm-name="${escapeHtml(f.name)}" data-dm-email="${escapeHtml(f.email)}" data-dm-avatar="${escapeHtml(f.avatar_url || '')}">
                             <div class="friend-row-left">
-                                ${getFriendAvatarHtml(f.name)}
+                                ${getFriendAvatarHtml(f.name, f.avatar_url)}
                                 <div style="min-width:0;">
                                     <div class="friend-name">${escapeHtml(f.name)} <span class="info-toggle-btn" onclick="toggleEmailInfo(event, '${emailId}')">ⓘ</span></div>
                                     <div class="friend-email hidden" id="${emailId}">${escapeHtml(f.email)}</div>
@@ -1974,7 +2191,7 @@
 
                 friendsList.querySelectorAll('[data-open-dm]').forEach(row => {
                     row.addEventListener('click', () => {
-                        openDmWith(row.dataset.openDm, row.dataset.dmName, row.dataset.dmEmail);
+                        openDmWith(row.dataset.openDm, row.dataset.dmName, row.dataset.dmEmail, row.dataset.dmAvatar);
                     });
                 });
             }
@@ -1983,13 +2200,17 @@
         // --- Direct Messages (stil Instagram: flluska, avatarë rrethorë, live) ---
         let activeDmFriendId = null;
         let activeDmFriendName = null;
+        let activeDmFriendAvatar = null;
         let dmChannel = null;
 
-        async function openDmWith(friendId, friendName, friendEmail) {
+        async function openDmWith(friendId, friendName, friendEmail, friendAvatarUrl) {
             activeDmFriendId = friendId;
             activeDmFriendName = friendName;
-            dmFriendAvatar.style.background = getAvatarColor(friendName);
-            dmFriendAvatar.textContent = getInitials(friendName);
+            activeDmFriendAvatar = friendAvatarUrl || null;
+            dmFriendAvatar.innerHTML = activeDmFriendAvatar
+                ? `<img src="${activeDmFriendAvatar}" style="width:100%; height:100%; object-fit:cover;">`
+                : getInitials(friendName);
+            dmFriendAvatar.style.background = activeDmFriendAvatar ? 'transparent' : getAvatarColor(friendName);
             dmFriendName.textContent = friendName;
             dmFriendEmail.textContent = friendEmail || '';
             dmFriendEmail.classList.add('hidden');
@@ -2027,9 +2248,10 @@
             dmMessages.innerHTML = messages.map(m => {
                 const isSelf = m.sender_id === currentUser.id;
                 const name = isSelf ? currentUser.name : activeDmFriendName;
+                const avUrl = isSelf ? currentUser.avatarUrl : activeDmFriendAvatar;
                 return `
                     <div class="discord-msg-row ${isSelf ? 'self' : ''}">
-                        <span class="msg-avatar" style="background:${getAvatarColor(name)}">${getInitials(name)}</span>
+                        ${avatarHtml(name, avUrl, 'msg-avatar')}
                         <div class="discord-msg">
                             <div class="discord-text">${escapeHtml(m.text)}</div>
                         </div>
@@ -2124,7 +2346,7 @@
             inviteFriendsList.innerHTML = friends.map(f => `
                 <div class="friend-row">
                     <div class="friend-row-left">
-                        ${getFriendAvatarHtml(f.name)}
+                        ${getFriendAvatarHtml(f.name, f.avatar_url)}
                         <div style="min-width:0;">
                             <div class="friend-name">${escapeHtml(f.name)}</div>
                         </div>
@@ -2365,10 +2587,13 @@
         locShareFriendsBtn.addEventListener('click', () => setLocationVisibility('friends'));
         locSharePublicBtn.addEventListener('click', () => setLocationVisibility('public'));
 
-        function personMarkerIcon(name, isMe) {
+        function personMarkerIcon(name, isMe, avatarUrl) {
+            const inner = avatarUrl
+                ? `<img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`
+                : getInitials(name);
             return L.divIcon({
                 className: '',
-                html: `<div class="person-marker-avatar" style="background:${isMe ? '#3fb950' : getAvatarColor(name)}">${getInitials(name)}</div>`,
+                html: `<div class="person-marker-avatar" style="background:${avatarUrl ? '#30363d' : (isMe ? '#3fb950' : getAvatarColor(name))}; padding:0; overflow:hidden;">${inner}</div>`,
                 iconSize: [34, 34],
                 iconAnchor: [17, 17]
             });
@@ -2405,7 +2630,7 @@
                 const p = profilesMap[row.user_id];
                 if (!p) return;
                 const isMe = row.user_id === currentUser.id;
-                const marker = L.marker([row.lat, row.lng], { icon: personMarkerIcon(p.name, isMe) }).addTo(peopleMap);
+                const marker = L.marker([row.lat, row.lng], { icon: personMarkerIcon(p.name, isMe, p.avatar_url) }).addTo(peopleMap);
 
                 marker.on('click', () => showPersonPopup(marker, p, isMe));
                 peopleMarkers[row.user_id] = marker;
@@ -2536,6 +2761,7 @@
                 const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
 
                 widget.innerHTML = `
+                    ${room.cover_url ? `<div style="height: 90px; margin: -12px -14px 8px; background-image:url(${room.cover_url}); background-size:cover; background-position:center; border-radius: 14px 14px 0 0;"></div>` : ''}
                     <div class="discover-widget-top">
                         <b style="font-size: 14px; color: #ff3366;">${iconEmoji} ${escapeHtml(room.name)}</b>
                         <button class="secondary-btn" style="padding: 6px 12px; font-size: 11px; margin-bottom: 0; width: auto;">Join</button>
@@ -2548,15 +2774,7 @@
                 `;
 
                 widget.querySelector('button').addEventListener('click', async () => {
-                    currentRoomCode = room.code;
-                    let members = room.members || [];
-                    if (!members.includes(currentUser.name)) {
-                        members.push(currentUser.name);
-                        await mySupabase.from('rooms').update({ members }).eq('code', room.code);
-                        room.members = members;
-                    }
-                    await trackRoomMembership(room.code);
-                    enterRoom(room);
+                    await requestToJoinRoom(room);
                 });
 
                 discoverGrid.appendChild(widget);
@@ -2873,10 +3091,10 @@
                     const isSelf = msg.sender === currentUser.name;
                     row.className = `discord-msg-row ${isSelf ? 'self' : ''}`;
 
-                    const avatar = document.createElement('div');
-                    avatar.className = 'msg-avatar';
-                    avatar.style.background = getAvatarColor(msg.sender || '?');
-                    avatar.textContent = getInitials(msg.sender || '?');
+                    const cachedProfile = roomProfileCache[msg.sender];
+                    const avatarWrap = document.createElement('div');
+                    avatarWrap.innerHTML = avatarHtml(msg.sender, cachedProfile?.avatar_url, 'msg-avatar');
+                    const avatar = avatarWrap.firstElementChild;
 
                     const bubble = document.createElement('div');
                     bubble.className = 'discord-msg';
@@ -2914,7 +3132,7 @@
                 
                 widget.innerHTML = `
                     <div class="room-info-left">
-                        <span style="font-size: 16px;">${iconEmoji}</span>
+                        ${room.cover_url ? `<img src="${room.cover_url}" style="width:32px; height:32px; border-radius:8px; object-fit:cover; flex-shrink:0;">` : `<span style="font-size: 16px;">${iconEmoji}</span>`}
                         <b style="font-size: 13px; color: #ff3366; overflow: hidden; text-overflow: ellipsis;">${room.name}</b>
                     </div>
                     <div>
@@ -2950,6 +3168,7 @@
             landingCard.classList.add('hidden');
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
+            pendingApprovalCard.classList.add('hidden');
             if (document.getElementById('discoverGrid')) document.getElementById('discoverGrid').classList.add('hidden');
             roomCard.classList.remove('hidden');
 
@@ -2958,6 +3177,13 @@
             // (jo admin) në një dhomë publike të dikujt tjetër.
             currentUser.isAdmin = !!currentUser.isAuthenticated && (room.admin === currentUser.name);
             inviteFriendsBtn.classList.toggle('hidden', !currentUser.isAuthenticated);
+
+            if (room.cover_url) {
+                roomCoverBanner.style.backgroundImage = `url(${room.cover_url})`;
+                roomCoverBanner.classList.remove('hidden');
+            } else {
+                roomCoverBanner.classList.add('hidden');
+            }
 
             const catEmoji = getCategoryEmoji(room.category);
             document.getElementById('roomTitle').textContent = room.name;
@@ -2991,6 +3217,7 @@
 
             memberCount.textContent = (room.members || []).length;
             renderOptionsList(room.options || []);
+            await loadRoomProfileCache(room.code);
             renderChat(room.messages || []);
             lastMessageCount = (room.messages || []).length;
             renderLocation(room.location || '');
@@ -2998,8 +3225,73 @@
             renderInOut(room.rsvp || {});
             startEventTimer(room.event_time);
             applyPermissions();
+            await loadPendingRequestsForRoom(room.code);
 
             subscribeToRoomChanges(room.code);
+        }
+
+        // Ndërton një bazë emër->profil (me avatar_url) nga `room_members`, që chat-i
+        // i dhomës të mund të shfaqë foto reale për anëtarët e loguar, jo vetëm inicialet.
+        async function loadRoomProfileCache(roomCode) {
+            const { data: memberRows } = await mySupabase.from('room_members').select('user_id, user_name').eq('room_code', roomCode);
+            const ids = (memberRows || []).map(r => r.user_id);
+            const profilesMap = await fetchProfilesByIds(ids);
+            roomProfileCache = {};
+            (memberRows || []).forEach(r => {
+                const p = profilesMap[r.user_id];
+                if (p) roomProfileCache[r.user_name] = p;
+            });
+        }
+
+        // --- Pending Join Requests (vetëm admini real i dhomës i sheh dhe i menaxhon) ---
+        async function loadPendingRequestsForRoom(roomCode) {
+            if (!currentUser.isAdmin) {
+                pendingRequestsPanel.classList.add('hidden');
+                return;
+            }
+            const { data } = await mySupabase.from('join_requests').select('*').eq('room_code', roomCode).eq('status', 'pending');
+            const requests = data || [];
+
+            if (requests.length === 0) {
+                pendingRequestsPanel.classList.add('hidden');
+                return;
+            }
+
+            pendingRequestsPanel.classList.remove('hidden');
+            roomPendingRequestsList.innerHTML = requests.map(r => `
+                <div class="friend-row">
+                    <div class="friend-row-left">
+                        ${getFriendAvatarHtml(r.user_name)}
+                        <div class="friend-name">${escapeHtml(r.user_name)}</div>
+                    </div>
+                    <div style="display:flex; gap:4px;">
+                        <button class="friend-action-btn" style="background:linear-gradient(135deg,#3fb950,#2ea043);" data-approve="${r.id}" data-req-name="${escapeHtml(r.user_name)}">✓</button>
+                        <button class="friend-action-btn" style="background:#21262d;" data-reject="${r.id}">✕</button>
+                    </div>
+                </div>
+            `).join('');
+
+            roomPendingRequestsList.querySelectorAll('[data-approve]').forEach(btn => {
+                btn.addEventListener('click', () => respondToJoinRequest(btn.dataset.approve, 'approved', btn.dataset.reqName, roomCode));
+            });
+            roomPendingRequestsList.querySelectorAll('[data-reject]').forEach(btn => {
+                btn.addEventListener('click', () => respondToJoinRequest(btn.dataset.reject, 'rejected', null, roomCode));
+            });
+        }
+
+        async function respondToJoinRequest(requestId, status, userName, roomCode) {
+            const { error } = await mySupabase.from('join_requests').update({ status }).eq('id', requestId);
+            if (error) { alert('Could not update request: ' + error.message); return; }
+
+            if (status === 'approved' && userName) {
+                const { data: roomData } = await mySupabase.from('rooms').select('members').eq('code', roomCode).single();
+                let members = roomData?.members || [];
+                if (!members.includes(userName)) {
+                    members.push(userName);
+                    await mySupabase.from('rooms').update({ members }).eq('code', roomCode);
+                }
+            }
+            await loadPendingRequestsForRoom(roomCode);
         }
 
         // Shfaq lokacionin e eventit: harta embed + buton "Open in Maps" për të gjithë,
@@ -3103,6 +3395,14 @@
                     if (updatedRoom.method === 'poll') {
                         renderPollOptions(updatedRoom);
                     }
+                })
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'join_requests',
+                    filter: `room_code=eq.${code}`
+                }, () => {
+                    if (currentUser.isAdmin) loadPendingRequestsForRoom(code);
                 })
                 .subscribe();
         }
