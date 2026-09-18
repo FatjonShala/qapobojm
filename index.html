@@ -6,6 +6,8 @@
     <title>QaPoBojm - Social Edition</title>
     <link rel="manifest" href="manifest.json">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         body {
             background-color: #1e293b;
@@ -632,6 +634,48 @@
             color: #ffffff;
             border-color: transparent;
         }
+        /* Leaflet dark-theme overrides */
+        .leaflet-popup-content-wrapper {
+            background: #161b22;
+            color: #e6edf3;
+            border-radius: 12px;
+        }
+        .leaflet-popup-tip {
+            background: #161b22;
+        }
+        .leaflet-popup-content {
+            margin: 10px 12px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        .person-marker-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .map-popup-name {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .map-popup-sub {
+            font-size: 11px;
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
+        .map-popup-btn {
+            width: 100%;
+            margin-bottom: 0;
+            padding: 7px;
+            font-size: 12px;
+        }
         .dash-tabs {
             display: flex;
             gap: 6px;
@@ -954,6 +998,7 @@
         <div class="dash-tabs">
             <button type="button" id="tabDiscover" class="dash-tab active">Discover Events</button>
             <button type="button" id="tabMyRooms" class="dash-tab">My Events</button>
+            <button type="button" id="tabPeople" class="dash-tab">📍 People</button>
         </div>
 
         <div style="display: flex; gap: 6px; margin-bottom: 10px;">
@@ -984,6 +1029,20 @@
 
         <div id="myEventsPanel" class="hidden" style="margin-top: 14px;">
             <p style="font-size: 12px; color: #8b949e; margin: 0;">Rooms you created or joined appear below.</p>
+        </div>
+
+        <div id="peoplePanel" class="hidden" style="margin-top: 14px;">
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; text-align: left;">
+                <div style="font-size: 12.5px; font-weight: 700; color: #f0f6fc; margin-bottom: 2px;">📍 Share My Location</div>
+                <div id="locShareSubtext" style="font-size: 10.5px; color: #8b949e; margin-bottom: 8px;">Not sharing right now</div>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" id="locShareOffBtn" class="vis-toggle-btn active" style="padding: 8px 4px; font-size: 11px;">Off</button>
+                    <button type="button" id="locShareFriendsBtn" class="vis-toggle-btn" style="padding: 8px 4px; font-size: 11px;">👥 Friends</button>
+                    <button type="button" id="locSharePublicBtn" class="vis-toggle-btn" style="padding: 8px 4px; font-size: 11px;">🌍 Public</button>
+                </div>
+            </div>
+            <div id="peopleMapContainer" style="height: 320px; border-radius: 14px; overflow: hidden; border: 1px solid #30363d;"></div>
+            <p style="font-size: 10.5px; color: #6e7681; margin-top: 8px; text-align: left;">Locations shown are approximate (fuzzed ~300-500m) for everyone's privacy.</p>
         </div>
     </div>
 
@@ -1094,6 +1153,15 @@
             <input type="text" id="dmInput" placeholder="Message...">
             <button class="send-btn" id="dmSendBtn">Send</button>
         </div>
+    </div>
+
+    <!-- Pick which of MY rooms to invite someone to (used from the People map) -->
+    <div class="card hidden" id="pickRoomModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; width: 88%; max-width: 340px; max-height: 70vh; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 15px;">Invite to which room?</h3>
+            <button type="button" id="closePickRoomModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
+        </div>
+        <div id="pickRoomList"></div>
     </div>
 
     <!-- 3. Active Room Card -->
@@ -1323,6 +1391,16 @@
         const dmInput = document.getElementById('dmInput');
         const dmSendBtn = document.getElementById('dmSendBtn');
         const dmUnreadDot = document.getElementById('dmUnreadDot');
+        const tabPeople = document.getElementById('tabPeople');
+        const peoplePanel = document.getElementById('peoplePanel');
+        const locShareOffBtn = document.getElementById('locShareOffBtn');
+        const locShareFriendsBtn = document.getElementById('locShareFriendsBtn');
+        const locSharePublicBtn = document.getElementById('locSharePublicBtn');
+        const locShareSubtext = document.getElementById('locShareSubtext');
+        const peopleMapContainer = document.getElementById('peopleMapContainer');
+        const pickRoomModal = document.getElementById('pickRoomModal');
+        const closePickRoomModalBtn = document.getElementById('closePickRoomModalBtn');
+        const pickRoomList = document.getElementById('pickRoomList');
         const createEventModal = document.getElementById('createEventModal');
         const modalBackdrop = document.getElementById('modalBackdrop');
         const dashboardTitle = document.getElementById('dashboardTitle');
@@ -1410,6 +1488,7 @@
                 showDashboard();
                 subscribeToNotifications();
                 subscribeToDmInbox();
+                checkMyLocationSharingStatus();
             }
         });
 
@@ -1473,6 +1552,7 @@
             showDashboard();
             subscribeToNotifications();
                 subscribeToDmInbox();
+                checkMyLocationSharingStatus();
         });
 
         // "My Events" = dhomat që i ke krijuar TI, ose dhomat ku je bërë join si anëtar
@@ -1616,13 +1696,15 @@
             enterRoom(newRoomData);
         });
 
-        // --- Dashboard tabs: Discover Events (default) vs My Events ---
+        // --- Dashboard tabs: Discover Events (default) vs My Events vs People ---
         tabMyRooms.addEventListener('click', () => {
             tabMyRooms.classList.add('active');
             tabDiscover.classList.remove('active');
+            tabPeople.classList.remove('active');
             dashboardTitle.textContent = 'My Events';
             myEventsPanel.classList.remove('hidden');
             discoverPanel.classList.add('hidden');
+            peoplePanel.classList.add('hidden');
             discoverGrid.classList.add('hidden');
             roomsGrid.classList.remove('hidden');
             fetchRoomsFromSupabase();
@@ -1630,11 +1712,25 @@
         tabDiscover.addEventListener('click', () => {
             tabDiscover.classList.add('active');
             tabMyRooms.classList.remove('active');
+            tabPeople.classList.remove('active');
             dashboardTitle.textContent = 'Discover Events';
             discoverPanel.classList.remove('hidden');
             myEventsPanel.classList.add('hidden');
+            peoplePanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             fetchPublicRooms('', '');
+        });
+        tabPeople.addEventListener('click', () => {
+            tabPeople.classList.add('active');
+            tabDiscover.classList.remove('active');
+            tabMyRooms.classList.remove('active');
+            dashboardTitle.textContent = 'Discover by People';
+            peoplePanel.classList.remove('hidden');
+            discoverPanel.classList.add('hidden');
+            myEventsPanel.classList.add('hidden');
+            discoverGrid.classList.add('hidden');
+            roomsGrid.classList.add('hidden');
+            initPeopleMap();
         });
 
         // --- Join a room directly by code (works for logged-in users too, not just guests) ---
@@ -1683,6 +1779,7 @@
             friendsModal.classList.add('hidden');
             inviteFriendsModal.classList.add('hidden');
             dmModal.classList.add('hidden');
+            pickRoomModal.classList.add('hidden');
             modalBackdrop.classList.add('hidden');
         }
         function closeCreateModal() { closeAllModals(); }
@@ -2151,6 +2248,263 @@
 
         // ==================== END FRIENDS & NOTIFICATIONS ====================
 
+        // ==================== DISCOVER BY PEOPLE (live map) ====================
+        // Lokacioni ruhet vetëm në `user_locations`, kurrë në `profiles` (i cili është
+        // publikisht i lexueshëm) — kështu RLS garanton që VETËM miqtë e pranuar mund
+        // ta shohin, edhe nëse dikush provon të lexojë databazën direkt.
+        // Koordinatat ruhen të "turbullta" (~300-500m off) përpara se të dërgohen te
+        // Supabase, si mbrojtje shtesë e privatësisë.
+
+        let peopleMap = null;
+        let myLat = null, myLng = null;
+        let locationVisibility = 'off'; // 'off' | 'friends' | 'public'
+        let locationUpdateInterval = null;
+        const peopleMarkers = {};
+
+        function fuzzCoordinates(lat, lng, maxMeters = 400) {
+            const radiusInDegrees = maxMeters / 111320;
+            const angle = Math.random() * 2 * Math.PI;
+            const distance = Math.random() * radiusInDegrees;
+            return {
+                lat: lat + distance * Math.cos(angle),
+                lng: lng + (distance * Math.sin(angle)) / Math.cos(lat * Math.PI / 180)
+            };
+        }
+
+        function getMyLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) { reject(new Error('Geolocation not supported')); return; }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+                    (err) => reject(err)
+                );
+            });
+        }
+
+        async function checkMyLocationSharingStatus() {
+            if (!currentUser.id) return;
+            const { data } = await mySupabase.from('user_locations').select('visibility').eq('user_id', currentUser.id).maybeSingle();
+            locationVisibility = data ? data.visibility : 'off';
+            updateLocationToggleUI();
+            if (locationVisibility !== 'off') startLocationUpdates();
+        }
+
+        function updateLocationToggleUI() {
+            locShareOffBtn.classList.toggle('active', locationVisibility === 'off');
+            locShareFriendsBtn.classList.toggle('active', locationVisibility === 'friends');
+            locSharePublicBtn.classList.toggle('active', locationVisibility === 'public');
+
+            locShareSubtext.textContent =
+                locationVisibility === 'public' ? 'Visible to everyone on the map' :
+                locationVisibility === 'friends' ? 'Only your accepted friends can see you' :
+                'Not sharing right now';
+        }
+
+        async function pushMyLocationUpdate() {
+            const pos = await getMyLocation();
+            const fuzzed = fuzzCoordinates(pos.lat, pos.lng);
+            myLat = pos.lat; myLng = pos.lng;
+            const { error } = await mySupabase.from('user_locations').upsert({
+                user_id: currentUser.id,
+                lat: fuzzed.lat,
+                lng: fuzzed.lng,
+                visibility: locationVisibility,
+                updated_at: new Date().toISOString()
+            });
+            if (error) throw error;
+        }
+
+        function startLocationUpdates() {
+            if (locationUpdateInterval) clearInterval(locationUpdateInterval);
+            locationUpdateInterval = setInterval(pushMyLocationUpdate, 60000);
+            return pushMyLocationUpdate();
+        }
+        function stopLocationUpdates() {
+            if (locationUpdateInterval) clearInterval(locationUpdateInterval);
+            locationUpdateInterval = null;
+        }
+
+        // "Off" fshin rekordin plotësisht nga DB. Kalimi Friends<->Public ndërsa je
+        // tashmë duke ndarë lokacionin thjesht ndryshon fushën `visibility`, pa kërkuar
+        // GPS-in sërish. Aktivizimi i parë (nga Off) kërkon leje/fiksim të freskët GPS.
+        async function setLocationVisibility(newVis) {
+            if (!currentUser.id) { alert('Please log in to share your location.'); return; }
+            if (newVis === locationVisibility) return;
+
+            if (newVis === 'off') {
+                await mySupabase.from('user_locations').delete().eq('user_id', currentUser.id);
+                locationVisibility = 'off';
+                stopLocationUpdates();
+                updateLocationToggleUI();
+                if (peopleMap) loadPeopleOnMap();
+                return;
+            }
+
+            const wasOff = locationVisibility === 'off';
+            const previous = locationVisibility;
+            locationVisibility = newVis;
+
+            try {
+                if (wasOff) {
+                    await startLocationUpdates();
+                } else {
+                    const { error } = await mySupabase.from('user_locations').update({ visibility: newVis }).eq('user_id', currentUser.id);
+                    if (error) throw error;
+                }
+                updateLocationToggleUI();
+                if (peopleMap) loadPeopleOnMap();
+            } catch (err) {
+                console.error('Could not update location sharing:', err);
+                locationVisibility = previous;
+                updateLocationToggleUI();
+                alert('Could not access your location. Please allow location access in your browser.');
+            }
+        }
+
+        locShareOffBtn.addEventListener('click', () => setLocationVisibility('off'));
+        locShareFriendsBtn.addEventListener('click', () => setLocationVisibility('friends'));
+        locSharePublicBtn.addEventListener('click', () => setLocationVisibility('public'));
+
+        function personMarkerIcon(name, isMe) {
+            return L.divIcon({
+                className: '',
+                html: `<div class="person-marker-avatar" style="background:${isMe ? '#3fb950' : getAvatarColor(name)}">${getInitials(name)}</div>`,
+                iconSize: [34, 34],
+                iconAnchor: [17, 17]
+            });
+        }
+
+        function initPeopleMap() {
+            if (!peopleMap) {
+                peopleMap = L.map(peopleMapContainer, { zoomControl: true }).setView([42.6629, 21.1655], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(peopleMap);
+            }
+            // Rregullon një gabim të zakonshëm të Leaflet kur harta inicializohet
+            // brenda një kontejneri që ishte i fshehur (display:none) deri tani.
+            setTimeout(() => peopleMap.invalidateSize(), 150);
+            loadPeopleOnMap();
+        }
+
+        async function loadPeopleOnMap() {
+            if (!currentUser.id) return;
+
+            Object.values(peopleMarkers).forEach(m => peopleMap.removeLayer(m));
+            for (const k in peopleMarkers) delete peopleMarkers[k];
+
+            const { data: rows, error } = await mySupabase.from('user_locations').select('*');
+            if (error) { console.error('Could not load locations:', error); return; }
+
+            const ids = (rows || []).map(r => r.user_id);
+            const profilesMap = await fetchProfilesByIds(ids);
+
+            let centered = false;
+            (rows || []).forEach(row => {
+                const p = profilesMap[row.user_id];
+                if (!p) return;
+                const isMe = row.user_id === currentUser.id;
+                const marker = L.marker([row.lat, row.lng], { icon: personMarkerIcon(p.name, isMe) }).addTo(peopleMap);
+
+                marker.on('click', () => showPersonPopup(marker, p, isMe));
+                peopleMarkers[row.user_id] = marker;
+
+                if (isMe && !centered) {
+                    peopleMap.setView([row.lat, row.lng], 13);
+                    centered = true;
+                }
+            });
+        }
+
+        async function showPersonPopup(marker, person, isMe) {
+            if (isMe) {
+                marker.bindPopup(`<div class="map-popup-name">${escapeHtml(person.name)} (You)</div>`).openPopup();
+                return;
+            }
+
+            marker.bindPopup(`<div class="map-popup-name">${escapeHtml(person.name)}</div><div class="map-popup-sub">Checking status…</div>`).openPopup();
+
+            const { data: memberRows } = await mySupabase.from('room_members').select('room_code').eq('user_id', person.id).limit(1);
+            const roomCode = memberRows && memberRows[0] ? memberRows[0].room_code : null;
+            let openRoom = null;
+            if (roomCode) {
+                const { data: roomData } = await mySupabase.from('rooms').select('*').eq('code', roomCode).maybeSingle();
+                openRoom = roomData || null;
+            }
+
+            let popupHtml = `<div class="map-popup-name">${escapeHtml(person.name)}</div>`;
+            if (openRoom) {
+                popupHtml += `<div class="map-popup-sub">🎉 Currently at: <b>${escapeHtml(openRoom.name)}</b></div>
+                    <button class="map-popup-btn" id="mapJoinBtn">Join</button>`;
+            } else {
+                popupHtml += `<div class="map-popup-sub">No open event right now</div>
+                    <button class="map-popup-btn" id="mapInviteBtn">Invite to my room</button>`;
+            }
+
+            marker.setPopupContent(popupHtml);
+
+            setTimeout(() => {
+                const joinBtn = document.getElementById('mapJoinBtn');
+                if (joinBtn) joinBtn.addEventListener('click', () => {
+                    peopleMap.closePopup();
+                    joinRoomByCode(openRoom.code);
+                });
+                const inviteBtn = document.getElementById('mapInviteBtn');
+                if (inviteBtn) inviteBtn.addEventListener('click', () => {
+                    peopleMap.closePopup();
+                    openPickRoomModal(person.id);
+                });
+            }, 0);
+        }
+
+        async function openPickRoomModal(targetFriendId) {
+            const { data: myRooms, error } = await mySupabase.from('rooms').select('*').eq('admin', currentUser.name);
+            if (error || !myRooms || myRooms.length === 0) {
+                alert("You don't have any rooms yet. Create one first from Discover Events!");
+                return;
+            }
+
+            if (myRooms.length === 1) {
+                await sendRoomInviteNotification(targetFriendId, myRooms[0]);
+                return;
+            }
+
+            pickRoomList.innerHTML = myRooms.map(r => `
+                <div class="friend-row friend-row-clickable" data-room-code="${escapeHtml(r.code)}" data-room-name="${escapeHtml(r.name)}">
+                    <div class="friend-row-left">
+                        <span style="font-size:18px;">${getCategoryEmoji(r.category)}</span>
+                        <div class="friend-name">${escapeHtml(r.name)}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            pickRoomList.querySelectorAll('[data-room-code]').forEach(row => {
+                row.addEventListener('click', async () => {
+                    await sendRoomInviteNotification(targetFriendId, { code: row.dataset.roomCode, name: row.dataset.roomName });
+                    closeAllModals();
+                });
+            });
+
+            closeAllModals();
+            pickRoomModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        }
+
+        async function sendRoomInviteNotification(targetFriendId, room) {
+            await mySupabase.from('notifications').insert({
+                recipient_id: targetFriendId,
+                type: 'room_invite',
+                sender_name: currentUser.name,
+                payload: { room_code: room.code, room_name: room.name }
+            });
+            alert(`Invite sent for "${room.name}"!`);
+        }
+
+        closePickRoomModalBtn.addEventListener('click', closeAllModals);
+
+        // ==================== END DISCOVER BY PEOPLE ====================
+
         async function fetchPublicRooms(category, city) {
             let query = mySupabase.from('rooms').select('*').eq('is_public', true);
             if (category) query = query.eq('category', category);
@@ -2281,6 +2635,7 @@
 
         backToLanding.addEventListener('click', async () => {
             await mySupabase.auth.signOut();
+            stopLocationUpdates();
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             landingCard.classList.remove('hidden');
