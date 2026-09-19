@@ -1118,12 +1118,24 @@
             <button type="button" id="closeFriendsModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
 
-        <label for="friendSearchInput">Add a friend by email</label>
-        <div style="display: flex; gap: 6px;">
-            <input type="text" id="friendSearchInput" placeholder="friend@email.com" style="margin-bottom: 0;">
-            <button type="button" id="friendSearchBtn" style="width: 80px; margin-bottom: 0; font-size: 12px;">Search</button>
+        <div class="dash-tabs" style="margin-bottom: 12px;">
+            <button type="button" id="friendsTabAdd" class="dash-tab active">➕ Add Friend</button>
+            <button type="button" id="friendsTabSearch" class="dash-tab">🔍 Search Friends</button>
         </div>
-        <div id="friendSearchResult" style="margin-top: 8px;"></div>
+
+        <div id="addFriendPanel">
+            <label for="friendSearchInput">Add a friend by email</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="friendSearchInput" placeholder="friend@email.com" style="margin-bottom: 0;">
+                <button type="button" id="friendSearchBtn" style="width: 80px; margin-bottom: 0; font-size: 12px;">Search</button>
+            </div>
+            <div id="friendSearchResult" style="margin-top: 8px;"></div>
+        </div>
+
+        <div id="searchFriendsPanel" class="hidden">
+            <label for="searchOwnFriendsInput">Search your friends by name</label>
+            <input type="text" id="searchOwnFriendsInput" placeholder="Type a name..." style="margin-bottom: 0;">
+        </div>
 
         <div style="margin-top: 18px;">
             <h4 style="font-size: 12px; color: #8b949e; text-align: left; margin-bottom: 8px;">Pending Requests</h4>
@@ -1329,6 +1341,11 @@
     </div>
 
     <!-- Modal për anëtarët -->
+    <!-- Avatar Lightbox: klikimi mbi çdo foto profili e hap më të madhe -->
+    <div id="avatarLightbox" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 24px;">
+        <img id="avatarLightboxImg" src="" style="width: min(85vw, 420px); height: min(85vw, 420px); max-height: 80vh; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.6); object-fit: cover; background: #161b22;">
+    </div>
+
     <div class="card hidden" id="membersModal" style="position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); z-index:100; width:300px;">
         <h3 style="margin-top: 0; color: #ff3366; font-size: 18px;">Room Members</h3>
         <ul id="modalMembersList" style="text-align: left; max-height: 150px; overflow-y: auto;"></ul>
@@ -1400,6 +1417,11 @@
         const closeFriendsModalBtn = document.getElementById('closeFriendsModalBtn');
         const friendsModal = document.getElementById('friendsModal');
         const friendSearchInput = document.getElementById('friendSearchInput');
+        const friendsTabAdd = document.getElementById('friendsTabAdd');
+        const friendsTabSearch = document.getElementById('friendsTabSearch');
+        const addFriendPanel = document.getElementById('addFriendPanel');
+        const searchFriendsPanel = document.getElementById('searchFriendsPanel');
+        const searchOwnFriendsInput = document.getElementById('searchOwnFriendsInput');
         const friendSearchBtn = document.getElementById('friendSearchBtn');
         const friendSearchResult = document.getElementById('friendSearchResult');
         const pendingRequestsList = document.getElementById('pendingRequestsList');
@@ -1971,9 +1993,37 @@
             closeAllModals();
             friendsModal.classList.remove('hidden');
             modalBackdrop.classList.remove('hidden');
+            friendsTabAdd.classList.add('active');
+            friendsTabSearch.classList.remove('active');
+            addFriendPanel.classList.remove('hidden');
+            searchFriendsPanel.classList.add('hidden');
+            searchOwnFriendsInput.value = '';
             await loadFriendsData();
         });
         closeFriendsModalBtn.addEventListener('click', closeAllModals);
+
+        friendsTabAdd.addEventListener('click', () => {
+            friendsTabAdd.classList.add('active');
+            friendsTabSearch.classList.remove('active');
+            addFriendPanel.classList.remove('hidden');
+            searchFriendsPanel.classList.add('hidden');
+        });
+        friendsTabSearch.addEventListener('click', () => {
+            friendsTabSearch.classList.add('active');
+            friendsTabAdd.classList.remove('active');
+            searchFriendsPanel.classList.remove('hidden');
+            addFriendPanel.classList.add('hidden');
+        });
+
+        // Filtron listën "My Friends" tashmë të renderuar, sipas emrit — pa kërkuar
+        // sërish nga databaza, thjesht fsheh/shfaq rreshtat lokalisht.
+        searchOwnFriendsInput.addEventListener('input', () => {
+            const query = searchOwnFriendsInput.value.trim().toLowerCase();
+            friendsList.querySelectorAll('.friend-row-clickable').forEach(row => {
+                const name = (row.dataset.dmName || '').toLowerCase();
+                row.style.display = !query || name.includes(query) ? 'flex' : 'none';
+            });
+        });
 
         inviteFriendsBtn.addEventListener('click', async () => {
             closeAllModals();
@@ -2036,10 +2086,19 @@
         // duhet të jetë një nga klasat ekzistuese (friend-avatar, msg-avatar, etj.)
         function avatarHtml(name, avatarUrl, sizeClass) {
             if (avatarUrl) {
-                return `<span class="${sizeClass}" style="padding:0; overflow:hidden; background:#30363d;"><img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; display:block;"></span>`;
+                const safeUrl = String(avatarUrl).replace(/'/g, '%27');
+                return `<span class="${sizeClass}" style="padding:0; overflow:hidden; background:#30363d;"><img src="${avatarUrl}" style="width:100%; height:100%; object-fit:cover; display:block; cursor:pointer;" onclick="event.stopPropagation(); openAvatarLightbox('${safeUrl}')"></span>`;
             }
             return `<span class="${sizeClass}" style="background:${getAvatarColor(name || '?')}">${getInitials(name || '?')}</span>`;
         }
+
+        const avatarLightbox = document.getElementById('avatarLightbox');
+        const avatarLightboxImg = document.getElementById('avatarLightboxImg');
+        window.openAvatarLightbox = function(url) {
+            avatarLightboxImg.src = url;
+            avatarLightbox.classList.remove('hidden');
+        };
+        avatarLightbox.addEventListener('click', () => avatarLightbox.classList.add('hidden'));
 
         function getFriendAvatarHtml(name, avatarUrl) {
             return avatarHtml(name, avatarUrl, 'friend-avatar');
@@ -2965,10 +3024,20 @@
             modalMembersList.innerHTML = '';
             if (data && data.members) {
                 data.members.forEach(m => {
+                    const cleanName = String(m).replace(" (Creator)", "").replace(" (Admin)", "").trim();
+                    const isCreator = String(m).includes("(Creator)") || String(m).includes("(Admin)");
+                    const profile = roomProfileCache[cleanName];
+
                     const li = document.createElement('li');
-                    li.textContent = m;
-                    li.style.color = "#c9d1d9";
-                    li.style.marginBottom = "6px";
+                    li.style.display = 'flex';
+                    li.style.alignItems = 'center';
+                    li.style.gap = '8px';
+                    li.style.marginBottom = '10px';
+                    li.style.listStyle = 'none';
+                    li.innerHTML = `
+                        ${avatarHtml(cleanName, profile?.avatar_url, 'friend-avatar')}
+                        <span style="color:#c9d1d9; font-size: 13px;">${escapeHtml(cleanName)}${isCreator ? ' <span style="color:#ff3366; font-size:11px;">(Creator)</span>' : ''}</span>
+                    `;
                     modalMembersList.appendChild(li);
                 });
             }
@@ -3378,6 +3447,7 @@
                     }
 
                     memberCount.textContent = (updatedRoom.members || []).length;
+                    loadRoomProfileCache(code);
                     renderOptionsList(updatedRoom.options || []);
 
                     const newMessages = updatedRoom.messages || [];
