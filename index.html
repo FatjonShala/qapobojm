@@ -856,6 +856,30 @@
         .friend-row-clickable:hover {
             background: rgba(255,255,255,0.08);
         }
+        .nearby-suggestion-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 9px 10px;
+            background: #21262d;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            color: #e6edf3;
+            font-size: 12px;
+            margin-bottom: 0;
+            box-shadow: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .nearby-suggestion-btn:hover {
+            background: #30363d;
+        }
+        .nearby-suggestion-btn.selected {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            border-color: transparent;
+            color: #ffffff;
+        }
         .friend-action-btn {
             margin-bottom: 0;
             width: auto;
@@ -1079,6 +1103,18 @@
                 <option value="Shetitje">🚗 Trip / Travel</option>
                 <option value="Tjetër">🎉 Other</option>
             </select>
+
+            <div id="nearbySuggestionsPanel" class="hidden" style="margin-bottom: 14px;">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <label style="margin-bottom: 0;">📍 Nearby Suggestions</label>
+                    <button type="button" id="hideNearbySuggestionsBtn" class="secondary-btn" style="width: auto; margin-bottom: 0; padding: 4px 10px; font-size: 10px;">Hide</button>
+                </div>
+                <div id="nearbySuggestionsSelectedRow" class="hidden" style="display:flex; justify-content:space-between; align-items:center; background: rgba(63,185,80,0.1); border: 1px solid rgba(63,185,80,0.3); border-radius: 10px; padding: 9px 10px; font-size: 12px; color:#3fb950;">
+                    <span id="nearbySuggestionsSelectedText"></span>
+                    <button type="button" id="changeNearbySuggestionBtn" class="secondary-btn" style="width: auto; margin-bottom: 0; padding: 4px 10px; font-size: 10px;">Change</button>
+                </div>
+                <div id="nearbySuggestionsList" style="display:flex; flex-direction:column; gap:6px; max-height: 220px; overflow-y:auto;"></div>
+            </div>
 
             <label for="newRoomName">Room / Event Name</label>
             <input type="text" id="newRoomName" placeholder="e.g. Office Lunch, Friday Pizza...">
@@ -1449,6 +1485,12 @@
         
         const newRoomNameInput = document.getElementById('newRoomName');
         const eventCategorySelect = document.getElementById('eventCategory');
+        const nearbySuggestionsPanel = document.getElementById('nearbySuggestionsPanel');
+        const nearbySuggestionsList = document.getElementById('nearbySuggestionsList');
+        const hideNearbySuggestionsBtn = document.getElementById('hideNearbySuggestionsBtn');
+        const nearbySuggestionsSelectedRow = document.getElementById('nearbySuggestionsSelectedRow');
+        const nearbySuggestionsSelectedText = document.getElementById('nearbySuggestionsSelectedText');
+        const changeNearbySuggestionBtn = document.getElementById('changeNearbySuggestionBtn');
         const decisionMethodSelect = document.getElementById('decisionMethod');
         const eventTimeInput = document.getElementById('eventTime');
         const eventCapacityInput = document.getElementById('eventCapacity');
@@ -1789,12 +1831,163 @@
             await requestToJoinRoom(data);
         });
 
+        // ==================== NEARBY PLACE SUGGESTIONS (Overpass/OpenStreetMap, falas) ====================
+        // Sipas kategorisë së zgjedhur, kërkojmë vende reale përreth GPS-it të userit
+        // dhe i lejojmë të zgjedhë njërin me një klik si Location të eventit.
+        const CATEGORY_PLACE_CONFIG = {
+            'Ushqim': {
+                radius: 1500,
+                queries: [
+                    { tags: { amenity: 'restaurant' }, icon: '🍽️' },
+                    { tags: { amenity: 'bar' }, icon: '🍺' },
+                    { tags: { amenity: 'cafe' }, icon: '☕' },
+                    { tags: { amenity: 'fast_food' }, icon: '🍔' }
+                ]
+            },
+            'Termin': {
+                radius: 5000,
+                queries: [
+                    { tags: { leisure: 'pitch', sport: 'soccer' }, icon: '⚽' },
+                    { tags: { leisure: 'pitch', sport: 'basketball' }, icon: '🏀' },
+                    { tags: { leisure: 'pitch', sport: 'tennis' }, icon: '🎾' },
+                    { tags: { sport: 'padel' }, icon: '🏓' }
+                ]
+            }
+        };
+
+        function haversineDistance(lat1, lng1, lat2, lng2) {
+            const R = 6371000;
+            const toRad = d => d * Math.PI / 180;
+            const dLat = toRad(lat2 - lat1);
+            const dLng = toRad(lng2 - lng1);
+            const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        }
+
+        function formatDistance(meters) {
+            return meters < 1000 ? `${Math.round(meters)}m` : `${(meters / 1000).toFixed(1)}km`;
+        }
+
+        function buildOverpassQuery(config, lat, lng) {
+            const parts = config.queries.map(q => {
+                const tagStr = Object.entries(q.tags).map(([k, v]) => `["${k}"="${v}"]`).join('');
+                return `node${tagStr}(around:${config.radius},${lat},${lng});\n  way${tagStr}(around:${config.radius},${lat},${lng});`;
+            }).join('\n  ');
+            return `[out:json][timeout:25];\n(\n  ${parts}\n);\nout center 40;`;
+        }
+
+        function matchConfigForTags(config, tags) {
+            for (const q of config.queries) {
+                if (Object.entries(q.tags).every(([k, v]) => tags[k] === v)) return q;
+            }
+            return { icon: '📍' };
+        }
+
+        let nearbySuggestionsRequestId = 0;
+
+        async function fetchNearbySuggestions(category) {
+            const config = CATEGORY_PLACE_CONFIG[category];
+            nearbySuggestionsPanel.classList.toggle('hidden', !config);
+            if (!config) return;
+
+            nearbySuggestionsSelectedRow.classList.add('hidden');
+            nearbySuggestionsList.classList.remove('hidden');
+
+            const requestId = ++nearbySuggestionsRequestId;
+            nearbySuggestionsList.innerHTML = `<div style="font-size:12px; color:#8b949e; padding:8px;">📡 Getting your location...</div>`;
+
+            let pos;
+            try {
+                pos = await getMyLocation();
+            } catch (err) {
+                if (requestId === nearbySuggestionsRequestId) {
+                    nearbySuggestionsList.innerHTML = `<div style="font-size:12px; color:#8b949e; padding:8px;">Enable location access on your device to see nearby suggestions — or just type the address manually below.</div>`;
+                }
+                return;
+            }
+
+            if (requestId !== nearbySuggestionsRequestId) return;
+            nearbySuggestionsList.innerHTML = `<div style="font-size:12px; color:#8b949e; padding:8px;">🔍 Finding nearby places...</div>`;
+
+            try {
+                const query = buildOverpassQuery(config, pos.lat, pos.lng);
+                const res = await fetch('https://overpass-api.de/api/interpreter', {
+                    method: 'POST',
+                    body: `data=${encodeURIComponent(query)}`
+                });
+                const json = await res.json();
+
+                if (requestId !== nearbySuggestionsRequestId) return;
+
+                const places = (json.elements || [])
+                    .map(el => {
+                        const elLat = el.lat || el.center?.lat;
+                        const elLng = el.lon || el.center?.lon;
+                        if (!elLat || !elLng || !el.tags?.name) return null;
+                        const cfg = matchConfigForTags(config, el.tags);
+                        return {
+                            name: el.tags.name,
+                            icon: cfg.icon,
+                            distance: haversineDistance(pos.lat, pos.lng, elLat, elLng)
+                        };
+                    })
+                    .filter(Boolean)
+                    .sort((a, b) => a.distance - b.distance)
+                    .slice(0, 15);
+
+                renderNearbySuggestions(places);
+            } catch (err) {
+                console.error('Overpass fetch failed:', err);
+                if (requestId === nearbySuggestionsRequestId) {
+                    nearbySuggestionsList.innerHTML = `<div style="font-size:12px; color:#8b949e; padding:8px;">Could not load nearby places right now. You can still type the location manually below.</div>`;
+                }
+            }
+        }
+
+        function renderNearbySuggestions(places) {
+            nearbySuggestionsSelectedRow.classList.add('hidden');
+            nearbySuggestionsList.classList.remove('hidden');
+
+            if (places.length === 0) {
+                nearbySuggestionsList.innerHTML = `<div style="font-size:12px; color:#8b949e; padding:8px;">No nearby places found in OpenStreetMap's data for this area. Type the location manually below.</div>`;
+                return;
+            }
+            nearbySuggestionsList.innerHTML = places.map((p, i) => `
+                <button type="button" class="nearby-suggestion-btn" data-idx="${i}">
+                    <span style="font-size:16px;">${p.icon}</span>
+                    <span style="flex:1; text-align:left; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(p.name)}</span>
+                    <span style="font-size:10px; color:#8b949e; flex-shrink:0;">${formatDistance(p.distance)}</span>
+                </button>
+            `).join('');
+
+            nearbySuggestionsList.querySelectorAll('.nearby-suggestion-btn').forEach((btn, i) => {
+                btn.addEventListener('click', () => {
+                    eventLocationInput.value = places[i].name;
+                    nearbySuggestionsSelectedText.textContent = `✅ Location set: ${places[i].name}`;
+                    nearbySuggestionsList.classList.add('hidden');
+                    nearbySuggestionsSelectedRow.classList.remove('hidden');
+                });
+            });
+        }
+        // "Hide" fsheh krejt panelin (por s'e prek vlerën e Location nëse është vendosur
+        // tashmë). "Change" rihap listën për të zgjedhur një vend tjetër.
+        hideNearbySuggestionsBtn.addEventListener('click', () => {
+            nearbySuggestionsPanel.classList.add('hidden');
+        });
+        changeNearbySuggestionBtn.addEventListener('click', () => {
+            nearbySuggestionsSelectedRow.classList.add('hidden');
+            nearbySuggestionsList.classList.remove('hidden');
+        });
+        // ==================== END NEARBY PLACE SUGGESTIONS ====================
+
         // Për kategorinë "Trip / Travel" (Shetitje), fusha e vetme e lokacionit
-        // zëvendësohet me dy fusha: Start Point + Destination.
+        // zëvendësohet me dy fusha: Start Point + Destination. Për "Ushqim"/"Termin"
+        // rifreskojmë edhe panelin e sugjerimeve të vendeve përreth.
         eventCategorySelect.addEventListener('change', () => {
             const isTravel = eventCategorySelect.value === 'Shetitje';
             standardLocationContainer.classList.toggle('hidden', isTravel);
             travelLocationContainer.classList.toggle('hidden', !isTravel);
+            fetchNearbySuggestions(eventCategorySelect.value);
         });
 
         visPrivateBtn.addEventListener('click', () => {
@@ -1892,6 +2085,7 @@
             newRoomNameInput.value = '';
             eventCapacityInput.value = '';
             eventLocationInput.value = '';
+            nearbySuggestionsList.querySelectorAll('.nearby-suggestion-btn.selected').forEach(b => b.classList.remove('selected'));
             startPointInput.value = '';
             destinationInput.value = '';
             standardLocationContainer.classList.remove('hidden');
@@ -2103,6 +2297,7 @@
             closeAllModals();
             createEventModal.classList.remove('hidden');
             modalBackdrop.classList.remove('hidden');
+            fetchNearbySuggestions(eventCategorySelect.value);
         });
         closeCreateModalBtn.addEventListener('click', closeAllModals);
         modalBackdrop.addEventListener('click', closeAllModals);
