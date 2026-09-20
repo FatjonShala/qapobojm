@@ -1928,6 +1928,8 @@
                         return {
                             name: el.tags.name,
                             icon: cfg.icon,
+                            lat: elLat,
+                            lng: elLng,
                             distance: haversineDistance(pos.lat, pos.lng, elLat, elLng)
                         };
                     })
@@ -1962,7 +1964,7 @@
 
             nearbySuggestionsList.querySelectorAll('.nearby-suggestion-btn').forEach((btn, i) => {
                 btn.addEventListener('click', () => {
-                    eventLocationInput.value = places[i].name;
+                    eventLocationInput.value = `${places[i].name} (${places[i].lat},${places[i].lng})`;
                     nearbySuggestionsSelectedText.textContent = `✅ Location set: ${places[i].name}`;
                     nearbySuggestionsList.classList.add('hidden');
                     nearbySuggestionsSelectedRow.classList.remove('hidden');
@@ -3801,6 +3803,22 @@
         // Shfaq lokacionin e eventit: harta embed + buton "Open in Maps" për të gjithë,
         // dhe fusha e editimit vetëm për adminin. Funksionon vetëm me tekst adrese/emri
         // vendi ose koordinata "lat,lng" - pa pasur nevojë për Google Maps API key.
+        // Nëse teksti i lokacionit përfundon me "(lat,lng)" (siç e shtojmë kur zgjedhet
+        // një Nearby Suggestion), e nxjerrim atë pjesë dhe e përdorim si pin TË SAKTË
+        // te harta — kërkimi me emër te Google mund të gjejë një vend tjetër me emër
+        // të njëjtë diku tjetër në botë, kurse koordinatat janë gjithmonë të sakta.
+        function parseLocationForMap(text) {
+            if (!text) return { display: text, mapQuery: text };
+            const match = text.match(/\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)\s*$/);
+            if (match) {
+                return {
+                    display: text.replace(/\s*\(\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*\)\s*$/, '').trim(),
+                    mapQuery: `${match[1]},${match[2]}`
+                };
+            }
+            return { display: text, mapQuery: text };
+        }
+
         function renderLocation(room) {
             const isTravel = room.category === 'Shetitje';
 
@@ -3810,9 +3828,10 @@
             if (!isTravel) {
                 locationInput.value = room.location || '';
                 if (room.location) {
-                    locationName.textContent = room.location;
-                    mapEmbedFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.location)}&output=embed`;
-                    openInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`;
+                    const parsed = parseLocationForMap(room.location);
+                    locationName.textContent = parsed.display;
+                    mapEmbedFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(parsed.mapQuery)}&output=embed`;
+                    openInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(parsed.mapQuery)}`;
                 } else {
                     mapEmbedFrame.src = '';
                 }
@@ -3828,17 +3847,19 @@
                 travelDestInput.value = room.destination || '';
 
                 if (room.location) {
-                    travelStartName.textContent = room.location;
-                    travelStartMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.location)}&output=embed`;
-                    openStartInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`;
+                    const parsedStart = parseLocationForMap(room.location);
+                    travelStartName.textContent = parsedStart.display;
+                    travelStartMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(parsedStart.mapQuery)}&output=embed`;
+                    openStartInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(parsedStart.mapQuery)}`;
                 } else {
                     travelStartMapFrame.src = '';
                 }
 
                 if (room.destination) {
-                    travelDestName.textContent = room.destination;
-                    travelDestMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.destination)}&output=embed`;
-                    openDestInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.destination)}`;
+                    const parsedDest = parseLocationForMap(room.destination);
+                    travelDestName.textContent = parsedDest.display;
+                    travelDestMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(parsedDest.mapQuery)}&output=embed`;
+                    openDestInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(parsedDest.mapQuery)}`;
                 } else {
                     travelDestMapFrame.src = '';
                 }
