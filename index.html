@@ -24,9 +24,9 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            gap: 10px;
-            margin-top: 20px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-top: 22px;
+            margin-bottom: 32px;
             width: 100%;
             max-width: 420px;
             margin-left: auto;
@@ -63,6 +63,21 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.08);
             margin: 10px;
+        }
+        .dashboard-header-glass {
+            position: sticky;
+            top: 0;
+            z-index: 60;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: -24px -24px 18px -24px;
+            padding: 14px 20px;
+            border-radius: 24px 24px 0 0;
+            background: rgba(22, 27, 34, 0.55);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .app-logo-container {
             display: flex;
@@ -634,6 +649,122 @@
             color: #ffffff;
             border-color: transparent;
         }
+        .filter-chips-row {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            scrollbar-width: none;
+        }
+        .filter-chips-row::-webkit-scrollbar {
+            display: none;
+        }
+        .filter-chip {
+            flex-shrink: 0;
+            margin-bottom: 0;
+            width: auto;
+            padding: 8px 15px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #21262d;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            border-radius: 999px;
+            box-shadow: none;
+            transition: all 0.15s ease;
+        }
+        .filter-chip.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            color: #ffffff;
+            border-color: transparent;
+        }
+        .chip-icon-btn {
+            width: 46px;
+            flex-shrink: 0;
+            margin-bottom: 0;
+            padding: 0;
+            font-size: 16px;
+            border-radius: 12px;
+        }
+        .ig-card {
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: #161b22;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            box-shadow: 0 10px 26px rgba(0,0,0,0.35);
+            text-align: left;
+        }
+        .ig-card-cover {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .ig-card-cover-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 35%, rgba(0,0,0,0.6) 100%);
+        }
+        .ig-card-creator-avatar {
+            position: relative;
+            z-index: 2;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.9);
+            overflow: hidden;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .ig-card-join-btn {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 0;
+            width: auto;
+            padding: 7px 16px;
+            font-size: 12px;
+            box-shadow: 0 4px 14px rgba(255,51,102,0.4);
+        }
+        .ig-card-body {
+            padding: 13px 15px 15px;
+        }
+        .ig-card-meta {
+            font-size: 11px;
+            color: #8b949e;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .capacity-track {
+            height: 5px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.08);
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff3366, #ff6b9d);
+            border-radius: 999px;
+            transition: width 0.3s ease;
+        }
+        .capacity-label {
+            font-size: 10.5px;
+            color: #8b949e;
+            margin-top: 5px;
+        }
         /* Leaflet dark-theme overrides */
         .leaflet-popup-content-wrapper {
             background: #161b22;
@@ -985,7 +1116,7 @@
 
     <!-- 2. Dashboard -->
     <div class="card hidden" id="roomsDashboard">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div class="dashboard-header-glass">
             <div class="app-logo-badge" style="padding: 5px 12px;">
                 <div class="logo-icon-box" style="width: 20px; height: 20px; font-size: 11px;">⚡</div>
                 <div class="logo-title-text" style="font-size: 12px;">QaPoBojm</div>
@@ -1042,22 +1173,18 @@
         <button type="button" id="openCreateModalBtn" style="margin-bottom: 4px;">+ Create Event</button>
 
         <div id="discoverPanel" style="margin-top: 14px;">
-            <label for="discoverCategorySelect">Category</label>
-            <select id="discoverCategorySelect">
-                <option value="">All Categories</option>
-                <option value="Ushqim">🍔 Food / Restaurants</option>
-                <option value="Termin">⚽ Activity / Sports</option>
-                <option value="Shetitje">🚗 Trip / Travel</option>
-                <option value="Tjetër">🎉 Other</option>
-            </select>
-
-            <label for="discoverCityInput">City</label>
-            <div style="display: flex; gap: 6px;">
-                <input type="text" id="discoverCityInput" placeholder="e.g. Prishtina" style="margin-bottom: 0;">
-                <button type="button" id="nearMeBtn" class="secondary-btn" style="width: 110px; margin-bottom: 0; font-size: 12px;">📍 Near Me</button>
+            <div class="filter-chips-row" id="categoryChipsRow">
+                <button type="button" class="filter-chip active" data-category="">All</button>
+                <button type="button" class="filter-chip" data-category="Ushqim">🍔 Food</button>
+                <button type="button" class="filter-chip" data-category="Termin">⚽ Sports</button>
+                <button type="button" class="filter-chip" data-category="Shetitje">🚗 Travel</button>
+                <button type="button" class="filter-chip" data-category="Tjetër">🎉 Other</button>
             </div>
 
-            <button type="button" id="searchPublicBtn" style="margin-top: 12px;">Search Public Events</button>
+            <div style="display: flex; gap: 6px; margin-top: 10px;">
+                <input type="text" id="discoverCityInput" placeholder="Search by city..." style="margin-bottom: 0;">
+                <button type="button" id="nearMeBtn" class="chip-icon-btn" title="Near Me">📍</button>
+            </div>
         </div>
 
         <div id="myEventsPanel" class="hidden" style="margin-top: 14px;">
@@ -1527,9 +1654,8 @@
         const createRoomPanel = document.getElementById('createRoomPanel');
         const discoverPanel = document.getElementById('discoverPanel');
         const discoverGrid = document.getElementById('discoverGrid');
-        const discoverCategorySelect = document.getElementById('discoverCategorySelect');
+        const categoryChipsRow = document.getElementById('categoryChipsRow');
         const discoverCityInput = document.getElementById('discoverCityInput');
-        const searchPublicBtn = document.getElementById('searchPublicBtn');
         const nearMeBtn = document.getElementById('nearMeBtn');
         const joinCodeInput = document.getElementById('joinCodeInput');
         const joinCodeBtn = document.getElementById('joinCodeBtn');
@@ -2142,6 +2268,9 @@
             myEventsPanel.classList.add('hidden');
             peoplePanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
+            categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.category === ''));
+            activeDiscoverCategory = '';
+            discoverCityInput.value = '';
             fetchPublicRooms('', '');
         });
         tabPeople.addEventListener('click', () => {
@@ -3131,6 +3260,16 @@
 
         // ==================== END DISCOVER BY PEOPLE ====================
 
+        function getCategoryGradient(category) {
+            const map = {
+                'Ushqim': 'linear-gradient(135deg, #ff9a56, #ff6b6b)',
+                'Termin': 'linear-gradient(135deg, #4facfe, #00c9b7)',
+                'Shetitje': 'linear-gradient(135deg, #a18cd1, #fbc2eb)',
+                'Tjetër': 'linear-gradient(135deg, #ff3366, #d50032)'
+            };
+            return map[category] || map['Tjetër'];
+        }
+
         async function fetchPublicRooms(category, city) {
             let query = mySupabase.from('rooms').select('*').eq('is_public', true);
             if (category) query = query.eq('category', category);
@@ -3141,51 +3280,89 @@
                 console.error("Error fetching public rooms:", error);
                 return;
             }
-            renderDiscoverGrid(data || []);
+            const rooms = data || [];
+            const creatorProfiles = await fetchProfilesByIds(rooms.map(r => r.admin_id).filter(Boolean));
+            renderDiscoverGrid(rooms, creatorProfiles);
         }
 
-        function renderDiscoverGrid(rooms) {
+        function renderDiscoverGrid(rooms, creatorProfiles) {
+            creatorProfiles = creatorProfiles || {};
             discoverGrid.innerHTML = '';
             discoverGrid.classList.remove('hidden');
 
             if (rooms.length === 0) {
-                discoverGrid.innerHTML = `<div style="text-align:center; color:#8b949e; font-size:12px; padding: 16px;">No public events found. Try a different filter.</div>`;
+                discoverGrid.innerHTML = `<div style="text-align:center; color:#8b949e; font-size:12px; padding: 20px;">No public events found. Try a different filter.</div>`;
                 return;
             }
 
             rooms.forEach(room => {
                 const iconEmoji = getCategoryEmoji(room.category);
-                const widget = document.createElement('div');
-                widget.className = 'discover-widget';
-                widget.style.backgroundColor = getRandomPastelColor();
+                const card = document.createElement('div');
+                card.className = 'ig-card';
 
                 const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
                 const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
+                const memberCount = (room.members || []).length;
+                const creator = room.admin_id ? creatorProfiles[room.admin_id] : null;
+                const creatorName = creator?.name || room.admin;
 
-                widget.innerHTML = `
-                    ${room.cover_url ? `<div style="height: 90px; margin: -12px -14px 8px; background-image:url(${room.cover_url}); background-size:cover; background-position:center; border-radius: 14px 14px 0 0;"></div>` : ''}
-                    <div class="discover-widget-top">
-                        <b style="font-size: 14px; color: #ff3366;">${iconEmoji} ${escapeHtml(room.name)}</b>
-                        <button class="secondary-btn" style="padding: 6px 12px; font-size: 11px; margin-bottom: 0; width: auto;">Join</button>
+                let capacityHtml;
+                if (room.capacity) {
+                    const pct = Math.min(100, Math.round((memberCount / room.capacity) * 100));
+                    capacityHtml = `
+                        <div class="capacity-track"><div class="capacity-fill" style="width:${pct}%"></div></div>
+                        <div class="capacity-label">${memberCount}/${room.capacity} spots</div>
+                    `;
+                } else {
+                    capacityHtml = `<div class="capacity-label" style="margin-top:9px;">👤 ${memberCount} joined</div>`;
+                }
+
+                const coverStyle = room.cover_url ? `background-image:url(${room.cover_url});` : `background-image:${getCategoryGradient(room.category)};`;
+
+                card.innerHTML = `
+                    <div class="ig-card-cover" style="${coverStyle}">
+                        <div class="ig-card-cover-overlay"></div>
+                        ${avatarHtml(creatorName, creator?.avatar_url, 'ig-card-creator-avatar')}
+                        <button class="ig-card-join-btn">Join</button>
                     </div>
-                    ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
-                    <div class="discover-widget-meta">
-                        ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
-                        ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
-                        <span>👤 ${(room.members || []).length} joined</span>
+                    <div class="ig-card-body">
+                        <b style="font-size: 14.5px; color: #f0f6fc;">${iconEmoji} ${escapeHtml(room.name)}</b>
+                        ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:4px;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
+                        <div class="ig-card-meta">
+                            ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
+                            ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
+                        </div>
+                        ${capacityHtml}
                     </div>
                 `;
 
-                widget.querySelector('button').addEventListener('click', async () => {
+                card.querySelector('.ig-card-join-btn').addEventListener('click', async (e) => {
+                    e.stopPropagation();
                     await requestToJoinRoom(room);
                 });
 
-                discoverGrid.appendChild(widget);
+                discoverGrid.appendChild(card);
             });
         }
 
-        searchPublicBtn.addEventListener('click', () => {
-            fetchPublicRooms(discoverCategorySelect.value, discoverCityInput.value.trim());
+        // Filter chips: zgjedhja e kategorisë kërkon menjëherë, pa buton "Search" të veçantë.
+        let activeDiscoverCategory = '';
+        categoryChipsRow.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeDiscoverCategory = chip.dataset.category;
+                fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
+            });
+        });
+
+        // Kërkim live sipas qytetit ndërsa shkruan (debounced, pa buton "Search").
+        let citySearchDebounce = null;
+        discoverCityInput.addEventListener('input', () => {
+            clearTimeout(citySearchDebounce);
+            citySearchDebounce = setTimeout(() => {
+                fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
+            }, 400);
         });
 
         // "Near Me" - merr koordinatat e pajisjes dhe i kthen në emër qyteti përmes
@@ -3197,7 +3374,7 @@
                 return;
             }
             nearMeBtn.disabled = true;
-            nearMeBtn.textContent = "Locating...";
+            nearMeBtn.textContent = "…";
 
             navigator.geolocation.getCurrentPosition(async (pos) => {
                 try {
@@ -3208,7 +3385,7 @@
 
                     if (city) {
                         discoverCityInput.value = city;
-                        fetchPublicRooms(discoverCategorySelect.value, city);
+                        fetchPublicRooms(activeDiscoverCategory, city);
                     } else {
                         alert("Could not determine your city. Please type it manually.");
                     }
@@ -3217,12 +3394,12 @@
                     alert("Could not detect your location right now. Please type your city manually.");
                 } finally {
                     nearMeBtn.disabled = false;
-                    nearMeBtn.textContent = "📍 Near Me";
+                    nearMeBtn.textContent = "📍";
                 }
             }, (err) => {
                 alert("Location access was denied or unavailable. Please type your city manually.");
                 nearMeBtn.disabled = false;
-                nearMeBtn.textContent = "📍 Near Me";
+                nearMeBtn.textContent = "📍";
             });
         });
 
@@ -3247,7 +3424,7 @@
                 if (tabMyRooms.classList.contains('active')) {
                     fetchRoomsFromSupabase();
                 } else {
-                    fetchPublicRooms(discoverCategorySelect.value, discoverCityInput.value.trim());
+                    fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
                 }
             } else {
                 landingCard.classList.remove('hidden');
