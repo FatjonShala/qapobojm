@@ -994,7 +994,9 @@
                             </div>
                         </div>
                         <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
-                        <button class="secondary-btn" id="backToLanding" style="margin: 0; font-size: 12px; padding: 8px;">🚪 Log out</button>
+                        <button class="secondary-btn" id="openChangePasswordBtn" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🔒 Change Password</button>
+                        <button class="secondary-btn" id="backToLanding" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🚪 Log out</button>
+                        <button class="secondary-btn" id="openDeactivateBtn" style="margin: 0; font-size: 12px; padding: 8px; color: #f85149; border-color: rgba(248,81,73,0.3);">⚠️ Deactivate Account</button>
                     </div>
                 </div>
             </div>
@@ -1066,7 +1068,8 @@
 
         <div id="createRoomPanel">
             <label for="eventCoverInput">Event Cover Photo <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
-            <input type="file" id="eventCoverInput" accept="image/*">
+            <button type="button" id="eventCoverTriggerBtn" class="secondary-btn" style="margin-bottom: 10px;">📷 Choose Cover Photo</button>
+            <input type="file" id="eventCoverInput" accept="image/*" class="hidden">
             <div id="eventCoverPreview" class="hidden" style="margin: -6px 0 14px; border-radius: 12px; overflow: hidden; height: 100px;"></div>
 
             <label for="eventCategory">Event Category</label>
@@ -1093,8 +1096,18 @@
             <label for="eventCapacity">Max Capacity <span style="color:#8b949e; font-weight: 400;">- optional, leave empty for unlimited</span></label>
             <input type="number" id="eventCapacity" min="1" placeholder="e.g. 12">
 
-            <label for="eventLocation">Event Location (address or place name) <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
-            <input type="text" id="eventLocation" placeholder="e.g. Skanderbeg Square, Tirana">
+            <div id="standardLocationContainer">
+                <label for="eventLocation">Event Location (address or place name) <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
+                <input type="text" id="eventLocation" placeholder="e.g. Skanderbeg Square, Tirana">
+            </div>
+
+            <div id="travelLocationContainer" class="hidden">
+                <label for="startPointInput">🚩 Start Point <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
+                <input type="text" id="startPointInput" placeholder="e.g. Prishtina Bus Station">
+
+                <label for="destinationInput">🏁 Destination <span style="color:#8b949e; font-weight: 400;">- optional</span></label>
+                <input type="text" id="destinationInput" placeholder="e.g. Ohrid, North Macedonia">
+            </div>
 
             <label>Room Visibility</label>
             <div style="display: flex; gap: 8px; margin-bottom: 10px;">
@@ -1185,6 +1198,39 @@
             <button type="button" id="closePickRoomModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
         <div id="pickRoomList"></div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="card hidden" id="changePasswordModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; width: 88%; max-width: 340px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 15px;">Change Password</h3>
+            <button type="button" id="closeChangePasswordBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
+        </div>
+        <label for="newPasswordInput">New Password</label>
+        <input type="password" id="newPasswordInput" placeholder="At least 6 characters">
+        <label for="confirmPasswordInput">Confirm New Password</label>
+        <input type="password" id="confirmPasswordInput" placeholder="Repeat new password">
+        <button id="submitChangePasswordBtn">Update Password</button>
+    </div>
+
+    <!-- Deactivate Account Modal -->
+    <div class="card hidden" id="deactivateModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; width: 88%; max-width: 340px; text-align: center;">
+        <div style="font-size: 34px; margin-bottom: 8px;">⚠️</div>
+        <h3 style="margin: 0 0 8px; font-size: 15px; color: #f85149;">Deactivate Account</h3>
+        <p style="font-size: 12px; color: #8b949e; margin-bottom: 14px;">This permanently deletes your profile, friends, messages, locations, and every room you created. This cannot be undone.</p>
+        <label for="deactivateConfirmInput" style="text-align:left;">Type <b>DELETE</b> to confirm</label>
+        <input type="text" id="deactivateConfirmInput" placeholder="DELETE">
+        <button id="confirmDeactivateBtn" style="background: linear-gradient(135deg, #f85149, #b62324);">Permanently Delete My Account</button>
+        <button class="secondary-btn" id="cancelDeactivateBtn" style="margin-top: 8px;">Cancel</button>
+    </div>
+
+    <!-- Photo Access Priming Modal -->
+    <div class="card hidden" id="photoPermissionModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 103; width: 86%; max-width: 320px; text-align: center;">
+        <div style="font-size: 30px; margin-bottom: 8px;">🖼️</div>
+        <h3 style="margin: 0 0 8px; font-size: 15px;">Access Your Photos?</h3>
+        <p id="photoPermissionText" style="font-size: 12px; color: #8b949e; margin-bottom: 16px;">QaPoBojm would like to access your photos so you can upload an image.</p>
+        <button id="photoPermissionAllowBtn">Allow</button>
+        <button class="secondary-btn" id="photoPermissionDenyBtn" style="margin-top: 8px;">Not Now</button>
     </div>
 
     <!-- Waiting for host approval -->
@@ -1287,6 +1333,31 @@
                 </div>
                 <iframe id="mapEmbedFrame" width="100%" height="160" style="border:0; border-radius: 12px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
+
+            <!-- Trip / Travel mode: Start Point + Destination -->
+            <div id="adminTravelLocationControls" class="hidden" style="margin-bottom: 8px;">
+                <label for="travelStartInput" style="font-size: 12px; color: #8b949e;">🚩 Start Point:</label>
+                <input type="text" id="travelStartInput" placeholder="Start point..." style="margin-bottom: 6px;">
+                <label for="travelDestInput" style="font-size: 12px; color: #8b949e;">🏁 Destination:</label>
+                <div style="display: flex; gap: 6px;">
+                    <input type="text" id="travelDestInput" placeholder="Destination..." style="margin-bottom: 0;">
+                    <button id="saveTravelLocationBtn" style="width: 90px; margin-bottom: 0;">Save</button>
+                </div>
+            </div>
+
+            <div id="travelLocationDisplay" class="hidden">
+                <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 6px;">
+                    <span style="font-size: 12px; color: #8b949e; font-weight: 600;">🚩 Start: <span id="travelStartName"></span></span>
+                    <a id="openStartInMapsBtn" href="#" target="_blank" rel="noopener" style="font-size: 11px; color: #ff3366; text-decoration: none; font-weight: 600; white-space: nowrap; margin-left: 8px;">Open ↗</a>
+                </div>
+                <iframe id="travelStartMapFrame" width="100%" height="120" style="border:0; border-radius: 12px; margin-bottom: 10px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 6px;">
+                    <span style="font-size: 12px; color: #8b949e; font-weight: 600;">🏁 Destination: <span id="travelDestName"></span></span>
+                    <a id="openDestInMapsBtn" href="#" target="_blank" rel="noopener" style="font-size: 11px; color: #ff3366; text-decoration: none; font-weight: 600; white-space: nowrap; margin-left: 8px;">Open ↗</a>
+                </div>
+                <iframe id="travelDestMapFrame" width="100%" height="120" style="border:0; border-radius: 12px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
         </div>
 
         <div id="setupSection">
@@ -1382,6 +1453,21 @@
         const eventTimeInput = document.getElementById('eventTime');
         const eventCapacityInput = document.getElementById('eventCapacity');
         const eventLocationInput = document.getElementById('eventLocation');
+        const standardLocationContainer = document.getElementById('standardLocationContainer');
+        const travelLocationContainer = document.getElementById('travelLocationContainer');
+        const startPointInput = document.getElementById('startPointInput');
+        const destinationInput = document.getElementById('destinationInput');
+        const adminTravelLocationControls = document.getElementById('adminTravelLocationControls');
+        const travelStartInput = document.getElementById('travelStartInput');
+        const travelDestInput = document.getElementById('travelDestInput');
+        const saveTravelLocationBtn = document.getElementById('saveTravelLocationBtn');
+        const travelLocationDisplay = document.getElementById('travelLocationDisplay');
+        const travelStartName = document.getElementById('travelStartName');
+        const travelDestName = document.getElementById('travelDestName');
+        const travelStartMapFrame = document.getElementById('travelStartMapFrame');
+        const travelDestMapFrame = document.getElementById('travelDestMapFrame');
+        const openStartInMapsBtn = document.getElementById('openStartInMapsBtn');
+        const openDestInMapsBtn = document.getElementById('openDestInMapsBtn');
         const adminLocationControls = document.getElementById('adminLocationControls');
         const locationInput = document.getElementById('locationInput');
         const saveLocationBtn = document.getElementById('saveLocationBtn');
@@ -1452,6 +1538,7 @@
         const profileAvatarBtn = document.getElementById('profileAvatarBtn');
         const avatarFileInput = document.getElementById('avatarFileInput');
         const eventCoverInput = document.getElementById('eventCoverInput');
+        const eventCoverTriggerBtn = document.getElementById('eventCoverTriggerBtn');
         const eventCoverPreview = document.getElementById('eventCoverPreview');
         const roomCoverBanner = document.getElementById('roomCoverBanner');
         const pendingRequestsPanel = document.getElementById('pendingRequestsPanel');
@@ -1463,6 +1550,21 @@
         const pendingApprovalMessage = document.getElementById('pendingApprovalMessage');
         const cancelJoinRequestBtn = document.getElementById('cancelJoinRequestBtn');
         const pickRoomList = document.getElementById('pickRoomList');
+        const openChangePasswordBtn = document.getElementById('openChangePasswordBtn');
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        const closeChangePasswordBtn = document.getElementById('closeChangePasswordBtn');
+        const newPasswordInput = document.getElementById('newPasswordInput');
+        const confirmPasswordInput = document.getElementById('confirmPasswordInput');
+        const submitChangePasswordBtn = document.getElementById('submitChangePasswordBtn');
+        const openDeactivateBtn = document.getElementById('openDeactivateBtn');
+        const deactivateModal = document.getElementById('deactivateModal');
+        const deactivateConfirmInput = document.getElementById('deactivateConfirmInput');
+        const confirmDeactivateBtn = document.getElementById('confirmDeactivateBtn');
+        const cancelDeactivateBtn = document.getElementById('cancelDeactivateBtn');
+        const photoPermissionModal = document.getElementById('photoPermissionModal');
+        const photoPermissionText = document.getElementById('photoPermissionText');
+        const photoPermissionAllowBtn = document.getElementById('photoPermissionAllowBtn');
+        const photoPermissionDenyBtn = document.getElementById('photoPermissionDenyBtn');
         const createEventModal = document.getElementById('createEventModal');
         const modalBackdrop = document.getElementById('modalBackdrop');
         const dashboardTitle = document.getElementById('dashboardTitle');
@@ -1687,6 +1789,14 @@
             await requestToJoinRoom(data);
         });
 
+        // Për kategorinë "Trip / Travel" (Shetitje), fusha e vetme e lokacionit
+        // zëvendësohet me dy fusha: Start Point + Destination.
+        eventCategorySelect.addEventListener('change', () => {
+            const isTravel = eventCategorySelect.value === 'Shetitje';
+            standardLocationContainer.classList.toggle('hidden', isTravel);
+            travelLocationContainer.classList.toggle('hidden', !isTravel);
+        });
+
         visPrivateBtn.addEventListener('click', () => {
             selectedVisibility = 'private';
             visPrivateBtn.classList.add('active');
@@ -1707,7 +1817,9 @@
             const eventTime = eventTimeInput.value;
             const capacityRaw = eventCapacityInput.value.trim();
             const capacity = capacityRaw ? parseInt(capacityRaw, 10) : null;
-            const location = eventLocationInput.value.trim();
+            const isTravel = category === 'Shetitje';
+            const location = isTravel ? startPointInput.value.trim() : eventLocationInput.value.trim();
+            const destination = isTravel ? destinationInput.value.trim() : null;
             const isPublic = selectedVisibility === 'public';
             const city = newRoomCityInput.value.trim();
 
@@ -1756,6 +1868,7 @@
                 event_time: eventTime,
                 capacity: capacity,
                 location: location,
+                destination: destination,
                 cover_url: coverUrl,
                 is_public: isPublic,
                 city: isPublic ? city : null,
@@ -1779,6 +1892,10 @@
             newRoomNameInput.value = '';
             eventCapacityInput.value = '';
             eventLocationInput.value = '';
+            startPointInput.value = '';
+            destinationInput.value = '';
+            standardLocationContainer.classList.remove('hidden');
+            travelLocationContainer.classList.add('hidden');
             newRoomCityInput.value = '';
             eventCoverInput.value = '';
             eventCoverPreview.classList.add('hidden');
@@ -1975,6 +2092,9 @@
             inviteFriendsModal.classList.add('hidden');
             dmModal.classList.add('hidden');
             pickRoomModal.classList.add('hidden');
+            changePasswordModal.classList.add('hidden');
+            deactivateModal.classList.add('hidden');
+            photoPermissionModal.classList.add('hidden');
             modalBackdrop.classList.add('hidden');
         }
         function closeCreateModal() { closeAllModals(); }
@@ -2061,7 +2181,32 @@
                 : `<span style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:${getAvatarColor(currentUser.name || '?')}; color:#fff; font-weight:700; font-size:14px;">${getInitials(currentUser.name || '?')}</span>`;
         }
 
-        profileAvatarBtn.addEventListener('click', () => avatarFileInput.click());
+        // ==================== PHOTO ACCESS PRIMING ====================
+        // Përpara se të hapim file-picker-in nativ (i cili në disa platforma/PWA
+        // shkakton kërkesë leje të OS-it), i shfaqim userit një shpjegim tonin që
+        // ai vetë të vendosë "Allow" ose "Not Now" — kështu leja e OS-it nuk vjen
+        // "nga hiçi" pa kontekst.
+        let pendingPhotoInputEl = null;
+        function requestPhotoAccess(inputEl, contextLabel) {
+            pendingPhotoInputEl = inputEl;
+            photoPermissionText.textContent = `QaPoBojm would like to access your photos so you can upload ${contextLabel}.`;
+            closeAllModals();
+            photoPermissionModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        }
+        photoPermissionAllowBtn.addEventListener('click', () => {
+            const target = pendingPhotoInputEl;
+            closeAllModals();
+            if (target) target.click();
+        });
+        photoPermissionDenyBtn.addEventListener('click', () => {
+            pendingPhotoInputEl = null;
+            closeAllModals();
+        });
+
+        profileAvatarBtn.addEventListener('click', () => requestPhotoAccess(avatarFileInput, 'a profile picture'));
+        eventCoverTriggerBtn.addEventListener('click', () => requestPhotoAccess(eventCoverInput, 'an event cover photo'));
+
         avatarFileInput.addEventListener('change', async () => {
             const file = avatarFileInput.files[0];
             if (!file || !currentUser.id) return;
@@ -2818,6 +2963,7 @@
                 widget.style.backgroundColor = getRandomPastelColor();
 
                 const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
+                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
 
                 widget.innerHTML = `
                     ${room.cover_url ? `<div style="height: 90px; margin: -12px -14px 8px; background-image:url(${room.cover_url}); background-size:cover; background-position:center; border-radius: 14px 14px 0 0;"></div>` : ''}
@@ -2825,6 +2971,7 @@
                         <b style="font-size: 14px; color: #ff3366;">${iconEmoji} ${escapeHtml(room.name)}</b>
                         <button class="secondary-btn" style="padding: 6px 12px; font-size: 11px; margin-bottom: 0; width: auto;">Join</button>
                     </div>
+                    ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
                     <div class="discover-widget-meta">
                         ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
                         ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
@@ -2916,6 +3063,97 @@
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             landingCard.classList.remove('hidden');
+        });
+
+        // ==================== CHANGE PASSWORD ====================
+        openChangePasswordBtn.addEventListener('click', () => {
+            profileMenuDropdown.classList.add('hidden');
+            closeAllModals();
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            changePasswordModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        });
+        closeChangePasswordBtn.addEventListener('click', closeAllModals);
+
+        submitChangePasswordBtn.addEventListener('click', async () => {
+            const newPass = newPasswordInput.value;
+            const confirmPass = confirmPasswordInput.value;
+
+            if (!newPass || newPass.length < 6) { alert("Password must be at least 6 characters."); return; }
+            if (newPass !== confirmPass) { alert("Passwords do not match."); return; }
+
+            submitChangePasswordBtn.disabled = true;
+            submitChangePasswordBtn.textContent = "Updating...";
+
+            const { error } = await mySupabase.auth.updateUser({ password: newPass });
+
+            submitChangePasswordBtn.disabled = false;
+            submitChangePasswordBtn.textContent = "Update Password";
+
+            if (error) {
+                alert("Could not update password: " + error.message);
+                return;
+            }
+
+            alert("Password updated successfully!");
+            closeAllModals();
+        });
+
+        // ==================== DEACTIVATE ACCOUNT ====================
+        // KUFIZIM TEKNIK: nga client-side (anon key) NUK mund të fshihet vetë rekordi
+        // auth.users (kërkon service_role key, që kurrë s'duhet ekspozuar në browser).
+        // Kjo fshin krejt të dhënat publike të userit (profil, dhoma, miq, mesazhe,
+        // lokacion) dhe e nxjerr nga sesioni — praktikisht një "reset total" i
+        // llogarisë. Fshirja e VËRTETË e kredencialeve kërkon Supabase Edge Function
+        // (shiko shënimin në fund të përgjigjes).
+        openDeactivateBtn.addEventListener('click', () => {
+            profileMenuDropdown.classList.add('hidden');
+            closeAllModals();
+            deactivateConfirmInput.value = '';
+            deactivateModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        });
+        cancelDeactivateBtn.addEventListener('click', closeAllModals);
+
+        confirmDeactivateBtn.addEventListener('click', async () => {
+            if (deactivateConfirmInput.value.trim().toUpperCase() !== 'DELETE') {
+                alert('Please type DELETE to confirm.');
+                return;
+            }
+            if (!confirm('This is permanent. Are you absolutely sure you want to delete your account?')) return;
+
+            confirmDeactivateBtn.disabled = true;
+            confirmDeactivateBtn.textContent = 'Deleting...';
+
+            try {
+                // 1) Fshi çdo dhomë që ke krijuar (edhe nëse kanë anëtarë të tjerë).
+                await mySupabase.from('rooms').delete().eq('admin', currentUser.name);
+
+                // 2) Fshi rekordin e profilit — kjo shkakton "on delete cascade" për
+                // friendships, direct_messages, room_members, user_locations,
+                // notifications, dhe join_requests që lidhen me këtë user_id.
+                if (currentUser.id) {
+                    await mySupabase.from('profiles').delete().eq('id', currentUser.id);
+                }
+
+                stopLocationUpdates();
+                if (notificationsChannel) mySupabase.removeChannel(notificationsChannel);
+                if (dmInboxChannel) mySupabase.removeChannel(dmInboxChannel);
+
+                await mySupabase.auth.signOut();
+
+                closeAllModals();
+                roomsDashboard.classList.add('hidden');
+                roomsGrid.classList.add('hidden');
+                landingCard.classList.remove('hidden');
+                alert('Your account data has been deleted. You have been logged out.');
+            } catch (err) {
+                alert('Something went wrong while deleting your account: ' + err.message);
+            } finally {
+                confirmDeactivateBtn.disabled = false;
+                confirmDeactivateBtn.textContent = 'Permanently Delete My Account';
+            }
         });
 
         backToPortalBtn.addEventListener('click', () => {
@@ -3198,7 +3436,9 @@
                 const widget = document.createElement('div');
                 widget.className = 'room-widget';
                 widget.style.backgroundColor = getRandomPastelColor();
-                
+                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
+                if (isTravel) widget.title = `🚩 ${room.location || '?'} → 🏁 ${room.destination || '?'}`;
+
                 widget.innerHTML = `
                     <div class="room-info-left">
                         ${room.cover_url ? `<img src="${room.cover_url}" style="width:32px; height:32px; border-radius:8px; object-fit:cover; flex-shrink:0;">` : `<span style="font-size: 16px;">${iconEmoji}</span>`}
@@ -3289,7 +3529,7 @@
             await loadRoomProfileCache(room.code);
             renderChat(room.messages || []);
             lastMessageCount = (room.messages || []).length;
-            renderLocation(room.location || '');
+            renderLocation(room);
             currentRoomCapacity = room.capacity || null;
             renderInOut(room.rsvp || {});
             startEventTimer(room.event_time);
@@ -3366,38 +3606,83 @@
         // Shfaq lokacionin e eventit: harta embed + buton "Open in Maps" për të gjithë,
         // dhe fusha e editimit vetëm për adminin. Funksionon vetëm me tekst adrese/emri
         // vendi ose koordinata "lat,lng" - pa pasur nevojë për Google Maps API key.
-        function renderLocation(location) {
-            if (currentUser.isAdmin) {
-                adminLocationControls.classList.remove('hidden');
-                locationInput.value = location || '';
-            } else {
-                adminLocationControls.classList.add('hidden');
+        function renderLocation(room) {
+            const isTravel = room.category === 'Shetitje';
+
+            // Standard single-location UI
+            adminLocationControls.classList.toggle('hidden', !(currentUser.isAdmin && !isTravel));
+            locationDisplay.classList.toggle('hidden', isTravel || !room.location);
+            if (!isTravel) {
+                locationInput.value = room.location || '';
+                if (room.location) {
+                    locationName.textContent = room.location;
+                    mapEmbedFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.location)}&output=embed`;
+                    openInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`;
+                } else {
+                    mapEmbedFrame.src = '';
+                }
             }
 
-            if (location) {
-                locationDisplay.classList.remove('hidden');
-                locationName.textContent = location;
-                mapEmbedFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(location)}&output=embed`;
-                openInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
-            } else {
-                locationDisplay.classList.add('hidden');
-                mapEmbedFrame.src = '';
+            // Trip / Travel UI: Start Point + Destination
+            adminTravelLocationControls.classList.toggle('hidden', !(currentUser.isAdmin && isTravel));
+            const hasTravelData = isTravel && (room.location || room.destination);
+            travelLocationDisplay.classList.toggle('hidden', !hasTravelData);
+
+            if (isTravel) {
+                travelStartInput.value = room.location || '';
+                travelDestInput.value = room.destination || '';
+
+                if (room.location) {
+                    travelStartName.textContent = room.location;
+                    travelStartMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.location)}&output=embed`;
+                    openStartInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.location)}`;
+                } else {
+                    travelStartMapFrame.src = '';
+                }
+
+                if (room.destination) {
+                    travelDestName.textContent = room.destination;
+                    travelDestMapFrame.src = `https://www.google.com/maps?q=${encodeURIComponent(room.destination)}&output=embed`;
+                    openDestInMapsBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(room.destination)}`;
+                } else {
+                    travelDestMapFrame.src = '';
+                }
             }
         }
 
         saveLocationBtn.addEventListener('click', async () => {
             if (!currentUser.isAdmin) return;
             const newLocation = locationInput.value.trim();
-            const { error } = await mySupabase
+            const { data, error } = await mySupabase
                 .from('rooms')
                 .update({ location: newLocation })
-                .eq('code', currentRoomCode);
+                .eq('code', currentRoomCode)
+                .select()
+                .single();
 
             if (error) {
                 alert("Could not save location: " + error.message);
                 return;
             }
-            renderLocation(newLocation);
+            renderLocation(data);
+        });
+
+        saveTravelLocationBtn.addEventListener('click', async () => {
+            if (!currentUser.isAdmin) return;
+            const newStart = travelStartInput.value.trim();
+            const newDest = travelDestInput.value.trim();
+            const { data, error } = await mySupabase
+                .from('rooms')
+                .update({ location: newStart, destination: newDest })
+                .eq('code', currentRoomCode)
+                .select()
+                .single();
+
+            if (error) {
+                alert("Could not save trip details: " + error.message);
+                return;
+            }
+            renderLocation(data);
         });
 
         // E lidh dhomën me Supabase Realtime, kështu që çdo ndryshim (chat, members, votes,
@@ -3459,7 +3744,7 @@
                     lastMessageCount = newMessages.length;
                     renderChat(newMessages);
 
-                    renderLocation(updatedRoom.location || '');
+                    renderLocation(updatedRoom);
                     currentRoomCapacity = updatedRoom.capacity || null;
                     renderInOut(updatedRoom.rsvp || {});
                     if (updatedRoom.method === 'poll') {
