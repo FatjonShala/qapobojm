@@ -1172,9 +1172,12 @@
             <button type="button" id="joinCodeBtn" class="secondary-btn" style="width: 78px; margin-bottom: 0; font-size: 12px;">Join</button>
         </div>
 
-        <button type="button" id="openCreateModalBtn" style="margin-bottom: 4px;">+ Create Event</button>
-
         <div id="discoverPanel" style="margin-top: 14px;">
+            <div class="filter-chips-row" id="visibilityScopeChips" style="margin-bottom: 10px;">
+                <button type="button" class="filter-chip active" data-scope="public">🌍 Public Events</button>
+                <button type="button" class="filter-chip" data-scope="friends">👥 Friends Events</button>
+            </div>
+
             <div class="filter-chips-row" id="categoryChipsRow">
                 <button type="button" class="filter-chip active" data-category="">All</button>
                 <button type="button" class="filter-chip" data-category="Ushqim">🍔 Food</button>
@@ -1190,6 +1193,7 @@
         </div>
 
         <div id="myEventsPanel" class="hidden" style="margin-top: 14px;">
+            <button type="button" id="openCreateModalBtn" style="margin-bottom: 12px;">+ Create Event</button>
             <p style="font-size: 12px; color: #8b949e; margin: 0;">Rooms you created or joined appear below.</p>
         </div>
 
@@ -1287,9 +1291,11 @@
 
             <label>Room Visibility</label>
             <div style="display: flex; gap: 8px; margin-bottom: 10px;">
-                <button type="button" id="visPrivateBtn" class="vis-toggle-btn active">🔒 Private</button>
-                <button type="button" id="visPublicBtn" class="vis-toggle-btn">🌍 Public</button>
+                <button type="button" id="visPrivateBtn" class="vis-toggle-btn active" style="padding: 10px 4px; font-size: 12px;">🔒 Private</button>
+                <button type="button" id="visFriendsBtn" class="vis-toggle-btn" style="padding: 10px 4px; font-size: 12px;">👥 Friends</button>
+                <button type="button" id="visPublicBtn" class="vis-toggle-btn" style="padding: 10px 4px; font-size: 12px;">🌍 Public</button>
             </div>
+            <p id="visibilityHint" style="font-size: 10.5px; color: #8b949e; margin: -8px 0 12px; text-align: left;">Nobody can see this event unless you send them the code or invite them directly.</p>
 
             <div id="publicCityContainer" class="hidden">
                 <label for="newRoomCity">City (so people can find it) </label>
@@ -1661,7 +1667,9 @@
         const mapEmbedFrame = document.getElementById('mapEmbedFrame');
         const createRoomBtn = document.getElementById('createRoomBtn');
         const visPrivateBtn = document.getElementById('visPrivateBtn');
+        const visFriendsBtn = document.getElementById('visFriendsBtn');
         const visPublicBtn = document.getElementById('visPublicBtn');
+        const visibilityHint = document.getElementById('visibilityHint');
         const publicCityContainer = document.getElementById('publicCityContainer');
         const newRoomCityInput = document.getElementById('newRoomCity');
         const tabMyRooms = document.getElementById('tabMyRooms');
@@ -1670,6 +1678,7 @@
         const discoverPanel = document.getElementById('discoverPanel');
         const discoverGrid = document.getElementById('discoverGrid');
         const categoryChipsRow = document.getElementById('categoryChipsRow');
+        const visibilityScopeChips = document.getElementById('visibilityScopeChips');
         const discoverCityInput = document.getElementById('discoverCityInput');
         const nearMeBtn = document.getElementById('nearMeBtn');
         const joinCodeInput = document.getElementById('joinCodeInput');
@@ -1821,6 +1830,11 @@
             discoverPanel.classList.remove('hidden');
             myEventsPanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
+            activeDiscoverScope = 'public';
+            activeDiscoverCategory = '';
+            visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.scope === 'public'));
+            categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.category === ''));
+            discoverCityInput.value = '';
             fetchPublicRooms('', '');
         }
 
@@ -1931,7 +1945,9 @@
                 console.error("Error fetching rooms by code:", error);
                 return;
             }
-            renderRoomsGrid(rooms || []);
+            const roomList = rooms || [];
+            const creatorProfiles = await fetchProfilesByIds(roomList.map(r => r.admin_id).filter(Boolean));
+            renderRoomsGrid(roomList, creatorProfiles);
         }
 
         // Regjistron/heq anëtarësinë e vërtetë (të qëndrueshme) të një useri të loguar
@@ -2152,18 +2168,22 @@
             });
         });
 
-        visPrivateBtn.addEventListener('click', () => {
-            selectedVisibility = 'private';
-            visPrivateBtn.classList.add('active');
-            visPublicBtn.classList.remove('active');
-            publicCityContainer.classList.add('hidden');
-        });
-        visPublicBtn.addEventListener('click', () => {
-            selectedVisibility = 'public';
-            visPublicBtn.classList.add('active');
-            visPrivateBtn.classList.remove('active');
-            publicCityContainer.classList.remove('hidden');
-        });
+        const VISIBILITY_HINTS = {
+            private: 'Nobody can see this event unless you send them the code or invite them directly.',
+            friends: 'Only your accepted friends will see this event, in their "Friends Events" feed.',
+            public: 'Anyone can find and join this event in "Discover Events".'
+        };
+        function setVisibility(value) {
+            selectedVisibility = value;
+            visPrivateBtn.classList.toggle('active', value === 'private');
+            visFriendsBtn.classList.toggle('active', value === 'friends');
+            visPublicBtn.classList.toggle('active', value === 'public');
+            publicCityContainer.classList.toggle('hidden', value !== 'public');
+            visibilityHint.textContent = VISIBILITY_HINTS[value];
+        }
+        visPrivateBtn.addEventListener('click', () => setVisibility('private'));
+        visFriendsBtn.addEventListener('click', () => setVisibility('friends'));
+        visPublicBtn.addEventListener('click', () => setVisibility('public'));
 
         createRoomBtn.addEventListener('click', async () => {
             const roomName = newRoomNameInput.value.trim();
@@ -2175,11 +2195,10 @@
             const isTravel = category === 'Shetitje';
             const location = isTravel ? startPointInput.value.trim() : eventLocationInput.value.trim();
             const destination = isTravel ? destinationInput.value.trim() : null;
-            const isPublic = selectedVisibility === 'public';
             const city = newRoomCityInput.value.trim();
 
             if (!roomName) { alert("Please give a name to the room!"); return; }
-            if (isPublic && !city) { alert("Please add a city so people can find this public event!"); return; }
+            if (selectedVisibility === 'public' && !city) { alert("Please add a city so people can find this public event!"); return; }
             if (capacityRaw && (isNaN(capacity) || capacity < 1)) { alert("Max Capacity must be a positive number."); return; }
 
             // Rate limiting: max 4 rooms per user per 24h, to prevent spam.
@@ -2225,8 +2244,8 @@
                 location: location,
                 destination: destination,
                 cover_url: coverUrl,
-                is_public: isPublic,
-                city: isPublic ? city : null,
+                visibility: selectedVisibility,
+                city: selectedVisibility === 'public' ? city : null,
                 admin: currentUser.name,
                 admin_id: currentUser.id || null,
                 options: [],
@@ -2261,10 +2280,7 @@
             eventCoverPreview.classList.add('hidden');
             eventCoverPreview.style.backgroundImage = '';
             selectedCoverFile = null;
-            selectedVisibility = 'private';
-            visPrivateBtn.classList.add('active');
-            visPublicBtn.classList.remove('active');
-            publicCityContainer.classList.add('hidden');
+            setVisibility('private');
             currentRoomCode = randomCode;
             await trackRoomMembership(randomCode);
             closeCreateModal();
@@ -2308,6 +2324,8 @@
             roomsGrid.classList.add('hidden');
             categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.category === ''));
             activeDiscoverCategory = '';
+            visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.scope === 'public'));
+            activeDiscoverScope = 'public';
             discoverCityInput.value = '';
             fetchPublicRooms('', '');
         });
@@ -3309,13 +3327,46 @@
         }
 
         async function fetchPublicRooms(category, city) {
-            let query = mySupabase.from('rooms').select('*').eq('is_public', true);
+            let query = mySupabase.from('rooms').select('*').eq('visibility', 'public');
             if (category) query = query.eq('category', category);
             if (city) query = query.ilike('city', `%${city}%`);
 
             const { data, error } = await query;
             if (error) {
                 console.error("Error fetching public rooms:", error);
+                return;
+            }
+            const rooms = data || [];
+            const creatorProfiles = await fetchProfilesByIds(rooms.map(r => r.admin_id).filter(Boolean));
+            renderDiscoverGrid(rooms, creatorProfiles);
+        }
+
+        // Eventet e miqve: vetëm miq të pranuar (friendships.status='accepted'), me
+        // visibility='friends'. Nëse s'ke miq ende, kthen listë bosh.
+        async function fetchFriendsRoomsFeed(category, city) {
+            if (!currentUser.id) {
+                renderDiscoverGrid([], {});
+                return;
+            }
+
+            const { data: acceptedRows } = await mySupabase
+                .from('friendships').select('*')
+                .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`)
+                .eq('status', 'accepted');
+
+            const friendIds = (acceptedRows || []).map(r => r.requester_id === currentUser.id ? r.addressee_id : r.requester_id);
+            if (friendIds.length === 0) {
+                renderDiscoverGrid([], {});
+                return;
+            }
+
+            let query = mySupabase.from('rooms').select('*').eq('visibility', 'friends').in('admin_id', friendIds);
+            if (category) query = query.eq('category', category);
+            if (city) query = query.ilike('city', `%${city}%`);
+
+            const { data, error } = await query;
+            if (error) {
+                console.error("Error fetching friends' rooms:", error);
                 return;
             }
             const rooms = data || [];
@@ -3385,12 +3436,32 @@
 
         // Filter chips: zgjedhja e kategorisë kërkon menjëherë, pa buton "Search" të veçantë.
         let activeDiscoverCategory = '';
+        let activeDiscoverScope = 'public';
+
+        function runDiscoverFetch() {
+            const city = discoverCityInput.value.trim();
+            if (activeDiscoverScope === 'friends') {
+                fetchFriendsRoomsFeed(activeDiscoverCategory, city);
+            } else {
+                fetchPublicRooms(activeDiscoverCategory, city);
+            }
+        }
+
+        visibilityScopeChips.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeDiscoverScope = chip.dataset.scope;
+                runDiscoverFetch();
+            });
+        });
+
         categoryChipsRow.querySelectorAll('.filter-chip').forEach(chip => {
             chip.addEventListener('click', () => {
                 categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
                 activeDiscoverCategory = chip.dataset.category;
-                fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
+                runDiscoverFetch();
             });
         });
 
@@ -3398,9 +3469,7 @@
         let citySearchDebounce = null;
         discoverCityInput.addEventListener('input', () => {
             clearTimeout(citySearchDebounce);
-            citySearchDebounce = setTimeout(() => {
-                fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
-            }, 400);
+            citySearchDebounce = setTimeout(runDiscoverFetch, 400);
         });
 
         // "Near Me" - merr koordinatat e pajisjes dhe i kthen në emër qyteti përmes
@@ -3423,7 +3492,7 @@
 
                     if (city) {
                         discoverCityInput.value = city;
-                        fetchPublicRooms(activeDiscoverCategory, city);
+                        runDiscoverFetch();
                     } else {
                         alert("Could not determine your city. Please type it manually.");
                     }
@@ -3462,7 +3531,7 @@
                 if (tabMyRooms.classList.contains('active')) {
                     fetchRoomsFromSupabase();
                 } else {
-                    fetchPublicRooms(activeDiscoverCategory, discoverCityInput.value.trim());
+                    runDiscoverFetch();
                 }
             } else {
                 landingCard.classList.remove('hidden');
@@ -3835,7 +3904,8 @@
             }
         }
 
-        function renderRoomsGrid(rooms) {
+        function renderRoomsGrid(rooms, creatorProfiles) {
+            creatorProfiles = creatorProfiles || {};
             roomsGrid.innerHTML = '';
             if (rooms.length > 0) {
                 roomsGrid.classList.remove('hidden');
@@ -3845,26 +3915,52 @@
 
             rooms.forEach(room => {
                 const iconEmoji = getCategoryEmoji(room.category);
-                const widget = document.createElement('div');
-                widget.className = 'room-widget';
-                widget.style.backgroundColor = getRandomPastelColor();
-                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
-                if (isTravel) widget.title = `🚩 ${room.location || '?'} → 🏁 ${room.destination || '?'}`;
+                const card = document.createElement('div');
+                card.className = 'ig-card';
 
-                widget.innerHTML = `
-                    <div class="room-info-left">
-                        ${room.cover_url ? `<img src="${room.cover_url}" style="width:32px; height:32px; border-radius:8px; object-fit:cover; flex-shrink:0;">` : `<span style="font-size: 16px;">${iconEmoji}</span>`}
-                        <b style="font-size: 13px; color: #ff3366; overflow: hidden; text-overflow: ellipsis;">${room.name}</b>
+                const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
+                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
+                const memberCount = (room.members || []).length;
+                const creator = room.admin_id ? creatorProfiles[room.admin_id] : null;
+                const creatorName = creator?.name || room.admin;
+
+                let capacityHtml;
+                if (room.capacity) {
+                    const pct = Math.min(100, Math.round((memberCount / room.capacity) * 100));
+                    capacityHtml = `
+                        <div class="capacity-track"><div class="capacity-fill" style="width:${pct}%"></div></div>
+                        <div class="capacity-label">${memberCount}/${room.capacity} spots</div>
+                    `;
+                } else {
+                    capacityHtml = `<div class="capacity-label" style="margin-top:9px;">👤 ${memberCount} joined</div>`;
+                }
+
+                const coverStyle = room.cover_url ? `background-image:url(${room.cover_url});` : `background-image:${getCategoryGradient(room.category)};`;
+
+                card.innerHTML = `
+                    <div class="ig-card-cover" style="${coverStyle}">
+                        <div class="ig-card-cover-overlay"></div>
+                        ${avatarHtml(creatorName, creator?.avatar_url, 'ig-card-creator-avatar')}
+                        <button class="ig-card-join-btn">Open Room</button>
                     </div>
-                    <div>
-                        <button class="secondary-btn" style="padding: 6px 10px; font-size: 11px; margin-bottom: 0; width: auto;">Open Room</button>
+                    <div class="ig-card-body">
+                        <b style="font-size: 14.5px; color: #f0f6fc;">${iconEmoji} ${escapeHtml(room.name)}</b>
+                        ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:4px;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
+                        <div class="ig-card-meta">
+                            ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
+                            ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
+                        </div>
+                        ${capacityHtml}
                     </div>
                 `;
-                widget.querySelector('button').addEventListener('click', () => {
+
+                card.querySelector('.ig-card-join-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
                     currentRoomCode = room.code;
                     enterRoom(room);
                 });
-                roomsGrid.appendChild(widget);
+
+                roomsGrid.appendChild(card);
             });
         }
 
