@@ -687,6 +687,8 @@
             border-radius: 12px;
         }
         .ig-card {
+            width: 100%;
+            box-sizing: border-box;
             border-radius: 18px;
             overflow: hidden;
             margin-bottom: 16px;
@@ -1212,7 +1214,7 @@
     <!-- Create Event Modal -->
     <div id="modalBackdrop" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 90;"></div>
     <div class="card hidden" id="createEventModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100; width: 88%; max-width: 380px; max-height: 86vh; overflow-y: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div class="dashboard-header-glass" style="justify-content: space-between;">
             <h3 style="margin: 0; font-size: 16px;">Create Event</h3>
             <button type="button" id="closeCreateModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
@@ -1223,8 +1225,14 @@
             <input type="file" id="eventCoverInput" accept="image/*" class="hidden">
             <div id="eventCoverPreview" class="hidden" style="margin: -6px 0 14px; border-radius: 12px; overflow: hidden; height: 100px;"></div>
 
-            <label for="eventCategory">Event Category</label>
-            <select id="eventCategory">
+            <label>Event Category</label>
+            <div class="filter-chips-row" id="eventCategoryChips" style="margin-bottom: 14px;">
+                <button type="button" class="filter-chip active" data-value="Ushqim">🍔 Food</button>
+                <button type="button" class="filter-chip" data-value="Termin">⚽ Sports</button>
+                <button type="button" class="filter-chip" data-value="Shetitje">🚗 Travel</button>
+                <button type="button" class="filter-chip" data-value="Tjetër">🎉 Other</button>
+            </div>
+            <select id="eventCategory" class="hidden">
                 <option value="Ushqim">🍔 Food / Restaurants</option>
                 <option value="Termin">⚽ Activity / Sports</option>
                 <option value="Shetitje">🚗 Trip / Travel</option>
@@ -1246,8 +1254,13 @@
             <label for="newRoomName">Room / Event Name</label>
             <input type="text" id="newRoomName" placeholder="e.g. Office Lunch, Friday Pizza...">
 
-            <label for="decisionMethod">Decision Method</label>
-            <select id="decisionMethod">
+            <label>Decision Method</label>
+            <div class="filter-chips-row" id="decisionMethodChips" style="margin-bottom: 14px;">
+                <button type="button" class="filter-chip active" data-value="inout">✅ In/Out</button>
+                <button type="button" class="filter-chip" data-value="spin">🎡 Spin</button>
+                <button type="button" class="filter-chip" data-value="poll">📊 Poll</button>
+            </div>
+            <select id="decisionMethod" class="hidden">
                 <option value="inout" selected>✅ In / Out</option>
                 <option value="spin">🎡 Spin the Wheel</option>
                 <option value="poll">📊 Vote Poll</option>
@@ -1612,6 +1625,8 @@
         
         const newRoomNameInput = document.getElementById('newRoomName');
         const eventCategorySelect = document.getElementById('eventCategory');
+        const eventCategoryChips = document.getElementById('eventCategoryChips');
+        const decisionMethodChips = document.getElementById('decisionMethodChips');
         const nearbySuggestionsPanel = document.getElementById('nearbySuggestionsPanel');
         const nearbySuggestionsList = document.getElementById('nearbySuggestionsList');
         const hideNearbySuggestionsBtn = document.getElementById('hideNearbySuggestionsBtn');
@@ -2118,6 +2133,25 @@
             fetchNearbySuggestions(eventCategorySelect.value);
         });
 
+        // Chips-at thjesht sinkronizojnë <select>-in e fshehur (i cili mbetet "burimi
+        // i vërtetë"), kështu që gjithë logjika ekzistuese (travel toggle, nearby
+        // suggestions, rate limit, etj.) vazhdon të punojë pa u prekur fare.
+        eventCategoryChips.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                eventCategoryChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                eventCategorySelect.value = chip.dataset.value;
+                eventCategorySelect.dispatchEvent(new Event('change'));
+            });
+        });
+        decisionMethodChips.querySelectorAll('.filter-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                decisionMethodChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                decisionMethodSelect.value = chip.dataset.value;
+            });
+        });
+
         visPrivateBtn.addEventListener('click', () => {
             selectedVisibility = 'private';
             visPrivateBtn.classList.add('active');
@@ -2218,6 +2252,10 @@
             destinationInput.value = '';
             standardLocationContainer.classList.remove('hidden');
             travelLocationContainer.classList.add('hidden');
+            eventCategorySelect.value = 'Ushqim';
+            eventCategoryChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.value === 'Ushqim'));
+            decisionMethodSelect.value = 'inout';
+            decisionMethodChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.value === 'inout'));
             newRoomCityInput.value = '';
             eventCoverInput.value = '';
             eventCoverPreview.classList.add('hidden');
