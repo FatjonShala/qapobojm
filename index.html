@@ -686,6 +686,283 @@
             font-size: 16px;
             border-radius: 12px;
         }
+        .scope-icon-btn {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            margin-bottom: 0;
+            padding: 0;
+            font-size: 16px;
+            border-radius: 50%;
+            background: #21262d;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            box-shadow: none;
+            transition: all 0.15s ease;
+        }
+        .scope-icon-btn.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(255,51,102,0.35);
+        }
+        .dropdown-option-btn {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 4px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            background: transparent;
+            color: #c9d1d9;
+            border: none;
+            border-radius: 8px;
+            box-shadow: none;
+            text-align: left;
+            transition: background 0.12s ease;
+        }
+        .dropdown-option-btn:last-child {
+            margin-bottom: 0;
+        }
+        .dropdown-option-btn:hover {
+            background: rgba(255,255,255,0.06);
+        }
+        .dropdown-option-btn.active {
+            background: rgba(255,51,102,0.15);
+            color: #ff3366;
+        }
+        /* ===== Fixed bottom navigation bar ===== */
+        .bottom-nav-bar {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 20px);
+            max-width: 400px;
+            z-index: 90;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 10px;
+            border-radius: 26px;
+            background: rgba(22, 27, 34, 0.75);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 34px rgba(0,0,0,0.55);
+        }
+        .bottom-nav-item {
+            flex: 1;
+            margin-bottom: 0;
+            padding: 8px 4px;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            color: #8b949e;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            transition: all 0.15s ease;
+        }
+        .bottom-nav-item .bn-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+        .bottom-nav-item.active {
+            background: rgba(255, 51, 102, 0.15);
+            color: #ff3366;
+        }
+        body.has-bottom-nav {
+            padding-bottom: 96px;
+        }
+        .logo-wordmark {
+            font-size: 20px;
+            font-weight: 900;
+            font-style: italic;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            margin-left: 8px;
+        }
+        /* ===== Area pill + icon row ===== */
+        .area-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .area-pill-btn {
+            flex: 1;
+            margin-bottom: 0;
+            height: 38px;
+            padding: 0 14px;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 999px;
+            background: #21262d;
+            color: #e6edf3;
+            border: 1px solid #30363d;
+            box-shadow: none;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .icon-row-btn {
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            margin-bottom: 0;
+            padding: 0;
+            font-size: 16px;
+            border-radius: 50%;
+            background: #21262d;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            box-shadow: none;
+            position: relative;
+            transition: all 0.15s ease;
+        }
+        .icon-row-btn.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(255,51,102,0.35);
+        }
+        /* ===== Calendar day strip ===== */
+        .calendar-day-strip {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding: 2px 0 10px;
+            margin-bottom: 8px;
+            scrollbar-width: none;
+        }
+        .calendar-day-strip::-webkit-scrollbar {
+            display: none;
+        }
+        .calendar-day-chip {
+            flex: 1 0 44px;
+            margin-bottom: 0;
+            padding: 8px 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 14px;
+            box-shadow: none;
+            color: #8b949e;
+            transition: all 0.15s ease;
+        }
+        .calendar-day-chip .cal-dow {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.4px;
+        }
+        .calendar-day-chip .cal-daynum {
+            font-size: 15px;
+            font-weight: 800;
+            color: #e6edf3;
+        }
+        .calendar-day-chip .cal-dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ff3366;
+        }
+        .calendar-day-chip.active {
+            background: linear-gradient(135deg, #ff3366, #d50032);
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(255,51,102,0.35);
+        }
+        .calendar-day-chip.active .cal-dow,
+        .calendar-day-chip.active .cal-daynum {
+            color: #ffffff;
+        }
+        .calendar-day-chip.active .cal-dot {
+            background: #ffffff;
+        }
+        /* ===== Day-grouped event list ===== */
+        .event-list-group-header {
+            width: 100%;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 800;
+            color: #f0f6fc;
+            margin: 16px 0 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .event-list-item {
+            width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #161b22;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: left;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+            transition: transform 0.12s ease, background 0.15s ease;
+        }
+        .event-list-item:active {
+            transform: scale(0.98);
+        }
+        .event-list-thumb {
+            width: 88px;
+            height: 88px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+        }
+        .event-list-content {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 4px;
+        }
+        .event-list-time {
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #d29922;
+            letter-spacing: 0.3px;
+        }
+        .event-list-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #f0f6fc;
+            line-height: 1.25;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .event-list-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #8b949e;
+        }
+        .event-list-badge {
+            background: rgba(255,255,255,0.07);
+            padding: 3px 9px;
+            border-radius: 999px;
+            font-weight: 700;
+            color: #c9d1d9;
+            flex-shrink: 0;
+        }
         .ig-card {
             width: 100%;
             box-sizing: border-box;
@@ -820,13 +1097,13 @@
         .dash-tab {
             flex: 1;
             margin-bottom: 0;
-            padding: 9px;
-            font-size: 12.5px;
+            padding: 7px;
+            font-size: 11.5px;
             font-weight: 700;
             background: transparent;
             color: #8b949e;
             border: none;
-            border-radius: 9px;
+            border-radius: 8px;
             box-shadow: none;
             transition: all 0.15s ease;
         }
@@ -1098,6 +1375,10 @@
             <button type="submit" id="authBtn">Sign in & Continue</button>
         </form>
 
+        <div class="footer-link" style="margin-top: -4px;">
+            <a href="#" id="forgotPasswordLink" style="font-size: 11px;">Forgot password?</a>
+        </div>
+
         <div class="footer-link">
             <a href="#" id="toggleAuth">No account? Create one</a>
         </div>
@@ -1118,86 +1399,83 @@
 
     <!-- 2. Dashboard -->
     <div class="card hidden" id="roomsDashboard">
-        <div class="dashboard-header-glass">
-            <div class="app-logo-badge" style="padding: 5px 12px;">
-                <div class="logo-icon-box" style="width: 20px; height: 20px; font-size: 11px;">⚡</div>
-                <div class="logo-title-text" style="font-size: 12px;">QaPoBojm</div>
-            </div>
-            <div style="display: flex; gap: 8px;">
-                <div style="position: relative;">
-                    <button type="button" id="openFriendsModalBtn" title="Friends" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; position: relative;">
-                        👥
-                        <span id="dmUnreadDot" class="hidden" style="position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: #ff3366; border-radius: 50%; border: 2px solid #161b22;"></span>
-                    </button>
-                </div>
-                <div style="position: relative;">
-                    <button type="button" id="notifBellBtn" title="Notifications" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; position: relative;">
-                        🔔
-                        <span id="notifBadge" class="hidden" style="position: absolute; top: -3px; right: -3px; background: #ff3366; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 3px; border: 2px solid #161b22;">0</span>
-                    </button>
-                    <div id="notifDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 8px; width: 260px; max-height: 340px; overflow-y: auto; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
-                        <div style="font-size: 12px; font-weight: 700; color: #f0f6fc; padding: 4px 6px 8px;">Notifications</div>
-                        <div id="notifList"></div>
-                    </div>
-                </div>
-                <div style="position: relative;">
-                    <button type="button" id="profileMenuBtn" title="Account" style="width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0; overflow: hidden;">👤</button>
-                    <div id="profileMenuDropdown" class="hidden" style="position: absolute; top: 42px; right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 10px; width: 190px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 2px 4px 10px;">
-                            <button type="button" id="profileAvatarBtn" title="Change photo" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; margin: 0; box-shadow: none; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></button>
-                            <div style="min-width: 0;">
-                                <div style="font-size: 10px; color: #8b949e;">Signed in as</div>
-                                <b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">User</b>
-                            </div>
-                        </div>
-                        <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
-                        <button class="secondary-btn" id="openChangePasswordBtn" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🔒 Change Password</button>
-                        <button class="secondary-btn" id="backToLanding" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🚪 Log out</button>
-                        <button class="secondary-btn" id="openDeactivateBtn" style="margin: 0; font-size: 12px; padding: 8px; color: #f85149; border-color: rgba(248,81,73,0.3);">⚠️ Deactivate Account</button>
-                    </div>
-                </div>
+        <div class="dashboard-header-glass" style="justify-content: flex-start;">
+            <div class="app-logo-badge" style="padding: 5px 12px; background: transparent; border: none; box-shadow: none;">
+                <div class="logo-icon-box" style="width: 22px; height: 22px; font-size: 12px;">⚡</div>
+                <span class="logo-wordmark">QaPoBojm</span>
             </div>
         </div>
 
-        <h2 id="dashboardTitle" style="margin-bottom: 10px; font-size: 19px;">Discover Events</h2>
+        <!-- All areas + njoftime + Public/Friends (të njëjtën madhësi si njoftimet) -->
+        <div class="area-filter-row" style="position: relative;">
+            <button type="button" id="areaPillBtn" class="area-pill-btn">📍 All areas ▾</button>
 
-        <div class="dash-tabs">
-            <button type="button" id="tabDiscover" class="dash-tab active">Discover Events</button>
+            <div style="position: relative;">
+                <button type="button" id="notifBellBtn" title="Notifications" class="icon-row-btn">
+                    🔔
+                    <span id="notifBadge" class="hidden" style="position: absolute; top: -3px; right: -3px; background: #ff3366; color: #fff; font-size: 9px; font-weight: 700; min-width: 15px; height: 15px; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0 3px; border: 2px solid #161b22;">0</span>
+                </button>
+                <div id="notifDropdown" class="hidden" style="position: absolute; top: 44px; right: -70px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 8px; width: 260px; max-height: 340px; overflow-y: auto; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 80; text-align: left;">
+                    <div style="font-size: 12px; font-weight: 700; color: #f0f6fc; padding: 4px 6px 8px;">Notifications</div>
+                    <div id="notifList"></div>
+                </div>
+            </div>
+
+            <button type="button" id="scopePublicBtn" class="scope-icon-btn active" title="Public Events">🌍</button>
+            <button type="button" id="scopeFriendsBtn" class="scope-icon-btn" title="Friends Events">👥</button>
+
+            <!-- Popover i "All areas": qyteti + Near Me -->
+            <div id="areaPopover" class="hidden" style="position: absolute; top: 46px; left: 0; width: 230px; background: #161b22; border: 1px solid #30363d; border-radius: 14px; padding: 10px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 85; text-align: left;">
+                <div style="font-size: 11px; font-weight: 700; color: #8b949e; margin-bottom: 6px;">Search by city</div>
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                    <input type="text" id="discoverCityInput" placeholder="City..." style="margin-bottom: 0; height: 36px; padding: 0 12px; font-size: 12px;">
+                    <button type="button" id="nearMeBtn" class="icon-row-btn" title="Events near me (10km)" style="width: 36px; height: 36px;">📍</button>
+                </div>
+                <button type="button" id="areaClearBtn" class="secondary-btn" style="margin: 0; padding: 7px; font-size: 11px;">All areas (clear)</button>
+            </div>
+        </div>
+
+        <!-- Kategoria + My Events (folded) + People + Join -->
+        <div class="filter-chips-row" style="margin-bottom: 12px;">
+            <div style="position: relative; flex-shrink: 0;">
+                <button type="button" id="categoryDropdownBtn" class="filter-chip active">All ▾</button>
+                <div id="categoryDropdownMenu" class="hidden" style="position: absolute; top: 38px; left: 0; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 6px; width: 150px; box-shadow: 0 14px 34px rgba(0,0,0,0.55); z-index: 70;">
+                    <button type="button" class="dropdown-option-btn active" data-category="">All</button>
+                    <button type="button" class="dropdown-option-btn" data-category="Ushqim">🍔 Food</button>
+                    <button type="button" class="dropdown-option-btn" data-category="Termin">⚽ Sports</button>
+                    <button type="button" class="dropdown-option-btn" data-category="Shetitje">🚗 Travel</button>
+                    <button type="button" class="dropdown-option-btn" data-category="Tjetër">🎉 Other</button>
+                </div>
+            </div>
+            <button type="button" id="scopeMineBtn" class="filter-chip">🗂️ My Events</button>
+            <button type="button" id="peopleToggleBtn" class="filter-chip">🗺️ People</button>
+            <button type="button" id="joinToggleBtn" class="filter-chip">🔑 Join</button>
+        </div>
+
+        <div id="joinCodeRow" style="display: none; gap: 6px; margin-bottom: 12px;">
+            <input type="text" id="joinCodeInput" placeholder="ROOM CODE" maxlength="6" style="margin-bottom: 0; height: 38px; flex: 1; text-align: center; letter-spacing: 1px; text-transform: uppercase; font-size: 12px;">
+            <button type="button" id="joinCodeBtn" class="secondary-btn" style="width: auto; height: 38px; padding: 0 18px; margin-bottom: 0; font-size: 12px;">Join</button>
+        </div>
+
+        <h2 id="dashboardTitle" class="hidden">Discover Events</h2>
+        <div class="hidden" aria-hidden="true">
+            <button type="button" id="tabDiscover" class="dash-tab active">Discover</button>
             <button type="button" id="tabMyRooms" class="dash-tab">My Events</button>
-            <button type="button" id="tabPeople" class="dash-tab">📍 People</button>
+            <button type="button" id="tabPeople" class="dash-tab">People</button>
         </div>
 
-        <div style="display: flex; gap: 6px; margin-bottom: 10px;">
-            <input type="text" id="joinCodeInput" placeholder="Have a room code? Enter it..." style="margin-bottom: 0; text-transform: uppercase;">
-            <button type="button" id="joinCodeBtn" class="secondary-btn" style="width: 78px; margin-bottom: 0; font-size: 12px;">Join</button>
+        <div id="calendarDayStripWrap" class="hidden">
+            <div id="calendarDayStrip" class="calendar-day-strip"></div>
         </div>
 
-        <div id="discoverPanel" style="margin-top: 14px;">
-            <div class="filter-chips-row" id="visibilityScopeChips" style="margin-bottom: 10px;">
-                <button type="button" class="filter-chip active" data-scope="public">🌍 Public Events</button>
-                <button type="button" class="filter-chip" data-scope="friends">👥 Friends Events</button>
-            </div>
+        <div id="discoverPanel"></div>
 
-            <div class="filter-chips-row" id="categoryChipsRow">
-                <button type="button" class="filter-chip active" data-category="">All</button>
-                <button type="button" class="filter-chip" data-category="Ushqim">🍔 Food</button>
-                <button type="button" class="filter-chip" data-category="Termin">⚽ Sports</button>
-                <button type="button" class="filter-chip" data-category="Shetitje">🚗 Travel</button>
-                <button type="button" class="filter-chip" data-category="Tjetër">🎉 Other</button>
-            </div>
-
-            <div style="display: flex; gap: 6px; margin-top: 10px;">
-                <input type="text" id="discoverCityInput" placeholder="Search by city..." style="margin-bottom: 0;">
-                <button type="button" id="nearMeBtn" class="chip-icon-btn" title="Near Me">📍</button>
-            </div>
-        </div>
-
-        <div id="myEventsPanel" class="hidden" style="margin-top: 14px;">
+        <div id="myEventsPanel" class="hidden">
             <button type="button" id="openCreateModalBtn" style="margin-bottom: 12px;">+ Create Event</button>
             <p style="font-size: 12px; color: #8b949e; margin: 0;">Rooms you created or joined appear below.</p>
         </div>
 
-        <div id="peoplePanel" class="hidden" style="margin-top: 14px;">
+        <div id="peoplePanel" class="hidden" style="margin-top: 4px;">
             <div style="background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; text-align: left;">
                 <div style="font-size: 12.5px; font-weight: 700; color: #f0f6fc; margin-bottom: 2px;">📍 Share My Location</div>
                 <div id="locShareSubtext" style="font-size: 10.5px; color: #8b949e; margin-bottom: 8px;">Not sharing right now</div>
@@ -1210,10 +1488,45 @@
             <div id="peopleMapContainer" style="height: 320px; border-radius: 14px; overflow: hidden; border: 1px solid #30363d;"></div>
             <p style="font-size: 10.5px; color: #6e7681; margin-top: 8px; text-align: left;">Locations shown are approximate (fuzzed ~300-500m) for everyone's privacy.</p>
         </div>
+
+        <!-- Elementë "legacy" të fshehur: mbahen në DOM (me logjikën e tyre origjinale
+             të pandryshuar) që Profile/Chats të bëjnë thjesht .click() mbi ta. -->
+        <div class="hidden" aria-hidden="true">
+            <button type="button" id="openFriendsModalBtn" title="Friends">👥</button>
+            <div style="position: relative;">
+                <button type="button" id="profileMenuBtn" title="Account">👤</button>
+
+            </div>
+        </div>
     </div>
 
     <div class="rooms-grid hidden" id="discoverGrid"></div>
     <div class="rooms-grid hidden" id="roomsGrid"></div>
+
+    <div id="profileMenuDropdown" class="hidden" style="position: fixed; bottom: 96px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; border-radius: 16px; padding: 12px; width: 210px; box-shadow: 0 14px 34px rgba(0,0,0,0.6); z-index: 95; text-align: left;">
+        <div style="display: flex; align-items: center; gap: 8px; padding: 2px 4px 10px;">
+            <button type="button" id="profileAvatarBtn" title="Change photo" style="width: 40px; height: 40px; border-radius: 50%; padding: 0; margin: 0; box-shadow: none; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></button>
+            <div style="min-width: 0;">
+                <div style="font-size: 10px; color: #8b949e;">Signed in as</div>
+                <b id="profileMenuName" style="color: #f0f6fc; font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block;">User</b>
+            </div>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/*" class="hidden">
+        <button class="secondary-btn" id="openChangePasswordBtn" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🔒 Change Password</button>
+        <button class="secondary-btn" id="backToLanding" style="margin: 0 0 6px; font-size: 12px; padding: 8px;">🚪 Log out</button>
+        <button class="secondary-btn" id="openDeactivateBtn" style="margin: 0; font-size: 12px; padding: 8px; color: #f85149; border-color: rgba(248,81,73,0.3);">⚠️ Deactivate Account</button>
+    </div>
+
+    <!-- Fixed bottom navigation -->
+    <nav id="bottomNavBar" class="bottom-nav-bar hidden">
+        <button type="button" id="bnHome" class="bottom-nav-item active"><span class="bn-icon">🏠</span>Home</button>
+        <button type="button" id="bnDiscover" class="bottom-nav-item"><span class="bn-icon">🧭</span>Discover</button>
+        <button type="button" id="bnChats" class="bottom-nav-item" style="position: relative;">
+            <span class="bn-icon">💬</span>Chats
+            <span id="dmUnreadDot" class="hidden" style="position: absolute; top: 4px; right: 22%; width: 10px; height: 10px; background: #ff3366; border-radius: 50%; border: 2px solid #161b22;"></span>
+        </button>
+        <button type="button" id="bnProfile" class="bottom-nav-item"><span class="bn-icon">👤</span>Profile</button>
+    </nav>
 
     <!-- Create Event Modal -->
     <div id="modalBackdrop" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 90;"></div>
@@ -1380,6 +1693,28 @@
             <button type="button" id="closePickRoomModalBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
         </div>
         <div id="pickRoomList"></div>
+    </div>
+
+    <!-- Universal Confirm Modal (zëvendëson window.confirm() nativ, i cili mund të
+         dështojë në heshtje brenda WebView-ve si Capacitor) -->
+    <div class="card hidden" id="confirmActionModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 105; width: 86%; max-width: 320px; text-align: center;">
+        <div id="confirmActionIcon" style="font-size: 32px; margin-bottom: 8px;">⚠️</div>
+        <h3 id="confirmActionTitle" style="margin: 0 0 8px; font-size: 15px;"></h3>
+        <p id="confirmActionMessage" style="font-size: 12px; color: #8b949e; margin-bottom: 16px;"></p>
+        <button id="confirmActionYesBtn">Confirm</button>
+        <button class="secondary-btn" id="confirmActionNoBtn" style="margin-top: 8px;">Cancel</button>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="card hidden" id="forgotPasswordModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; width: 88%; max-width: 340px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 15px;">Reset Password</h3>
+            <button type="button" id="closeForgotPasswordBtn" style="width: 30px; height: 30px; border-radius: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: #e6edf3; font-size: 14px; margin-bottom: 0; box-shadow: none; padding: 0;">✕</button>
+        </div>
+        <p style="font-size: 12px; color: #8b949e; margin-bottom: 14px; text-align: left;">Enter your email and we'll send you a link to reset your password.</p>
+        <label for="forgotPasswordEmailInput">Email</label>
+        <input type="email" id="forgotPasswordEmailInput" placeholder="name@example.com">
+        <button id="sendResetLinkBtn">Send Reset Link</button>
     </div>
 
     <!-- Change Password Modal -->
@@ -1677,8 +2012,10 @@
         const createRoomPanel = document.getElementById('createRoomPanel');
         const discoverPanel = document.getElementById('discoverPanel');
         const discoverGrid = document.getElementById('discoverGrid');
-        const categoryChipsRow = document.getElementById('categoryChipsRow');
-        const visibilityScopeChips = document.getElementById('visibilityScopeChips');
+        const categoryDropdownBtn = document.getElementById('categoryDropdownBtn');
+        const categoryDropdownMenu = document.getElementById('categoryDropdownMenu');
+        const scopePublicBtn = document.getElementById('scopePublicBtn');
+        const scopeFriendsBtn = document.getElementById('scopeFriendsBtn');
         const discoverCityInput = document.getElementById('discoverCityInput');
         const nearMeBtn = document.getElementById('nearMeBtn');
         const joinCodeInput = document.getElementById('joinCodeInput');
@@ -1742,6 +2079,31 @@
         const pendingApprovalMessage = document.getElementById('pendingApprovalMessage');
         const cancelJoinRequestBtn = document.getElementById('cancelJoinRequestBtn');
         const pickRoomList = document.getElementById('pickRoomList');
+        const bottomNavBar = document.getElementById('bottomNavBar');
+        const bnHome = document.getElementById('bnHome');
+        const bnDiscover = document.getElementById('bnDiscover');
+        const bnChats = document.getElementById('bnChats');
+        const bnProfile = document.getElementById('bnProfile');
+        const areaPillBtn = document.getElementById('areaPillBtn');
+        const areaPopover = document.getElementById('areaPopover');
+        const areaClearBtn = document.getElementById('areaClearBtn');
+        const scopeMineBtn = document.getElementById('scopeMineBtn');
+        const peopleToggleBtn = document.getElementById('peopleToggleBtn');
+        const joinToggleBtn = document.getElementById('joinToggleBtn');
+        const joinCodeRow = document.getElementById('joinCodeRow');
+        const calendarDayStripWrap = document.getElementById('calendarDayStripWrap');
+        const calendarDayStrip = document.getElementById('calendarDayStrip');
+        const confirmActionModal = document.getElementById('confirmActionModal');
+        const confirmActionIcon = document.getElementById('confirmActionIcon');
+        const confirmActionTitle = document.getElementById('confirmActionTitle');
+        const confirmActionMessage = document.getElementById('confirmActionMessage');
+        const confirmActionYesBtn = document.getElementById('confirmActionYesBtn');
+        const confirmActionNoBtn = document.getElementById('confirmActionNoBtn');
+        const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+        const forgotPasswordModal = document.getElementById('forgotPasswordModal');
+        const closeForgotPasswordBtn = document.getElementById('closeForgotPasswordBtn');
+        const forgotPasswordEmailInput = document.getElementById('forgotPasswordEmailInput');
+        const sendResetLinkBtn = document.getElementById('sendResetLinkBtn');
         const openChangePasswordBtn = document.getElementById('openChangePasswordBtn');
         const changePasswordModal = document.getElementById('changePasswordModal');
         const closeChangePasswordBtn = document.getElementById('closeChangePasswordBtn');
@@ -1822,6 +2184,8 @@
             landingCard.classList.add('hidden');
             roomsDashboard.classList.remove('hidden');
             profileMenuDropdown.classList.add('hidden');
+            showBottomNav();
+            setBottomNavActive(bnHome);
 
             // Default View: Discover Events
             tabDiscover.classList.add('active');
@@ -1830,11 +2194,7 @@
             discoverPanel.classList.remove('hidden');
             myEventsPanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
-            activeDiscoverScope = 'public';
-            activeDiscoverCategory = '';
-            visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.scope === 'public'));
-            categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.category === ''));
-            discoverCityInput.value = '';
+            resetDiscoverFilterUI();
             fetchPublicRooms('', '');
         }
 
@@ -2023,6 +2383,28 @@
 
         function formatDistance(meters) {
             return meters < 1000 ? `${Math.round(meters)}m` : `${(meters / 1000).toFixed(1)}km`;
+        }
+
+        // Koordinatat e një dhome: nga "(lat,lng)" i ngulitur në location (kur është
+        // zgjedhur nga Nearby Suggestions), përndryshe gjeokodim i qytetit (Nominatim,
+        // falas). Përdoret te krijimi i eventit, për të mundësuar kërkim me rreze GPS.
+        async function deriveRoomCoordinates(locationText, cityText) {
+            if (locationText) {
+                const match = locationText.match(/\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)\s*$/);
+                if (match) return { lat: parseFloat(match[1]), lng: parseFloat(match[2]) };
+            }
+            if (cityText) {
+                try {
+                    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityText)}&format=json&limit=1`);
+                    const results = await res.json();
+                    if (results && results[0]) {
+                        return { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+                    }
+                } catch (err) {
+                    console.error('Geocoding city failed:', err);
+                }
+            }
+            return { lat: null, lng: null };
         }
 
         function buildOverpassQuery(config, lat, lng) {
@@ -2234,6 +2616,11 @@
                 }
             }
 
+            // Koordinatat e dhomës: nëse lokacioni u zgjodh nga "Nearby Suggestions" (ka
+            // "(lat,lng)" të ngulitura), i përdorim ato direkt (precize, pa rrjet). Përndryshe
+            // gjeokodojmë qytetin (nëse ka) përmes Nominatim, falas, për kërkim me rreze GPS.
+            const coords = await deriveRoomCoordinates(location, city);
+
             const newRoomData = {
                 code: randomCode,
                 name: roomName,
@@ -2246,6 +2633,8 @@
                 cover_url: coverUrl,
                 visibility: selectedVisibility,
                 city: selectedVisibility === 'public' ? city : null,
+                lat: coords.lat,
+                lng: coords.lng,
                 admin: currentUser.name,
                 admin_id: currentUser.id || null,
                 options: [],
@@ -2322,11 +2711,7 @@
             myEventsPanel.classList.add('hidden');
             peoplePanel.classList.add('hidden');
             roomsGrid.classList.add('hidden');
-            categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.category === ''));
-            activeDiscoverCategory = '';
-            visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.toggle('active', c.dataset.scope === 'public'));
-            activeDiscoverScope = 'public';
-            discoverCityInput.value = '';
+            resetDiscoverFilterUI();
             fetchPublicRooms('', '');
         });
         tabPeople.addEventListener('click', () => {
@@ -2334,6 +2719,7 @@
             tabDiscover.classList.remove('active');
             tabMyRooms.classList.remove('active');
             dashboardTitle.textContent = 'Discover by People';
+            calendarDayStripWrap.classList.add('hidden');
             peoplePanel.classList.remove('hidden');
             discoverPanel.classList.add('hidden');
             myEventsPanel.classList.add('hidden');
@@ -2341,6 +2727,80 @@
             roomsGrid.classList.add('hidden');
             initPeopleMap();
         });
+
+        // ==================== BOTTOM NAV + AREA PILL + FOLDED CHIPS ====================
+        // Shiriti poshtë dhe chips e reja (My Events/People/Join) RIPËRDORIN logjikën
+        // ekzistuese të tab-eve (tabDiscover/tabMyRooms/tabPeople) përmes .click() —
+        // kështu s'rrezikojmë dyfishim ose mospërputhje të sjelljes.
+        function setBottomNavActive(activeBtn) {
+            [bnHome, bnDiscover, bnChats, bnProfile].forEach(b => b.classList.remove('active'));
+            if (activeBtn) activeBtn.classList.add('active');
+        }
+        bnHome.addEventListener('click', () => {
+            setBottomNavActive(bnHome);
+            homePreselectToday = true;
+            tabDiscover.click();
+        });
+        bnDiscover.addEventListener('click', () => {
+            setBottomNavActive(bnDiscover);
+            tabDiscover.click();
+        });
+        bnChats.addEventListener('click', () => {
+            setBottomNavActive(bnChats);
+            openFriendsModalBtn.click();
+        });
+        bnProfile.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setBottomNavActive(bnProfile);
+            profileMenuBtn.click();
+        });
+
+        // "My Events" (folded into Discover) dhe "People" thjesht shtypin tab-et
+        // origjinale ekzistuese; "Join" hap/mbyll rreshtin e kodit.
+        scopeMineBtn.addEventListener('click', () => {
+            tabMyRooms.click();
+            setBottomNavActive(bnDiscover);
+        });
+        peopleToggleBtn.addEventListener('click', () => {
+            tabPeople.click();
+            setBottomNavActive(bnDiscover);
+        });
+        joinToggleBtn.addEventListener('click', () => {
+            const isOpen = joinCodeRow.style.display === 'flex';
+            joinCodeRow.style.display = isOpen ? 'none' : 'flex';
+        });
+
+        // "All areas" pill: popover me qytet + Near Me + pastrim.
+        areaPillBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            areaPopover.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!areaPopover.contains(e.target) && e.target !== areaPillBtn) {
+                areaPopover.classList.add('hidden');
+            }
+        });
+        areaClearBtn.addEventListener('click', () => {
+            discoverCityInput.value = '';
+            areaPillBtn.textContent = '📍 All areas ▾';
+            areaPopover.classList.add('hidden');
+            runDiscoverFetch();
+        });
+        discoverCityInput.addEventListener('change', () => {
+            const city = discoverCityInput.value.trim();
+            areaPillBtn.textContent = city ? `📍 ${city} ▾` : '📍 All areas ▾';
+        });
+
+        // Shiriti poshtë shfaqet vetëm pasi je i loguar (jo te landing/login).
+        function showBottomNav() {
+            bottomNavBar.classList.remove('hidden');
+            document.body.classList.add('has-bottom-nav');
+        }
+        function hideBottomNav() {
+            bottomNavBar.classList.add('hidden');
+            document.body.classList.remove('has-bottom-nav');
+        }
+        // ==================== END BOTTOM NAV ====================
 
         // --- Join a room directly by code (works for logged-in users too, not just guests) ---
         async function joinRoomByCode(code) {
@@ -2401,6 +2861,7 @@
             roomsGrid.classList.add('hidden');
             discoverGrid.classList.add('hidden');
             roomCard.classList.add('hidden');
+            if (currentUser.isAuthenticated) showBottomNav(); else hideBottomNav();
 
             pendingApprovalIcon.textContent = '⏳';
             pendingApprovalTitle.textContent = 'Waiting for approval...';
@@ -2476,9 +2937,85 @@
             changePasswordModal.classList.add('hidden');
             deactivateModal.classList.add('hidden');
             photoPermissionModal.classList.add('hidden');
+            confirmActionModal.classList.add('hidden');
+            forgotPasswordModal.classList.add('hidden');
             modalBackdrop.classList.add('hidden');
         }
         function closeCreateModal() { closeAllModals(); }
+
+        // Zëvendëson window.confirm() (i cili mund të dështojë në heshtje brenda
+        // WebView-ve si Capacitor/Android) me një modal tonin, i cili funksionon
+        // gjithmonë. Përdorim: const ok = await showConfirmAction({...}); if (!ok) return;
+        let confirmActionResolve = null;
+        function showConfirmAction({ title, message, confirmText = 'Confirm', danger = false, icon = '⚠️' }) {
+            return new Promise((resolve) => {
+                confirmActionIcon.textContent = icon;
+                confirmActionTitle.textContent = title;
+                confirmActionMessage.textContent = message;
+                confirmActionYesBtn.textContent = confirmText;
+                confirmActionYesBtn.style.background = danger ? 'linear-gradient(135deg, #f85149, #b62324)' : '';
+                closeAllModals();
+                confirmActionModal.classList.remove('hidden');
+                modalBackdrop.classList.remove('hidden');
+                confirmActionResolve = resolve;
+            });
+        }
+        confirmActionYesBtn.addEventListener('click', () => {
+            closeAllModals();
+            if (confirmActionResolve) confirmActionResolve(true);
+            confirmActionResolve = null;
+        });
+        confirmActionNoBtn.addEventListener('click', () => {
+            closeAllModals();
+            if (confirmActionResolve) confirmActionResolve(false);
+            confirmActionResolve = null;
+        });
+
+        // ==================== FORGOT PASSWORD ====================
+        forgotPasswordLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            forgotPasswordEmailInput.value = document.getElementById('email').value.trim();
+            closeAllModals();
+            forgotPasswordModal.classList.remove('hidden');
+            modalBackdrop.classList.remove('hidden');
+        });
+        closeForgotPasswordBtn.addEventListener('click', closeAllModals);
+
+        sendResetLinkBtn.addEventListener('click', async () => {
+            const email = forgotPasswordEmailInput.value.trim();
+            if (!email) { alert('Please enter your email.'); return; }
+
+            sendResetLinkBtn.disabled = true;
+            sendResetLinkBtn.textContent = 'Sending...';
+
+            const { error } = await mySupabase.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.href.split('#')[0]
+            });
+
+            sendResetLinkBtn.disabled = false;
+            sendResetLinkBtn.textContent = 'Send Reset Link';
+
+            if (error) {
+                alert('Could not send reset email: ' + error.message);
+                return;
+            }
+            alert('If an account exists for that email, a password reset link has been sent.');
+            closeAllModals();
+        });
+
+        // Kur useri klikon linkun e reset-it te email-i, Supabase e rikthen këtu me
+        // një sesion të përkohshëm "recovery" — e kapim dhe hapim direkt modalin
+        // "Change Password" që tashmë kemi, që të vendosë fjalëkalimin e ri.
+        mySupabase.auth.onAuthStateChange((event) => {
+            if (event === 'PASSWORD_RECOVERY') {
+                closeAllModals();
+                newPasswordInput.value = '';
+                confirmPasswordInput.value = '';
+                changePasswordModal.classList.remove('hidden');
+                modalBackdrop.classList.remove('hidden');
+            }
+        });
+        // ==================== END FORGOT PASSWORD ====================
 
         openCreateModalBtn.addEventListener('click', () => {
             closeAllModals();
@@ -2903,7 +3440,9 @@
                 .select('*', { count: 'exact', head: true })
                 .eq('recipient_id', currentUser.id)
                 .eq('is_read', false);
-            dmUnreadDot.classList.toggle('hidden', !count);
+            dmUnreadCount = count || 0;
+            dmUnreadDot.classList.toggle('hidden', !dmUnreadCount);
+            refreshAppBadge();
         }
 
         // --- Ftesë e drejtpërdrejtë në dhomë ---
@@ -2971,6 +3510,8 @@
 
         function renderNotifications(items) {
             const unreadCount = items.filter(n => !n.is_read).length;
+            notifUnreadCount = unreadCount;
+            refreshAppBadge();
             notifBadge.classList.toggle('hidden', unreadCount === 0);
             notifBadge.textContent = unreadCount > 9 ? '9+' : unreadCount;
 
@@ -3034,7 +3575,7 @@
                     filter: `recipient_id=eq.${currentUser.id}`
                 }, () => {
                     fetchNotifications();
-                    playPingSound();
+                    playInviteSound();
                 })
                 .subscribe();
         }
@@ -3374,65 +3915,176 @@
             renderDiscoverGrid(rooms, creatorProfiles);
         }
 
-        function renderDiscoverGrid(rooms, creatorProfiles) {
-            creatorProfiles = creatorProfiles || {};
-            discoverGrid.innerHTML = '';
-            discoverGrid.classList.remove('hidden');
+        // ==================== CALENDAR FEED (shirit javor + listë e grupuar sipas ditës) ====================
+        let selectedCalendarDate = null;
+        let feedRoomsCache = [];
+        let feedDistanceMapCache = {};
+        let feedClickMode = 'join'; // 'join' (Discover/Friends) | 'open' (My Events)
+        let feedTargetGrid = null;
 
-            if (rooms.length === 0) {
-                discoverGrid.innerHTML = `<div style="text-align:center; color:#8b949e; font-size:12px; padding: 20px;">No public events found. Try a different filter.</div>`;
+        let homePreselectToday = false;
+
+        function displayFeed(targetGrid, rooms, creatorProfiles, distanceMap, clickMode) {
+            feedTargetGrid = targetGrid;
+            feedClickMode = clickMode || 'join';
+            feedDistanceMapCache = distanceMap || {};
+            let list = rooms || [];
+
+            // Te Discover/Friends s'ka kuptim të shfaqen evente që kanë kaluar; te My Events
+            // (clickMode 'open') mbahen të gjitha. Eventet pa orar mbeten gjithmonë.
+            if (feedClickMode === 'join') {
+                const startOfToday = new Date();
+                startOfToday.setHours(0, 0, 0, 0);
+                list = list.filter(r => !r.event_time || new Date(r.event_time) >= startOfToday);
+            }
+            feedRoomsCache = list;
+
+            selectedCalendarDate = null;
+            if (homePreselectToday) {
+                const todayStr = new Date().toDateString();
+                if (feedRoomsCache.some(r => r.event_time && new Date(r.event_time).toDateString() === todayStr)) {
+                    selectedCalendarDate = todayStr;
+                }
+                homePreselectToday = false;
+            }
+            calendarDayStripWrap.classList.remove('hidden');
+            renderCalendarStrip();
+            renderEventListGrouped();
+        }
+
+        function renderCalendarStrip() {
+            const days = [];
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push(d);
+            }
+            const eventDateSet = new Set(feedRoomsCache.filter(r => r.event_time).map(r => new Date(r.event_time).toDateString()));
+
+            calendarDayStrip.innerHTML = days.map(d => {
+                const dow = d.toLocaleDateString([], { weekday: 'short' }).toUpperCase();
+                const dateKey = d.toDateString();
+                const isSelected = selectedCalendarDate === dateKey;
+                const hasEvents = eventDateSet.has(dateKey);
+                return `
+                    <button type="button" class="calendar-day-chip ${isSelected ? 'active' : ''}" data-date="${dateKey}">
+                        <span class="cal-dow">${dow}</span>
+                        <span class="cal-daynum">${d.getDate()}</span>
+                        ${hasEvents ? '<span class="cal-dot"></span>' : ''}
+                    </button>
+                `;
+            }).join('');
+
+            calendarDayStrip.querySelectorAll('.calendar-day-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    const date = chip.dataset.date;
+                    selectedCalendarDate = (selectedCalendarDate === date) ? null : date;
+                    renderCalendarStrip();
+                    renderEventListGrouped();
+                });
+            });
+        }
+
+        function buildEventListItem(room) {
+            const iconEmoji = getCategoryEmoji(room.category);
+            const item = document.createElement('div');
+            item.className = 'event-list-item';
+
+            const timeLabel = room.event_time ? new Date(room.event_time).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'No time set';
+            const memberCount = (room.members || []).length;
+            const distanceLabel = feedDistanceMapCache[room.code] != null ? formatDistance(feedDistanceMapCache[room.code]) : null;
+            const capacityText = room.capacity ? `${memberCount}/${room.capacity}` : `${memberCount} joined`;
+            const thumbStyle = room.cover_url ? `background-image:url(${room.cover_url});` : `background-image:${getCategoryGradient(room.category)};`;
+            const locationText = distanceLabel ? `~${distanceLabel} away` : (room.city || room.location || '');
+
+            item.innerHTML = `
+                <div class="event-list-thumb" style="${thumbStyle}"></div>
+                <div class="event-list-content">
+                    <div class="event-list-time">${timeLabel}</div>
+                    <div class="event-list-title">${iconEmoji} ${escapeHtml(room.name)}</div>
+                    <div class="event-list-meta">
+                        <span>📍 ${escapeHtml(locationText)}</span>
+                        <span class="event-list-badge">${capacityText}</span>
+                    </div>
+                </div>
+            `;
+
+            item.addEventListener('click', async () => {
+                if (feedClickMode === 'open') {
+                    currentRoomCode = room.code;
+                    enterRoom(room);
+                } else {
+                    await requestToJoinRoom(room);
+                }
+            });
+
+            return item;
+        }
+
+        function renderEventListGrouped() {
+            const grid = feedTargetGrid;
+            if (!grid) return;
+
+            let filtered = feedRoomsCache;
+            if (selectedCalendarDate) {
+                filtered = feedRoomsCache.filter(r => r.event_time && new Date(r.event_time).toDateString() === selectedCalendarDate);
+            }
+
+            grid.innerHTML = '';
+            grid.classList.remove('hidden');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div style="text-align:center; color:#8b949e; font-size:12px; padding: 20px;">No events found.</div>`;
                 return;
             }
 
-            rooms.forEach(room => {
-                const iconEmoji = getCategoryEmoji(room.category);
-                const card = document.createElement('div');
-                card.className = 'ig-card';
-
-                const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
-                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
-                const memberCount = (room.members || []).length;
-                const creator = room.admin_id ? creatorProfiles[room.admin_id] : null;
-                const creatorName = creator?.name || room.admin;
-
-                let capacityHtml;
-                if (room.capacity) {
-                    const pct = Math.min(100, Math.round((memberCount / room.capacity) * 100));
-                    capacityHtml = `
-                        <div class="capacity-track"><div class="capacity-fill" style="width:${pct}%"></div></div>
-                        <div class="capacity-label">${memberCount}/${room.capacity} spots</div>
-                    `;
-                } else {
-                    capacityHtml = `<div class="capacity-label" style="margin-top:9px;">👤 ${memberCount} joined</div>`;
-                }
-
-                const coverStyle = room.cover_url ? `background-image:url(${room.cover_url});` : `background-image:${getCategoryGradient(room.category)};`;
-
-                card.innerHTML = `
-                    <div class="ig-card-cover" style="${coverStyle}">
-                        <div class="ig-card-cover-overlay"></div>
-                        ${avatarHtml(creatorName, creator?.avatar_url, 'ig-card-creator-avatar')}
-                        <button class="ig-card-join-btn">Join</button>
-                    </div>
-                    <div class="ig-card-body">
-                        <b style="font-size: 14.5px; color: #f0f6fc;">${iconEmoji} ${escapeHtml(room.name)}</b>
-                        ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:4px;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
-                        <div class="ig-card-meta">
-                            ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
-                            ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
-                        </div>
-                        ${capacityHtml}
-                    </div>
-                `;
-
-                card.querySelector('.ig-card-join-btn').addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    await requestToJoinRoom(room);
-                });
-
-                discoverGrid.appendChild(card);
+            const groups = {};
+            const noDate = [];
+            filtered.forEach(r => {
+                if (!r.event_time) { noDate.push(r); return; }
+                const key = new Date(r.event_time).toDateString();
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(r);
             });
+
+            const sortedKeys = Object.keys(groups).sort((a, b) => new Date(a) - new Date(b));
+            const todayStr = new Date().toDateString();
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrowStr = tomorrowDate.toDateString();
+
+            sortedKeys.forEach(key => {
+                const d = new Date(key);
+                let label;
+                if (key === todayStr) label = `Today, ${d.toLocaleDateString([], { day: 'numeric', month: 'long' })}`;
+                else if (key === tomorrowStr) label = `Tomorrow, ${d.toLocaleDateString([], { day: 'numeric', month: 'long' })}`;
+                else label = d.toLocaleDateString([], { weekday: 'long', day: 'numeric', month: 'long' });
+
+                const header = document.createElement('div');
+                header.className = 'event-list-group-header';
+                header.textContent = label;
+                grid.appendChild(header);
+
+                groups[key]
+                    .sort((a, b) => new Date(a.event_time) - new Date(b.event_time))
+                    .forEach(room => grid.appendChild(buildEventListItem(room)));
+            });
+
+            if (noDate.length > 0) {
+                const header = document.createElement('div');
+                header.className = 'event-list-group-header';
+                header.textContent = 'No date set';
+                grid.appendChild(header);
+                noDate.forEach(room => grid.appendChild(buildEventListItem(room)));
+            }
         }
+
+        function renderDiscoverGrid(rooms, creatorProfiles, distanceMap) {
+            displayFeed(discoverGrid, rooms, creatorProfiles, distanceMap, 'join');
+        }
+        // ==================== END CALENDAR FEED ====================
 
         // Filter chips: zgjedhja e kategorisë kërkon menjëherë, pa buton "Search" të veçantë.
         let activeDiscoverCategory = '';
@@ -3447,20 +4099,47 @@
             }
         }
 
-        visibilityScopeChips.querySelectorAll('.filter-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                visibilityScopeChips.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                activeDiscoverScope = chip.dataset.scope;
-                runDiscoverFetch();
-            });
+        function resetDiscoverFilterUI() {
+            activeDiscoverScope = 'public';
+            activeDiscoverCategory = '';
+            scopePublicBtn.classList.add('active');
+            scopeFriendsBtn.classList.remove('active');
+            categoryDropdownMenu.querySelectorAll('.dropdown-option-btn').forEach(o => o.classList.toggle('active', o.dataset.category === ''));
+            categoryDropdownBtn.textContent = 'All ▾';
+            discoverCityInput.value = '';
+        }
+
+        scopePublicBtn.addEventListener('click', () => {
+            scopePublicBtn.classList.add('active');
+            scopeFriendsBtn.classList.remove('active');
+            activeDiscoverScope = 'public';
+            runDiscoverFetch();
+        });
+        scopeFriendsBtn.addEventListener('click', () => {
+            scopeFriendsBtn.classList.add('active');
+            scopePublicBtn.classList.remove('active');
+            activeDiscoverScope = 'friends';
+            runDiscoverFetch();
         });
 
-        categoryChipsRow.querySelectorAll('.filter-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                categoryChipsRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                activeDiscoverCategory = chip.dataset.category;
+        // Dropdown-i i kategorisë: "All ▾" tregon vetëm emojin kur zgjidhet një
+        // kategori specifike, për të mbetur kompakt.
+        categoryDropdownBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            categoryDropdownMenu.classList.toggle('hidden');
+        });
+        document.addEventListener('click', (e) => {
+            if (!categoryDropdownMenu.contains(e.target) && e.target !== categoryDropdownBtn) {
+                categoryDropdownMenu.classList.add('hidden');
+            }
+        });
+        categoryDropdownMenu.querySelectorAll('.dropdown-option-btn').forEach(opt => {
+            opt.addEventListener('click', () => {
+                categoryDropdownMenu.querySelectorAll('.dropdown-option-btn').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                activeDiscoverCategory = opt.dataset.category;
+                categoryDropdownBtn.textContent = activeDiscoverCategory ? `${getCategoryEmoji(activeDiscoverCategory)} ▾` : 'All ▾';
+                categoryDropdownMenu.classList.add('hidden');
                 runDiscoverFetch();
             });
         });
@@ -3475,7 +4154,10 @@
         // "Near Me" - merr koordinatat e pajisjes dhe i kthen në emër qyteti përmes
         // Nominatim (OpenStreetMap, falas, pa API key). Kjo mbush automatikisht
         // fushën e qytetit dhe kërkon direkt eventet publike aty afër.
-        nearMeBtn.addEventListener('click', () => {
+        // "Near Me" për evente: kërkim me rreze reale (10km) përmes koordinatave të
+        // ruajtura te dhoma — njësoj metodologjikisht si kërkimi i restoranteve/fushave
+        // sportive kur krijojmë event (Haversine mbi një set kandidatësh).
+        async function fetchNearbyEvents() {
             if (!navigator.geolocation) {
                 alert("Geolocation is not supported on this device/browser.");
                 return;
@@ -3483,32 +4165,54 @@
             nearMeBtn.disabled = true;
             nearMeBtn.textContent = "…";
 
-            navigator.geolocation.getCurrentPosition(async (pos) => {
-                try {
-                    const { latitude, longitude } = pos.coords;
-                    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                    const geo = await res.json();
-                    const city = geo?.address?.city || geo?.address?.town || geo?.address?.village || geo?.address?.municipality || '';
+            try {
+                const pos = await getMyLocation();
 
-                    if (city) {
-                        discoverCityInput.value = city;
-                        runDiscoverFetch();
-                    } else {
-                        alert("Could not determine your city. Please type it manually.");
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert("Could not detect your location right now. Please type your city manually.");
-                } finally {
-                    nearMeBtn.disabled = false;
-                    nearMeBtn.textContent = "📍";
+                let query = mySupabase.from('rooms').select('*').not('lat', 'is', null).not('lng', 'is', null);
+
+                if (activeDiscoverScope === 'friends') {
+                    if (!currentUser.id) { renderDiscoverGrid([], {}); return; }
+                    const { data: acceptedRows } = await mySupabase
+                        .from('friendships').select('*')
+                        .or(`requester_id.eq.${currentUser.id},addressee_id.eq.${currentUser.id}`)
+                        .eq('status', 'accepted');
+                    const friendIds = (acceptedRows || []).map(r => r.requester_id === currentUser.id ? r.addressee_id : r.requester_id);
+                    if (friendIds.length === 0) { renderDiscoverGrid([], {}); return; }
+                    query = query.eq('visibility', 'friends').in('admin_id', friendIds);
+                } else {
+                    query = query.eq('visibility', 'public');
                 }
-            }, (err) => {
-                alert("Location access was denied or unavailable. Please type your city manually.");
+
+                if (activeDiscoverCategory) query = query.eq('category', activeDiscoverCategory);
+
+                const { data, error } = await query;
+                if (error) {
+                    console.error(error);
+                    alert("Could not search nearby events right now.");
+                    return;
+                }
+
+                const RADIUS_METERS = 10000;
+                const distanceMap = {};
+                const nearby = (data || [])
+                    .map(room => ({ room, dist: haversineDistance(pos.lat, pos.lng, room.lat, room.lng) }))
+                    .filter(x => x.dist <= RADIUS_METERS)
+                    .sort((a, b) => a.dist - b.dist);
+
+                nearby.forEach(x => { distanceMap[x.room.code] = x.dist; });
+                const rooms = nearby.map(x => x.room);
+
+                const creatorProfiles = await fetchProfilesByIds(rooms.map(r => r.admin_id).filter(Boolean));
+                renderDiscoverGrid(rooms, creatorProfiles, distanceMap);
+            } catch (err) {
+                console.error(err);
+                alert("Could not access your location. Please allow location access, or type a city manually.");
+            } finally {
                 nearMeBtn.disabled = false;
                 nearMeBtn.textContent = "📍";
-            });
-        });
+            }
+        }
+        nearMeBtn.addEventListener('click', fetchNearbyEvents);
 
         async function updateRoomInSupabase(updates) {
             await mySupabase.from('rooms').update(updates).eq('code', currentRoomCode);
@@ -3528,12 +4232,14 @@
         function returnToDashboardOrLanding() {
             if (currentUser.isAuthenticated) {
                 roomsDashboard.classList.remove('hidden');
+                showBottomNav();
                 if (tabMyRooms.classList.contains('active')) {
                     fetchRoomsFromSupabase();
                 } else {
                     runDiscoverFetch();
                 }
             } else {
+                hideBottomNav();
                 landingCard.classList.remove('hidden');
             }
         }
@@ -3541,6 +4247,8 @@
         backToLanding.addEventListener('click', async () => {
             await mySupabase.auth.signOut();
             stopLocationUpdates();
+            updateAppBadge(0);
+            hideBottomNav();
             roomsDashboard.classList.add('hidden');
             roomsGrid.classList.add('hidden');
             landingCard.classList.remove('hidden');
@@ -3602,23 +4310,40 @@
                 alert('Please type DELETE to confirm.');
                 return;
             }
-            if (!confirm('This is permanent. Are you absolutely sure you want to delete your account?')) return;
+            const reallySure = await showConfirmAction({
+                icon: '⚠️',
+                title: 'Delete Account?',
+                message: 'This is permanent. Are you absolutely sure you want to delete your account?',
+                confirmText: 'Yes, Delete Forever',
+                danger: true
+            });
+            if (!reallySure) return;
 
             confirmDeactivateBtn.disabled = true;
             confirmDeactivateBtn.textContent = 'Deleting...';
 
             try {
-                // 1) Fshi çdo dhomë që ke krijuar (edhe nëse kanë anëtarë të tjerë).
-                await mySupabase.from('rooms').delete().eq('admin', currentUser.name);
+                // 1) Fshi çdo dhomë që ke krijuar — sipas admin_id (ID e qëndrueshme),
+                // JO sipas emrit (i cili mund të mos përputhet nëse e ke ndryshuar
+                // emrin që kur u krijua dhoma — kjo ishte shkaku i vërtetë i bug-ut:
+                // nëse mbetej qoftë edhe një dhomë me admin_id ende duke referuar këtë
+                // profil, fshirja e profilit dështonte në heshtje për shkak të foreign key).
+                if (currentUser.id) {
+                    const { error: roomsDelErr } = await mySupabase.from('rooms').delete().eq('admin_id', currentUser.id);
+                    if (roomsDelErr) throw new Error('Could not delete your rooms: ' + roomsDelErr.message);
+                }
 
                 // 2) Fshi rekordin e profilit — kjo shkakton "on delete cascade" për
                 // friendships, direct_messages, room_members, user_locations,
                 // notifications, dhe join_requests që lidhen me këtë user_id.
                 if (currentUser.id) {
-                    await mySupabase.from('profiles').delete().eq('id', currentUser.id);
+                    const { error: profileDelErr } = await mySupabase.from('profiles').delete().eq('id', currentUser.id);
+                    if (profileDelErr) throw new Error('Could not delete your profile: ' + profileDelErr.message);
                 }
 
                 stopLocationUpdates();
+                updateAppBadge(0);
+                hideBottomNav();
                 if (notificationsChannel) mySupabase.removeChannel(notificationsChannel);
                 if (dmInboxChannel) mySupabase.removeChannel(dmInboxChannel);
 
@@ -3647,7 +4372,14 @@
         leaveRoomBtn.addEventListener('click', async () => {
             if (!currentRoomCode) return;
 
-            if (!confirm("Are you sure you want to leave this room permanently?")) return;
+            const ok = await showConfirmAction({
+                icon: '🚪',
+                title: 'Leave this room?',
+                message: 'Are you sure you want to leave this room permanently?',
+                confirmText: 'Leave Room',
+                danger: true
+            });
+            if (!ok) return;
 
             leaveRoomBtn.disabled = true;
             leaveRoomBtn.textContent = "Leaving...";
@@ -3801,20 +4533,88 @@
             }
         });
 
+        // Një AudioContext i ndarë/ripërdorshëm (jo i ri çdo herë) — dhe e "resume"-ojmë
+        // te ndërveprimi i parë i userit, sepse browsers/WebView (Capacitor përfshirë) e
+        // mbajnë të heshtur ("suspended") derisa userit t'i jetë "prekur" faqja, edhe kur
+        // luhet nga një event realtime (jo klikim direkt). Ky ishte shkaku real pse tingulli
+        // s'dëgjohej për njoftimet/chat-in që vijnë nga serveri, jo nga një klikim i userit.
+        // ==================== APP ICON BADGE (pika e kuqe si Instagram) ====================
+        // Provon fillimisht plugin-in nativ të Capacitor (@capacitor/badge ose
+        // @capawesome/capacitor-badge, nëse është shtuar te projekti Android) për një
+        // badge të VËRTETË mbi ikonën e app-it. Nëse s'ekziston, bie mbrapa te Web
+        // Badging API standarde (navigator.setAppBadge), e cila funksionon në disa
+        // browser/PWA por s'garantohet brenda çdo WebView-i Capacitor.
+        let notifUnreadCount = 0;
+        let dmUnreadCount = 0;
+        function refreshAppBadge() {
+            updateAppBadge(notifUnreadCount + dmUnreadCount);
+        }
+        async function updateAppBadge(count) {
+            try {
+                if (window.Capacitor?.Plugins?.Badge) {
+                    if (count > 0) await window.Capacitor.Plugins.Badge.set({ count });
+                    else await window.Capacitor.Plugins.Badge.clear();
+                    return;
+                }
+                if ('setAppBadge' in navigator) {
+                    if (count > 0) await navigator.setAppBadge(count);
+                    else await navigator.clearAppBadge();
+                }
+            } catch (err) {
+                console.error('Could not update app badge:', err);
+            }
+        }
+        // ==================== END APP ICON BADGE ====================
+
+        let sharedAudioCtx = null;
+        function getAudioContext() {
+            if (!sharedAudioCtx) {
+                sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return sharedAudioCtx;
+        }
+        document.addEventListener('click', () => {
+            const ctx = getAudioContext();
+            if (ctx.state === 'suspended') ctx.resume();
+        }, { once: true });
+
         function playPingSound() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') ctx.resume();
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(880, ctx.currentTime);
                 osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.1);
-                gain.gain.setValueAtTime(0.08, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 osc.start();
-                osc.stop(ctx.currentTime + 0.16);
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) { /* audio not available, ignore */ }
+        }
+
+        // Tingull i dedikuar (2-ton) për ftesa/kërkesa (friend request, room invite) —
+        // pak më i dallueshëm/i vëmendshëm sesa "ping"-u i thjeshtë i chat-it.
+        function playInviteSound() {
+            try {
+                const ctx = getAudioContext();
+                if (ctx.state === 'suspended') ctx.resume();
+                [880, 1108].forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    const t = ctx.currentTime + i * 0.13;
+                    osc.frequency.setValueAtTime(freq, t);
+                    gain.gain.setValueAtTime(0.14, t);
+                    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.16);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(t);
+                    osc.stop(t + 0.17);
+                });
             } catch (e) { /* audio not available, ignore */ }
         }
 
@@ -3905,63 +4705,9 @@
         }
 
         function renderRoomsGrid(rooms, creatorProfiles) {
-            creatorProfiles = creatorProfiles || {};
-            roomsGrid.innerHTML = '';
-            if (rooms.length > 0) {
-                roomsGrid.classList.remove('hidden');
-            } else {
-                roomsGrid.classList.add('hidden');
-            }
-
-            rooms.forEach(room => {
-                const iconEmoji = getCategoryEmoji(room.category);
-                const card = document.createElement('div');
-                card.className = 'ig-card';
-
-                const timeLabel = room.event_time ? new Date(room.event_time).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
-                const isTravel = room.category === 'Shetitje' && (room.location || room.destination);
-                const memberCount = (room.members || []).length;
-                const creator = room.admin_id ? creatorProfiles[room.admin_id] : null;
-                const creatorName = creator?.name || room.admin;
-
-                let capacityHtml;
-                if (room.capacity) {
-                    const pct = Math.min(100, Math.round((memberCount / room.capacity) * 100));
-                    capacityHtml = `
-                        <div class="capacity-track"><div class="capacity-fill" style="width:${pct}%"></div></div>
-                        <div class="capacity-label">${memberCount}/${room.capacity} spots</div>
-                    `;
-                } else {
-                    capacityHtml = `<div class="capacity-label" style="margin-top:9px;">👤 ${memberCount} joined</div>`;
-                }
-
-                const coverStyle = room.cover_url ? `background-image:url(${room.cover_url});` : `background-image:${getCategoryGradient(room.category)};`;
-
-                card.innerHTML = `
-                    <div class="ig-card-cover" style="${coverStyle}">
-                        <div class="ig-card-cover-overlay"></div>
-                        ${avatarHtml(creatorName, creator?.avatar_url, 'ig-card-creator-avatar')}
-                        <button class="ig-card-join-btn">Open Room</button>
-                    </div>
-                    <div class="ig-card-body">
-                        <b style="font-size: 14.5px; color: #f0f6fc;">${iconEmoji} ${escapeHtml(room.name)}</b>
-                        ${isTravel ? `<div style="font-size: 11.5px; color: #e6edf3; font-weight: 600; display:flex; align-items:center; gap:4px; flex-wrap:wrap; margin-top:4px;">🚩 ${escapeHtml(room.location || '?')} <span style="color:#8b949e;">→</span> 🏁 ${escapeHtml(room.destination || '?')}</div>` : ''}
-                        <div class="ig-card-meta">
-                            ${room.city ? `<span>📍 ${escapeHtml(room.city)}</span>` : ''}
-                            ${timeLabel ? `<span>🕐 ${timeLabel}</span>` : ''}
-                        </div>
-                        ${capacityHtml}
-                    </div>
-                `;
-
-                card.querySelector('.ig-card-join-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    currentRoomCode = room.code;
-                    enterRoom(room);
-                });
-
-                roomsGrid.appendChild(card);
-            });
+            // My Events përdor të njëjtin sistem kalendari/liste; klikimi hap dhomën direkt
+            // (je tashmë anëtar), jo kërkesë join.
+            displayFeed(roomsGrid, rooms, creatorProfiles, null, 'open');
         }
 
         // Çdokush që është brenda dhomës — guest apo user i loguar — mund të chattojë, të
@@ -3988,6 +4734,7 @@
             pendingApprovalCard.classList.add('hidden');
             if (document.getElementById('discoverGrid')) document.getElementById('discoverGrid').classList.add('hidden');
             roomCard.classList.remove('hidden');
+            if (currentUser.isAuthenticated) showBottomNav(); else hideBottomNav();
 
             // Admin i KËSAJ dhome specifike = je i loguar (jo guest) DHE emri yt përputhet me admin-in
             // e ruajtur në rekord. Kjo lejon që një user i loguar të hyjë si pjesëmarrës i thjeshtë
